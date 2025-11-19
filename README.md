@@ -7,6 +7,9 @@
 
 -----
 
+![Pratinjau Demo](_ext/demo/preview.png)
+
+
 ## ✨ Fitur Utama
 
 ### 💡 Visi & Dampak Sosial
@@ -112,4 +115,3 @@ Proyek ini dilisensikan di bawah GPL-3.0 License!
 
 -----
  
-Apakah Anda ingin menambahkan detail teknis spesifik lainnya, misalnya tentang modul utama atau *tech stack* (misalnya: *frontend framework* atau *library* yang digunakan)?
