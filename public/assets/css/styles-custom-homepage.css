@@ -1,0 +1,44 @@
+#settings-propic-preview{
+  display: block;
+  width: 128px;
+  height: 128px;
+}
+
+.link-hide {
+  display: none !important;
+}
+
+.link-shown{
+  display: inline-block;
+}
+
+
+#delete-propic, #delete-attachment, #delete-icon-materi {
+  background-image: url('/assets/img/delete.png');
+  display: inline-block; /* Allows setting width and height */
+    width: 24px;          /* Set the width */
+    height: 24px;         /* Set the height */
+    background-size: cover; /* Ensure the image covers the entire area */
+    background-position: center; /* Center the image */
+    cursor : pointer;
+}
+
+
+#icon-loading, #attachment-loading, #delete-propic, #delete-attachment, #preview-attachment, #save-kategori, #kategori-materi-custom, #preview-icon-materi, #delete-icon-materi {
+  display: none;
+}
+
+.img-circle {
+  display: inline-block !important;
+}
+
+#browseMateriModal .modal-content,
+#browseMateriModal .modal-dialog{
+  width: 130% !important;
+  
+}
+
+.wa_cs02_disabled, .wa_cs01_disabled {
+  display: none;
+}
+

@@ -1,0 +1,195 @@
+#nama-materi-perangkat {
+
+	width: 100%;
+	height: 100px;
+	display: block;
+	border-style: inset;
+	border-radius: 5px;
+}
+
+.nama-materi {
+	margin: 5px;
+	background-color: yellow;
+	border-radius: 2px;
+	padding: 3px;
+	display: inline-block;
+
+}
+
+.removal {
+	background-color: grey;
+	cursor: pointer;
+	padding: 3px;
+}
+
+#delete-icon {
+	display: none;
+}
+
+#cs-02-form{
+	display: none;
+}
+
+.dropdown-shown{
+	left: -140px !important;
+}
+
+.info span {
+	color: white;
+	font-size: 2.0vh;
+}
+
+.text-todoCheck{
+	width: 70%;
+	display: none;
+}
+
+.card-img-overlay p, .card-img-overlay span, .card-img-overlay a {
+	background-color: rgba(0, 0, 255, 0.5);
+	padding : 10px;
+}
+
+.nav-link {
+	cursor : pointer;
+}
+
+/* ini untuk management materi */
+/* Untuk kontainer gambar dan tombol hapus */
+.icon-preview-container {
+    position: relative; /* Penting: agar posisi child absolute merujuk ke container ini */
+    display: inline-block; /* Agar container hanya selebar gambar */
+    margin-top: 10px; /* Sedikit jarak dari input file */
+}
+
+/* Untuk gambar pratinjau */
+#preview-icon-materi {
+    width: 100px; /* Sesuaikan ukuran gambar sesuai kebutuhan */
+    height: 100px; /* Sesuaikan ukuran gambar sesuai kebutuhan */
+    object-fit: contain; /* Memastikan gambar tidak terdistorsi */
+    border: 1px solid #ddd; /* Contoh border */
+    padding: 2px;
+}
+
+/* Untuk tombol hapus */
+#delete-icon-materi {
+    position: absolute; /* Posisi absolut di dalam container relative */
+    top: -5px; /* Sesuaikan untuk posisi vertikal */
+    right: -5px; /* Sesuaikan untuk posisi horizontal */
+    padding: 0px 5px; /* Padding untuk tombol 'x' */
+    line-height: 1; /* Agar 'x' di tengah */
+    font-size: 16px; /* Ukuran 'x' */
+    border-radius: 50%; /* Membuat tombol bulat */
+    /* background-color: #dc3545; /* Warna latar belakang */
+    /* color: white; /* Warna teks */
+    /* border: none; /* Tanpa border */
+    cursor: pointer;
+    z-index: 10; /* Pastikan tombol di atas gambar */
+    display: none; /* Sembunyikan secara default, tampilkan dengan JS saat ada gambar */
+}
+
+/* Container untuk tombol aksi */
+.attachment-action-container {
+    display: block; /* Memastikan mengambil baris penuh di form-group */
+    margin-top: 5px;
+}
+
+/* Tautan Delete dibuat seperti tombol */
+#delete-attachment {
+    /* Jika Anda menggunakan kelas Bootstrap btn-danger, styling ini mungkin tidak diperlukan */
+    /* text-decoration: none; */
+    /* color: white; */
+    /* background-color: #dc3545; */
+    /* padding: 3px 8px; */
+    /* border-radius: 4px; */
+    display: inline-block;
+    /* Sembunyikan secara default */
+    display: none; 
+}
+
+/* Tautan Preview */
+#preview-attachment-materi {
+    display: none;
+}
+
+/* Styling untuk ikon Font Awesome */
+.btn-group-toggle .fa-2x {
+    font-size: 2em; /* Mengatur ukuran ikon */
+    display: block; /* Memastikan ikon mengambil baris sendiri */
+    margin-bottom: 2px; /* Jarak antara ikon dan teks */
+}
+
+.btn-group-toggle .active {
+    background-color: #007bff; /* Warna latar belakang saat aktif */
+    color: white; /* Warna teks saat aktif */
+}
+
+/* management materi done! */
+
+/* single materi layout */
+
+/* === EFEK VISUAL: Shadow dan Radius === */
+.img-card-effect {
+    /* Sudut Tumpul (Radius) */
+    border-radius: 12px;
+    
+    /* Efek Shadow */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); 
+    
+    /* Memastikan gambar ditampilkan sebagai blok untuk membatasi margin */
+    display: block; 
+    
+    /* Transisi untuk efek halus (opsional) */
+    transition: all 0.3s ease-in-out;
+}
+
+.img-card-effect:hover {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25); 
+}
+
+/* === KONTROL UKURAN UNTUK LAYAR BESAR === */
+
+/* Target: Gambar di dalam kolom (col-12) */
+.col-12 .product-image {
+    width: 100%; /* Memastikan gambar responsif penuh pada lebar kolomnya */
+    height: auto;
+    
+    /* PENTING: Mengatur TINGGI MAKSIMUM di layar besar */
+    max-height: 350px; /* Batasi tinggi maksimum gambar (misalnya, 350px) */
+    
+    /* PENTING: Memastikan gambar mengisi ruang tanpa meregang/melar */
+    object-fit: cover; 
+}
+
+/* Di layar desktop (min-width: 992px), kita akan membatasi lebar gambar secara absolut
+   agar tidak terlalu besar meskipun kontainer col-sm-6 lebar. */
+@media (min-width: 992px) {
+    .col-12 .product-image {
+        /* Tetapkan lebar tetap maksimum yang proporsional di desktop */
+        max-width: 400px; /* Contoh: Gambar tidak akan lebih lebar dari 400px */
+        
+        /* Pusatkan gambar di dalam kontainernya (col-12) */
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+/* single materi layout */
+
+/* bagian pengisian saldo */
+
+#paymentQRIS img {
+    max-height: 43vh; width: auto; display: block; margin: 0 auto;
+}
+
+#konfirmasiBayarModal .modal-body {
+    /* Wajibkan .modal-body untuk memiliki tinggi maksimum */
+    max-height: calc(100vh - 200px); /* Contoh: 100vh dikurangi tinggi header, footer, dan margin */
+    
+    /* Wajibkan agar terjadi scrolling jika konten melebihi max-height */
+    overflow-y: auto; 
+    
+    /* Tambahkan sedikit padding/margin agar scroll bar tidak terlalu mepet */
+    padding-bottom: 15px;
+}
+
+/* bagian pengisian saldo done! */
