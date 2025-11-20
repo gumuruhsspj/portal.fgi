@@ -1,16 +1,4 @@
-/**
-* Template Name: eStartup
-* Template URL: https://bootstrapmade.com/estartup-bootstrap-landing-page-template/
-* Updated: Aug 07 2024 with Bootstrap v5.3.3
-* Author: BootstrapMade.com
-* License: https://bootstrapmade.com/license/
-*/
 
-/*--------------------------------------------------------------
-# Font & Color Variables
-# Help: https://bootstrapmade.com/color-system/
---------------------------------------------------------------*/
-/* Fonts */
 :root {
   --default-font: "Roboto",  system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --heading-font: "Raleway",  sans-serif;
@@ -1386,3 +1374,85 @@ background-image: url('/assets/img/keunggulan-6.jpg');
   width: 50%;
   display: block;
 }
+
+/* for login purposes */
+
+/* Card ala Nexus (clean + smooth shadow) */
+.nexus-card {
+  border-radius: 16px;
+  border: none;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background: #ffffff;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+/* Header */
+.nexus-header h5 {
+  font-size: 1.25rem;
+  letter-spacing: 0.3px;
+}
+
+.nexus-icon {
+  width: 60px;
+  opacity: 0.9;
+}
+
+/* Input Style modern */
+.nexus-input {
+  border-radius: 10px;
+  border: 1px solid #dce3f0;
+  background: #f8faff;
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  transition: all 0.25s ease;
+}
+
+.nexus-input:focus {
+  border-color: #7b88ff;
+  box-shadow: 0 0 0 3px rgba(123, 136, 255, 0.25);
+  background: #ffffff;
+}
+
+/* Buttons */
+.nexus-btn-primary {
+  background: linear-gradient(135deg, #7b88ff, #5ab0ff);
+  color: #fff;
+  border-radius: 10px;
+  padding: 8px 20px;
+  border: none;
+  font-weight: 600;
+  transition: 0.25s ease;
+}
+
+.nexus-btn-primary:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.nexus-btn-secondary {
+  background: #f1f4ff;
+  color: #59657d;
+  border-radius: 10px;
+  padding: 8px 20px;
+  border: 1px solid #d7dff5;
+  font-weight: 500;
+  transition: 0.25s ease;
+}
+
+.nexus-btn-secondary:hover {
+  background: #e6ecff;
+}
+
+/* Small adjustments */
+.modal-body {
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+.modal-footer {
+  padding: 15px 30px;
+}
+
+
+/* for login purposes */

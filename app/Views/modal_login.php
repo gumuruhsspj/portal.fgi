@@ -1,52 +1,54 @@
-
-
-
 <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            
+        <div class="modal-content nexus-card">
+
             <form action="/verify-login" method="post">
-                
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title fw-bold" style="color:white;" id="loginModalLabel">
-                        <i class="fas fa-lock me-2"></i> Akses Masuk Sistem
+
+                <div class="modal-header border-0 text-center flex-column nexus-header">
+                    <h5 class="modal-title fw-semibold" id="loginModalLabel">
+                        Akses Masuk Sistem
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <p class="text-muted small mt-1">Silakan login untuk melanjutkan</p>
                 </div>
-                
-                <div class="modal-body text-center">
-                    
-                    <img class="sm-logo mb-4" src="/assets/img/locked.png" alt="Ikon Terkunci" style="max-width: 80px;">
-                    
-                    <div class="mb-3 text-start">
-                        <label for="usertypeSelect" class="form-label">Masuk Sebagai:</label>
-                        <select class="form-select" id="usertypeSelect" name="usertype">
-                            <option value="peserta"> Peserta</option>
-                            <option value="instruktur"> Instruktur</option>
+
+                <div class="modal-body">
+
+                    <img class="d-block mx-auto img-fluid" src="/assets/img/locked.png" alt="Locked">
+
+                    <div class="mb-3">
+                        <label for="usertypeSelect" class="form-label small fw-medium">Masuk Sebagai</label>
+                        <select class="form-select nexus-input" id="usertypeSelect" name="usertype">
+                            <option value="peserta">Peserta</option>
+                            <option value="instruktur">Instruktur</option>
                         </select>
                     </div>
 
-                    <div class="input-group mb-3">
-                        <span class="input-group-text"><i class="fas fa-user"></i></span>
-                        <input class="form-control" type="text" name="username" placeholder="Ketik Username" required>
+                    <div class="mb-3">
+                        <label class="form-label small fw-medium">Username/Email</label>
+                        <input class="form-control nexus-input" type="text" name="username" placeholder="Ketik Username atau Email" required>
                     </div>
 
-                    <div class="input-group mb-3">
-                        <span class="input-group-text"><i class="fas fa-key"></i></span>
-                        <input class="form-control" type="password" name="pass" placeholder="Ketik Password" required>
+                    <div class="mb-2">
+                        <label class="form-label small fw-medium">Password</label>
+                        <input class="form-control nexus-input" type="password" name="pass" placeholder="Ketik Password" required>
                     </div>
-                    
+
                 </div>
-                
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary fw-bold">
-                        <i class="fas fa-sign-in-alt me-1"></i> Login
+
+                <div class="modal-footer border-0 d-flex justify-content-between">
+
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Batal
                     </button>
+
+                    <button type="submit" class="btn btn-primary">
+                        Login
+                    </button>
+
                 </div>
-                
+
             </form>
-            
+
         </div>
     </div>
 </div>

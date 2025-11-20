@@ -193,3 +193,22 @@
 }
 
 /* bagian pengisian saldo done! */
+
+/* bagian management materi pembahasan */
+
+#modalPembahasan { 
+   min-height: 80vh;
+}
+
+trix-editor {
+    width: 100%;
+    min-height: 400px; 
+}
+
+#modalPembahasan .modal-dialog {
+    max-width: 85%; /* Set lebar maksimum modal */
+    width: 85%; /* Set lebar modal */
+  }
+
+
+/* bagian management materi pembahasan */

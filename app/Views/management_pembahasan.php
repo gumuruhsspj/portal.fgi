@@ -17,6 +17,7 @@
   <!-- Theme style -->
   <link rel="stylesheet" href="/assets/vendor/bootstrap/css/bootstrap.min.css">
 
+  <link rel="stylesheet" href="/assets/css/trix.css">
   <link rel="stylesheet" href="/assets/css/adminlte.min.css">
   <link rel="stylesheet" href="/assets/css/styles-custom-homepage.css">
   <link rel="stylesheet" href="/assets/css/styles-custom-portal.css">
@@ -89,7 +90,7 @@
           <div class="col">
             <div class="card">
               <div class="card-header border-0">
-                <h3 class="card-title">Total Overall: <span><?= (isset($management_data) && $management_data!=false) ? count($management_data) : 0; ?> data.</span></h3>
+                <h3 class="card-title">Total Overall: <span id="total_data" data-jumlah="<?= $jumlah_data;?>" ><?= (isset($management_data) && $management_data!=false) ? count($management_data) : 0; ?> bab.</span></h3>
                 <div class="card-tools">
                 
                     <a href="#" id="add-card" class="btn btn-tool btn-sm">
@@ -104,9 +105,62 @@
                   </a>
                 </div>
               </div>
-
-              <div id="card-mode" class="row mt-4" style="display:none;">
+            
+              <?php if(empty($management_data)) : ?>
+                  <div id="card-mode" class="row mt-4" style="display:none;">
+                <?php else : ?>
+                  <div id="card-mode" class="row mt-4" >
+              <?php endif; ?>
                 <!-- JS akan append card-card disini -->
+                 <?php if(!empty($management_data)) : ?>
+        <?php foreach($management_data as $data) : ?>
+            <div class="col-md-4 mb-4 card-item" data-id-materi="<?= $data->id_materi ;?>" data-id="<?= $data->id ;?>">
+            <div class="card h-100">
+                <div class="card-body" style="margin-left: 15px;">
+                    <input type="checkbox" class="form-check-input selected-card mb-2">
+
+                    <input type="text" class="form-control mb-2 judul" 
+                          placeholder="Judul Bab" value="<?= $data->judul ;?>">
+
+                    <textarea class="form-control mb-2 deskripsi" 
+                              placeholder="Deskripsi"><?= $data->deskripsi ;?></textarea>
+
+                    <p class="text-muted">
+                    
+                    <a href="#" class="add-pembahasan" data-bs-toggle="modal" data-bs-target="#modalPembahasan" >Add Pembahasan</a>
+                    
+                    <div class="list-group">
+                      <?php if(!empty($management_pembahasan[$data->id])) : ?>
+                          <?php foreach($management_pembahasan[$data->id] as $pembahasan): ?>
+                            <?php if($pembahasan->id_bab == $data->id): ?>
+                              <li class="list-group-item">
+                           <?= $pembahasan->judul ;?>
+                            <button data-id="<?= $pembahasan->id ;?>" class="btn btn-warning btn-sm float-end edit-pembahasan"  >
+                            <i class="fas fa-edit"></i>
+                            </button>
+                            <button data-id="<?= $pembahasan->id ;?>" class="btn btn-danger btn-sm float-end remove-pembahasan"  >
+                            <i class="fas fa-trash-alt"></i>
+                            </button>
+                          </li>
+                            <?php endif; ?>
+                          <?php endforeach; ?>
+                          <?php endif; ?>
+                    </div>
+                    </p>
+
+                    <button class="btn btn-sm btn-danger delete-card" data-id="<?= $data->id ;?>">
+                        Delete
+                    </button>
+
+                    <button class="btn btn-sm btn-success float-end save-card" data-id="<?= $data->id ;?>">
+                        Save
+                    </button>
+                </div>
+            </div>
+        </div>
+                  <?php endforeach; ?>
+                  <?php endif; ?>
+
                 </div>
 
             </div>
@@ -136,6 +190,8 @@
 <?php include('modal_materi.php'); ?>
 <?php include('modal_customer_services.php'); ?>
 <?php include('modal_comments_rating.php'); ?>
+<?php include('modal_pembahasan.php'); ?>
+
 
 <!-- REQUIRED SCRIPTS -->
 
@@ -145,11 +201,14 @@
 <!-- Bootstrap -->
 <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="/assets/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="/assets/js/sweetalert2@11.js<?=$random;?>"></script>
 <!-- AdminLTE -->
 <script src="/assets/js/manage-materi.js<?=$random;?>"></script>
 <script src="/assets/js/settings.js<?=$random;?>"></script>
 <script src="/assets/js/customer-services.js<?=$random;?>"></script>
 
+
+<script src="/assets/js/trix.umd.min.js<?=$random;?>"></script>
 <script src="/assets/js/adminlte.js<?=$random;?>"></script>
 <script src="/assets/js/pembahasan.js<?=$random;?>"></script>
 <script src="/assets/js/pages/dashboard3.js<?=$random;?>"></script>

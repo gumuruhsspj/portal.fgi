@@ -29,10 +29,14 @@ $routes->post('/manage/materi/kategori/all', 'Works::materi_kategori_all');
 $routes->post('/manage/materi/kategori/add', 'Works::materi_kategori_add');
 $routes->post('/manage/materi/kategori/delete', 'Works::materi_kategori_delete');
 
-$routes->post('/manage/materi/pembahasan/bab/add', 'Works::management_pembahasan_bab_add');
-$routes->post('/manage/materi/pembahasan/bab/delete', 'Works::management_pembahasan_bab_delete');
-$routes->post('/manage/materi/pembahasan/add', 'Works::management_pembahasan_add');
-$routes->post('/manage/materi/pembahasan/delete', 'Works::management_pembahasan_delete');
+$routes->post('/manage/materi/pembahasan/bab/add', 'Works::pembahasan_bab_add');
+$routes->post('/manage/materi/pembahasan/bab/update', 'Works::pembahasan_bab_update');
+$routes->post('/manage/materi/pembahasan/bab/delete', 'Works::pembahasan_bab_delete');
+$routes->post('/manage/materi/pembahasan/add', 'Works::pembahasan_add');
+$routes->post('/manage/materi/pembahasan/no-urut/next', 'Works::pembahasan_next_no_urut');
+$routes->post('/manage/materi/pembahasan/delete', 'Works::pembahasan_delete');
+$routes->post('/manage/materi/pembahasan/edit', 'Works::pembahasan_edit');
+$routes->post('/manage/materi/pembahasan/update', 'Works::pembahasan_update');
 
 $routes->post('/manage/materi/comments-rating/all', 'Works::comments_rating_all');
 $routes->post('/manage/materi/comments-rating/delete', 'Works::comments_rating_delete');

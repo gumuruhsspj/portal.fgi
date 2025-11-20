@@ -97,11 +97,22 @@ class Home extends BaseController
          $id = $this->request->getGet('materi_id');
          
          $data_materi = $this->model_materi->get_by(['id'=>$id]);
+         
+         // data returned is in object instead of array
          $data_all_bab = $this->model_materi->get_all_bab_by_materi_id($id);
 
+         // loop lagi
+         $data_all_pembahasan = array();
+
+         foreach ($data_all_bab as $data_bab){
+            $data_all_pembahasan[$data_bab->id] = $this->model_materi->get_all_pembahasan_by_bab_id($data_bab->id);
+         }
+         
          $data['judul_materi'] = $data_materi->judul;    
          $data['id_materi'] = $data_materi->id;
-        $data['management_data'] = $data_all_bab;
+         $data['management_data'] = $data_all_bab;
+         $data['management_pembahasan'] = $data_all_pembahasan;
+        $data['jumlah_data'] = sizeof($data_all_bab);
         $data['link_management_open'] = 'menu-open';
         $data['link_management_materi_active'] = 'active';
         $data['random'] = '?' . rand(0,11);

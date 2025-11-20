@@ -506,7 +506,82 @@ class Works extends BaseController
 
     }
 
-    public function management_pembahasan_bab_add(){
+    public function pembahasan_delete(){
+
+        $id          = $this->request->getPost('id');
+
+        $returned_value = $this->model_materi->delete_existing_pembahasan($id);
+
+         $result = array(
+            'status' => 'invalid',
+            'message' => 'error'
+        );
+
+        if($returned_value){
+            $result['status'] = 'valid';
+            $result['message'] = 'pembahasan berhasil dihapus!';
+        }
+
+        echo json_encode($result);
+
+    }
+
+    public function pembahasan_bab_delete(){
+
+        $id          = $this->request->getPost('id');
+
+        $returned_value = $this->model_materi->delete_existing_bab($id);
+
+         $result = array(
+            'status' => 'invalid',
+            'message' => 'error'
+        );
+
+        if($returned_value){
+            $result['status'] = 'valid';
+            $result['message'] = 'bab berhasil dihapus!';
+        }
+
+        echo json_encode($result);
+    }
+
+    public function pembahasan_bab_update(){
+
+        // terima post request untuk ini
+        /*  id: id_babna,
+        id_materi : id_materina,
+        id_user: id_userna,
+        judul: judul_na,
+        deskripsi: deskripsi_na */
+        $result = array(
+            'status' => 'invalid',
+            'message' => 'error'
+        );
+
+        $id = $this->request->getPost('id');
+        $id_materi = $this->request->getPost('id_materi');
+        $id_user = $this->request->getPost('id_user');
+        $judul = $this->request->getPost('judul');
+        $deskripsi = $this->request->getPost('deskripsi');
+
+        $data = array(
+            'id_materi'   => $id_materi,
+            'id_user'     => $id_user,
+            'judul'       => $judul,
+            'deskripsi'  => $deskripsi
+        );
+
+        $result_update = $this->model_materi->update_existing_bab($data, $id);
+        if(!empty($result_update)){
+            $result['status'] = 'valid';
+            $result['message'] = 'bab berhasil diupdate!';
+        }
+
+        echo json_encode($result);
+
+    }
+
+    public function pembahasan_bab_add(){
 
         $result = array(
             'status' => 'invalid',
@@ -534,7 +609,32 @@ class Works extends BaseController
 
     }
 
-    public function management_pembahasan_add(){
+    public function pembahasan_next_no_urut(){
+
+        // kasih id_bab, cari no urut tertinggi, terus return no urut selanjutnya
+        $result = array(
+            'status' => 'invalid',
+            'message' => 'error'
+        );
+
+        $id_bab = $this->request->getPost('id_bab');
+        $data = $this->model_materi->get_highest_ordering_index($id_bab);
+
+        if($data){
+            $next_no_urut = $data->ordering_index + 1;
+
+        }else{
+            $next_no_urut = 1;
+        }
+
+        $result['status'] = 'valid';
+        $result['data'] = $next_no_urut;
+
+        echo json_encode($result);
+
+    }
+
+    public function pembahasan_add(){
 
         $result = array(
             'status' => 'invalid',
@@ -552,13 +652,14 @@ class Works extends BaseController
           'id_user'     => $id_user,
           'ordering_index'   => $ordering_index,
           'judul'       => $judul,
-          'deskripsib'  => $deskripsi
+          'deskripsi'  => $deskripsi
      );
 
-     $this->model_materi->insert_new_pembahasan($data);
+     $no_id = $this->model_materi->insert_new_pembahasan($data);
 
       $result['status'] = 'valid';
       $result['message'] = 'pembahasan berhasil ditambahkan!';
+      $result['data'] = $no_id;
 
       echo json_encode($result);
 

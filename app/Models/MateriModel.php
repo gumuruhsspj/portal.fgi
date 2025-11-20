@@ -33,6 +33,30 @@ class MateriModel extends Model
     private $table_bab_materi_name = "table_bab_materi";
     private $table_pembahasan_materi_name = "table_pembahasan_materi";
     
+    public function get_highest_ordering_index($id_bab){
+
+        $builder = $this->db->table($this->table_pembahasan_materi_name);
+
+        $builder->selectMax('ordering_index');
+
+        $filter = array(
+            'id_bab' => $id_bab
+        );
+
+        $builder->where($filter);
+
+        $query = $builder->get();
+        $manyData = $builder->countAllResults();
+
+        if($manyData > 0){
+
+            return $query->getRow();
+
+        }else {
+            return false;
+        }
+
+    }
 
     public function insert_new_pembahasan_bab($data){
 
@@ -52,21 +76,88 @@ class MateriModel extends Model
 
         if(!empty($data)){
             $hasil = $this->db->table($this->table_pembahasan_materi_name)->insert($data);
+
+        }
+
+        if($hasil){
+            return $this->db->insertID();
         }
 
         return $hasil;
 
     }
 
-    public function get_all_bab_by_materi_id($id){
+    public function delete_existing_pembahasan($id)
+    {
+        $query = $this->db->table($this->table_pembahasan_materi_name)->delete(array('id' => $id));
+        return $query;
+    }
 
-        $builder = $this->db->table($this->table_bab_materi_name);
+    public function delete_existing_bab($id)
+    {
+        $query = $this->db->table($this->table_bab_materi_name)->delete(array('id' => $id));
+
+        // delete jga dari table pembahasan
+        $query = $this->db->table($this->table_pembahasan_materi_name)->delete(array('id_bab' => $id));
+
+        return $query;
+    }
+
+    public function update_existing_bab($data, $id)
+    {
+        $query = $this->db->table($this->table_bab_materi_name)->update($data, array('id' => $id));
+          if($query){
+            return true;
+        }
+
+        return false;
+    }
+
+    public function get_all_pembahasan_by_bab_id($id){
+
+        $builder = $this->db->table($this->table_pembahasan_materi_name);
 
         $filter = array(
-            'id' => $id
+            'id_bab' => $id
         );
 
         $builder->where($filter);
+        $builder->orderBy('ordering_index', 'ASC');
+
+        $query = $builder->get();
+        $manyData = $builder->countAllResults();
+
+        if($manyData > 0){
+
+            return $query->getResult();
+
+        }else {
+            return false;
+        }
+
+    }
+
+    public function get_all_bab_by_materi_id($id){
+
+        // returned value is object
+        // id, id_materi, judul, deskripsi, and jumlah pembahasan only
+
+        $builder = $this->db->table($this->table_bab_materi_name);
+
+        // Join table_bab_materi with table_pembahasan
+        $builder->select('table_bab_materi.id, table_bab_materi.id_materi, table_bab_materi.judul as judul, 
+        table_bab_materi.deskripsi as deskripsi, 
+        COUNT(table_pembahasan_materi.id) as jumlah_pembahasan');
+        
+        $builder->join($this->table_pembahasan_materi_name, 
+        'table_pembahasan_materi.id_bab = table_bab_materi.id', 'left');
+
+        $filter = array(
+            'table_bab_materi.id_materi' => $id
+        );
+
+        $builder->where($filter);
+        $builder->groupBy('table_bab_materi.id');
 
         $query = $builder->get();
         $manyData = $builder->countAllResults();
