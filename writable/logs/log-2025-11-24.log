@@ -1,0 +1,163 @@
+INFO - 2025-11-24 02:47:04 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2025-11-24 02:47:14 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2025-11-24 02:47:15 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2025-11-24 02:47:19 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2025-11-24 02:47:20 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2025-11-24 02:47:25 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2025-11-24 02:47:29 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2025-11-24 09:56:01 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2025-11-24 09:56:12 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2025-11-24 09:56:12 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2025-11-24 09:56:28 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2025-11-24 09:56:30 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2025-11-24 09:58:29 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2025-11-24 09:58:31 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2025-11-24 09:58:32 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2025-11-24 09:58:32 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2025-11-24 09:58:47 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2025-11-24 09:58:47 --> TypeError: CodeIgniter\Database\BaseBuilder::setBind(): Argument #1 ($key) must be of type string, int given, called in C:\xampp\htdocs\portal-fgroupindonesia\system\Database\BaseBuilder.php on line 1555
+[Method: POST, Route: settings/user/update-propic]
+in SYSTEMPATH\Database\BaseBuilder.php on line 3487.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1555): CodeIgniter\Database\BaseBuilder->setBind(12, '', true)
+ 2 SYSTEMPATH\Database\BaseBuilder.php(2468): CodeIgniter\Database\BaseBuilder->set([...])
+ 3 APPPATH\Models\UserModel.php(125): CodeIgniter\Database\BaseBuilder->update('12', [...])
+ 4 APPPATH\Controllers\Works.php(1260): App\Models\UserModel->update_existing('12', [...])
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Works->user_update_propic()
+ 6 SYSTEMPATH\CodeIgniter.php(509): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Works))
+ 7 SYSTEMPATH\CodeIgniter.php(355): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(312): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+INFO - 2025-11-24 09:58:49 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2025-11-24 09:58:49 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2025-11-24 09:58:49 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2025-11-24 09:59:18 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2025-11-24 09:59:18 --> TypeError: CodeIgniter\Database\BaseBuilder::setBind(): Argument #1 ($key) must be of type string, int given, called in C:\xampp\htdocs\portal-fgroupindonesia\system\Database\BaseBuilder.php on line 1555
+[Method: POST, Route: settings/user/update-propic]
+in SYSTEMPATH\Database\BaseBuilder.php on line 3487.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1555): CodeIgniter\Database\BaseBuilder->setBind(12, '', true)
+ 2 SYSTEMPATH\Database\BaseBuilder.php(2468): CodeIgniter\Database\BaseBuilder->set([...])
+ 3 APPPATH\Models\UserModel.php(125): CodeIgniter\Database\BaseBuilder->update('12', [...])
+ 4 APPPATH\Controllers\Works.php(1260): App\Models\UserModel->update_existing('12', [...])
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Works->user_update_propic()
+ 6 SYSTEMPATH\CodeIgniter.php(509): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Works))
+ 7 SYSTEMPATH\CodeIgniter.php(355): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(312): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+INFO - 2025-11-24 09:59:19 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2025-11-24 09:59:19 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2025-11-24 09:59:19 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2025-11-24 10:04:33 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2025-11-24 10:04:33 --> TypeError: CodeIgniter\Database\BaseBuilder::setBind(): Argument #1 ($key) must be of type string, int given, called in C:\xampp\htdocs\portal-fgroupindonesia\system\Database\BaseBuilder.php on line 1555
+[Method: POST, Route: settings/user/update-propic]
+in SYSTEMPATH\Database\BaseBuilder.php on line 3487.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1555): CodeIgniter\Database\BaseBuilder->setBind(12, '', true)
+ 2 SYSTEMPATH\Database\BaseBuilder.php(2468): CodeIgniter\Database\BaseBuilder->set([...])
+ 3 APPPATH\Models\UserModel.php(125): CodeIgniter\Database\BaseBuilder->update('12', [...])
+ 4 APPPATH\Controllers\Works.php(1260): App\Models\UserModel->update_existing('12', [...])
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Works->user_update_propic()
+ 6 SYSTEMPATH\CodeIgniter.php(509): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Works))
+ 7 SYSTEMPATH\CodeIgniter.php(355): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(312): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+INFO - 2025-11-24 10:04:44 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2025-11-24 10:04:44 --> TypeError: CodeIgniter\Database\BaseBuilder::setBind(): Argument #1 ($key) must be of type string, int given, called in C:\xampp\htdocs\portal-fgroupindonesia\system\Database\BaseBuilder.php on line 1555
+[Method: POST, Route: settings/user/update-propic]
+in SYSTEMPATH\Database\BaseBuilder.php on line 3487.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1555): CodeIgniter\Database\BaseBuilder->setBind(12, '', true)
+ 2 SYSTEMPATH\Database\BaseBuilder.php(2468): CodeIgniter\Database\BaseBuilder->set([...])
+ 3 APPPATH\Models\UserModel.php(125): CodeIgniter\Database\BaseBuilder->update('12', [...])
+ 4 APPPATH\Controllers\Works.php(1260): App\Models\UserModel->update_existing('12', [...])
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Works->user_update_propic()
+ 6 SYSTEMPATH\CodeIgniter.php(509): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Works))
+ 7 SYSTEMPATH\CodeIgniter.php(355): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(312): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+INFO - 2025-11-24 10:09:08 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2025-11-24 10:09:18 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2025-11-24 10:09:18 --> TypeError: CodeIgniter\Database\BaseBuilder::setBind(): Argument #1 ($key) must be of type string, int given, called in C:\xampp\htdocs\portal-fgroupindonesia\system\Database\BaseBuilder.php on line 1555
+[Method: POST, Route: settings/user/update]
+in SYSTEMPATH\Database\BaseBuilder.php on line 3487.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1555): CodeIgniter\Database\BaseBuilder->setBind(12, '', true)
+ 2 SYSTEMPATH\Database\BaseBuilder.php(2468): CodeIgniter\Database\BaseBuilder->set([...])
+ 3 APPPATH\Models\UserModel.php(125): CodeIgniter\Database\BaseBuilder->update('12', [...])
+ 4 APPPATH\Controllers\Works.php(1318): App\Models\UserModel->update_existing([...], '12')
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Works->user_update()
+ 6 SYSTEMPATH\CodeIgniter.php(509): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Works))
+ 7 SYSTEMPATH\CodeIgniter.php(355): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(312): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+INFO - 2025-11-24 10:09:22 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2025-11-24 10:09:22 --> TypeError: CodeIgniter\Database\BaseBuilder::setBind(): Argument #1 ($key) must be of type string, int given, called in C:\xampp\htdocs\portal-fgroupindonesia\system\Database\BaseBuilder.php on line 1555
+[Method: POST, Route: settings/user/update]
+in SYSTEMPATH\Database\BaseBuilder.php on line 3487.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1555): CodeIgniter\Database\BaseBuilder->setBind(12, '', true)
+ 2 SYSTEMPATH\Database\BaseBuilder.php(2468): CodeIgniter\Database\BaseBuilder->set([...])
+ 3 APPPATH\Models\UserModel.php(125): CodeIgniter\Database\BaseBuilder->update('12', [...])
+ 4 APPPATH\Controllers\Works.php(1318): App\Models\UserModel->update_existing([...], '12')
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Works->user_update()
+ 6 SYSTEMPATH\CodeIgniter.php(509): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Works))
+ 7 SYSTEMPATH\CodeIgniter.php(355): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(312): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+INFO - 2025-11-24 10:09:24 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2025-11-24 10:09:30 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2025-11-24 10:09:34 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2025-11-24 10:09:34 --> TypeError: CodeIgniter\Database\BaseBuilder::setBind(): Argument #1 ($key) must be of type string, int given, called in C:\xampp\htdocs\portal-fgroupindonesia\system\Database\BaseBuilder.php on line 1555
+[Method: POST, Route: settings/user/update]
+in SYSTEMPATH\Database\BaseBuilder.php on line 3487.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1555): CodeIgniter\Database\BaseBuilder->setBind(12, '', true)
+ 2 SYSTEMPATH\Database\BaseBuilder.php(2468): CodeIgniter\Database\BaseBuilder->set([...])
+ 3 APPPATH\Models\UserModel.php(125): CodeIgniter\Database\BaseBuilder->update('12', [...])
+ 4 APPPATH\Controllers\Works.php(1318): App\Models\UserModel->update_existing([...], '12')
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Works->user_update()
+ 6 SYSTEMPATH\CodeIgniter.php(509): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Works))
+ 7 SYSTEMPATH\CodeIgniter.php(355): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(312): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+INFO - 2025-11-24 10:09:45 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2025-11-24 10:09:45 --> TypeError: CodeIgniter\Database\BaseBuilder::setBind(): Argument #1 ($key) must be of type string, int given, called in C:\xampp\htdocs\portal-fgroupindonesia\system\Database\BaseBuilder.php on line 1555
+[Method: POST, Route: settings/user/update]
+in SYSTEMPATH\Database\BaseBuilder.php on line 3487.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1555): CodeIgniter\Database\BaseBuilder->setBind(12, '', true)
+ 2 SYSTEMPATH\Database\BaseBuilder.php(2468): CodeIgniter\Database\BaseBuilder->set([...])
+ 3 APPPATH\Models\UserModel.php(125): CodeIgniter\Database\BaseBuilder->update('12', [...])
+ 4 APPPATH\Controllers\Works.php(1318): App\Models\UserModel->update_existing([...], '12')
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Works->user_update()
+ 6 SYSTEMPATH\CodeIgniter.php(509): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Works))
+ 7 SYSTEMPATH\CodeIgniter.php(355): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(312): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+INFO - 2025-11-24 10:13:12 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2025-11-24 10:13:30 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2025-11-24 10:13:30 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2025-11-24 10:13:30 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2025-11-24 10:13:38 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2025-11-24 10:13:39 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2025-11-24 10:13:39 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2025-11-24 10:13:39 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2025-11-24 12:24:18 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2025-11-24 12:24:18 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2025-11-24 12:24:28 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2025-11-24 12:24:28 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2025-11-24 12:42:21 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2025-11-24 12:42:21 --> [DEPRECATED] number_format(): Passing null to parameter #1 ($num) of type float is deprecated in APPPATH\Helpers\my_helper.php on line 40.
+ 1 APPPATH\Helpers\my_helper.php(40): number_format(null, 0, ',', '.')
+ 2 APPPATH\Views\management_saldo_history.php(68): as_rupiah(null)
+ 3 SYSTEMPATH\View\View.php(234): include('C:\\xampp\\htdocs\\portal-fgroupindonesia\\app\\Views\\management_saldo_history.php')
+ 4 SYSTEMPATH\View\View.php(237): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 5 SYSTEMPATH\Common.php(1171): CodeIgniter\View\View->render('management_saldo_history', [], true)
+ 6 APPPATH\Controllers\Home.php(400): view('management_saldo_history', [...])
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Home->management_saldo_history()
+ 8 SYSTEMPATH\CodeIgniter.php(509): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Home))
+ 9 SYSTEMPATH\CodeIgniter.php(355): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(312): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))

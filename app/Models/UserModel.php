@@ -14,6 +14,7 @@ class UserModel extends Model
         'username',
         'email',
         'pass',
+        'balance',
         'gender',
         'whatsapp',
         'subscription_id',
@@ -85,12 +86,11 @@ class UserModel extends Model
         $builder->where($dataFilter);
 
         $query = $builder->get();
+        $result = $query->getResult();
         $manyData = $builder->countAllResults();
 
-        if($manyData > 0){
-
-            return $query->getResult()[0];
-
+        if($manyData > 0 && !empty($result)) {
+            return $result[0];
         }else {
             return false;
         }

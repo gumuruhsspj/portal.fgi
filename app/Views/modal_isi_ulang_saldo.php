@@ -14,7 +14,7 @@
                     
                     <div class="alert alert-info text-center shadow-sm">
                         Saldo Anda saat ini: <br>
-                        <h4 class="mb-0"><strong><i class="fas fa-money-bill-wave me-1"></i> <span id="currentSaldoDisplay">Rp. 1.250.000</span></strong></h4>
+                        <h4 class="mb-0"><strong><i class="fas fa-money-bill-wave me-1"></i> <span data-balance="<?=$balance;?> id="currentSaldoDisplay"><?= as_rupiah($balance); ?></span></strong></h4>
                     </div>
                     
                     <h6 class="mt-4 mb-3 text-success"><i class="fas fa-hand-holding-dollar me-1"></i> Pilih Nominal:</h6>

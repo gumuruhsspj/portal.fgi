@@ -66,7 +66,7 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0"><?= $title;?></h1>
+            <h1 class="m-0" id="title-materi"><?= $title;?></h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
@@ -141,17 +141,17 @@
               </div>
 
               <div class="mt-4">
-                <div class="btn btn-primary btn-lg btn-flat btn-pilih-materi" >
+                <div data-status="<?= empty($participate) ? 'none' : 'subscribed' ?>" class="btn btn-primary btn-lg btn-flat btn-pilih-materi" data-balance="<?= $balance; ?>" >
                   <?php if(empty($participate)) :?>
                   <i class="fas fa-plus-circle fa-lg mr-2"></i>
                   Mau Ini Sekarang
                   <?php else : ?>
-                    <i class="fas fa-arrow-right-to-bracket fa-lg mr-2"></i>
+                    <i data-id="<?=$data_materi->id; ?>" class="fas fa-arrow-right-to-bracket fa-lg mr-2"></i>
                     Masuk ke Pembahasan
                   <?php endif; ?>
                 </div>
 
-                <div class="btn btn-default btn-lg btn-flat">
+                <div id="konsultasi-wa-materi" class="btn btn-default btn-lg btn-flat">
                   <i class="fa-brands fa-whatsapp"></i>
                   Konsultasi Sebentar
                 </div>

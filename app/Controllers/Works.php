@@ -52,6 +52,129 @@ class Works extends BaseController
 
     }
 
+   public function checkout_materi() {
+
+    // Ambil data dari POST request (dari jQuery AJAX tadi)
+    $materi_id  = $this->request->getPost('materi_id');
+    $opsi_paket = $this->request->getPost('opsi_paket');
+    
+    // Asumsi: ID User diambil dari session yang sedang login
+    $id_user = session()->get('id_user'); 
+    $username = session()->get('username');
+
+    $data_user = $this->model_user->find($id_user);
+
+    // 1. Cek Harga Materi (Contoh: ambil dari model materi)
+    $materi = $this->model_materi->find($materi_id);
+    if (!$materi) {
+        return $this->response->setJSON(['status' => 'failed', 'message' => 'Materi tidak ditemukan!']);
+    }
+
+    // Tentukan harga berdasarkan paket (misal: reguler/private)
+    if($opsi_paket == 'paket_kasus_custom'){
+        $harga = $materi['biaya_kasus_custom'];
+    }else if($opsi_paket == 'paket_pokok'){
+        $harga = $materi['biaya_pokok'];
+    } else {
+        $harga = $materi['biaya_belajar_sendiri'];
+    }
+
+    // 2. Cek apakah saldo user cukup
+    $saldo_sekarang = $data_user['balance'];
+    if ($saldo_sekarang < $harga) {
+        return $this->response->setJSON(['status' => 'failed', 'message' => 'Saldo tidak mencukupi! ' . $saldo_sekarang]);
+    }
+
+    $data_balance = array(
+        'balance' => $saldo_sekarang-$harga
+    );
+
+    $this->model_user->update($id_user, $data_balance);
+
+    // 3. Catat di History Saldo sebagai "Pengeluaran" (Minus)
+    $data_history = [
+        'id_user'     => $id_user,
+        'keterangan'  => 'Pembelian Akses Materi: ' . $materi['judul'] . ' paket ' . $opsi_paket,
+        'nominal'      => $harga, 
+        'jenis' => 'daftar kursus',
+        'status'      => 'approved'
+    ];
+
+    $insert_history = $this->model_history_saldo->insert($data_history);
+
+    if ($insert_history) {
+        // 4. Update Balance di tabel User (Sync Saldo)
+        $new_balance = $this->model_history_saldo->get_saldo_by($id_user);
+        $this->model_user->update($id_user, ['balance' => $new_balance]);
+
+        // 5. Tambahkan akses materi ke user (tabel user_materi / enrollment)
+        // Ini opsional tergantung struktur DB kamu
+        $data_akses = [
+            'username'   => $username,
+            'id_materi'  => $materi_id,
+            'paket'      => $opsi_paket,
+            'status'     => 'in progress'
+        ];
+
+        $this->model_materi->add_student_materi($data_akses);
+
+        $respond = [
+            'status'  => 'success',
+            'message' => 'Checkout Berhasil! Saldo telah dipotong.'
+        ];
+    } else {
+        $respond = [
+            'status'  => 'failed',
+            'message' => 'Gagal memproses transaksi!'
+        ];
+    }
+
+    return $this->response->setJSON($respond);
+}
+
+	public function pembayaran_update(){
+
+    $status = $this->request->getPost('status');
+    $id     = $this->request->getPost('id'); // Ini ID History Saldo
+    
+    // 1. Ambil data history dulu UNTUK tahu siapa pemilik transaksi ini
+    $history = $this->model_history_saldo->find($id);
+    if (!$history) {
+        return $this->response->setJSON(['status' => 'failed', 'message' => 'Data tidak ditemukan!']);
+    }
+
+    $target_id_user = $history['id_user']; // Pemilik saldo yang sebenarnya
+    
+    $data = ['status' => $status];
+    
+    // 2. Eksekusi Update Status Transaksi
+    if($status != 'deleted'){
+        $hasil = $this->model_history_saldo->update($id, $data);
+    } else {
+        $hasil = $this->model_history_saldo->delete($id);
+    }
+
+    // 3. Update Balance User si PEMILIK transaksi
+    if ($hasil) {
+        $balance = $this->model_history_saldo->get_saldo_by($target_id_user);
+        
+        $up = ['balance' => $balance];
+        $this->model_user->update($target_id_user, $up);
+        
+        $respond = [
+            'status' => 'success',
+            'message' => 'Update berhasil!'
+        ];
+    } else {
+        $respond = [
+            'status' => 'failed',
+            'message' => 'Update gagal!'
+        ];
+    }
+
+    return $this->response->setJSON($respond);
+}
+
     public function register_new_user(){
 
         // default respond
@@ -231,9 +354,7 @@ class Works extends BaseController
         $p = $this->request->getPost('pass');
         $ut = $this->request->getPost('usertype');
 
-        if(strpos($u, '@') !== -1){
-            // if username contain email
-            // then take the username from email
+       if (strpos($u, '@') !== false){
             $u = substr($u, 0, strpos($u, '@'));
         }
 
@@ -250,6 +371,9 @@ class Works extends BaseController
             $this->session->set('propic', $data_user->propic); 
             $this->session->set('usertype', $data_user->usertype);
             $this->session->set('id', $data_user->id);
+            $this->session->set('id_user', $data_user->id);
+            $this->session->set('username', $u);
+            $this->session->set('nama_lengkap', $data_user->nama_lengkap);
         }
 
         if(!$valid_pass){
@@ -260,9 +384,7 @@ class Works extends BaseController
         }
          
          $this->session->set('status-logged-in', 'valid');
-         $this->session->set('username', $u);
          
-         $this->session->set('nama_lengkap', $data_user->nama_lengkap);
 
         return redirect()->to('/homepage');
 
@@ -634,6 +756,57 @@ class Works extends BaseController
 
     }
 
+    public function pembahasan_update(){
+
+        // terima judul, deskripsi dan ordering_index
+        $result = array(
+            'status' => 'invalid',
+            'message' => 'error'
+        );
+        
+        $id = $this->request->getPost('id');
+        $judul = $this->request->getPost('judul');
+        $deskripsi = $this->request->getPost('deskripsi');
+        $ordering_index = $this->request->getPost('ordering_index');
+
+        $data = array(
+            'judul'       => $judul,
+            'deskripsi'  => $deskripsi,
+            'ordering_index' => $ordering_index
+        );
+
+        $result_update = $this->model_materi->update_existing_pembahasan($data, $id);
+        if(!empty($result_update)){
+            $result['status'] = 'valid';
+            $result['message'] = 'pembahasan berhasil diupdate!';
+        }
+
+        echo json_encode($result);
+    }
+
+    public function pembahasan_edit(){
+
+            $id          = $this->request->getPost('id');
+    
+            $filter = array(
+                'id' => $id
+            );
+    
+            $returned_value = $this->model_materi->get_pembahasan_by($filter);
+    
+            $result = array(
+                'status' => 'invalid'
+                );
+    
+            if($returned_value){
+                $result['status'] = 'valid';
+                $result['data'] = $returned_value;
+            }
+    
+            echo json_encode($result);
+
+    }
+
     public function pembahasan_add(){
 
         $result = array(
@@ -642,12 +815,14 @@ class Works extends BaseController
         );
 
         $id_bab = $this->request->getPost('id_bab');
+        $id_materi = $this->request->getPost('id_materi');
         $id_user = $this->request->getPost('id_user');
         $ordering_index = $this->request->getPost('ordering_index');
         $judul = $this->request->getPost('judul');
         $deskripsi = $this->request->getPost('deskripsi');
 
      $data = array(
+          'id_materi' => $id_materi,
           'id_bab'   => $id_bab,
           'id_user'     => $id_user,
           'ordering_index'   => $ordering_index,
@@ -1158,7 +1333,7 @@ class Works extends BaseController
             'propic' => 'empty.png'
           );
 
-        $this->model_user->update_existing($id, $datana);
+        $this->model_user->update_existing($datana, $id);
 
         $result = array(
             'status' => 'valid'
@@ -1206,7 +1381,7 @@ class Works extends BaseController
                 'propic' => $newName
             );
 
-            $this->model_user->update_existing($id, $datana);
+            $this->model_user->update_existing($datana, $id);
             
             $result = array(
                 'status' => 'valid',

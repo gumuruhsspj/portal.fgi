@@ -22,6 +22,7 @@ $( document ).ready(function() {
 	calculateTax();
 
 	linkPembahasan();
+	linkQuiz();
 
 	prepareUploads('#icon-materi', '#icon-error', '#icon-loading', 2);
 	prepareUploads('#attachment-materi', '#attachment-error', '#attachment-loading', 2);
@@ -684,6 +685,21 @@ function linkPembahasan(){
 		let idna = $(this).attr('data-id');
 		
 		location.href = '/manage/materi/pembahasan?materi_id=' + idna;
+		
+	});
+
+}
+
+
+function linkQuiz(){
+
+	$('body').on('click', '.quiz-single', function(e){
+
+		e.preventDefault();
+
+		let idna = $(this).attr('data-id');
+		
+		location.href = '/manage/materi/quiz?materi_id=' + idna;
 		
 	});
 

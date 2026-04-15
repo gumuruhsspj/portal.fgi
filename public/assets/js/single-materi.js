@@ -6,8 +6,13 @@ $(document).ready(function() {
     submit_comments();
     update_info_paket();
     lanjutkan_pilihan();
+
+    // untuk konsul by wa sblm join materi
+    konsultasi_wa_materi();
     
 });
+
+
 
 function lanjutkan_pilihan(){
 
@@ -15,7 +20,14 @@ function lanjutkan_pilihan(){
 
         e.preventDefault();
 
+        let statusna = $(this).data('status');
         let id_materi = $('#materi_id').val();
+
+        if(statusna == 'subscribed'){
+            window.location.href = "/materi/start?id=" + id_materi;
+            return;
+        }
+
         let opsi_paket = $('.btn_opsi_paket:checked').val();
 
         if (!opsi_paket) {
@@ -31,8 +43,64 @@ function lanjutkan_pilihan(){
         }
 
         // Redirect ke halaman checkout dengan parameter yang sesuai
-        let checkoutUrl = `/checkout?materi_id=${id_materi}&opsi_paket=${opsi_paket}`;
-        window.location.href = checkoutUrl;
+        let saldona = $(this).data('balance');
+        let harga_paket = $('.btn_opsi_paket:checked').data('biaya');
+
+        if(saldona < harga_paket){
+            Swal.fire({
+                icon: 'warning',
+                title: 'Peringatan',
+                text: 'Saldo kamu tidak cukup membeli paket materi ini!',
+                timer: 2000
+            });
+            
+            return;
+        }
+
+
+        //let checkoutUrl = `/materi/checkout?materi_id=${id_materi}&opsi_paket=${opsi_paket}`;
+        
+        Swal.fire({
+        title: 'Memproses Pesanan...',
+        text: 'Sedang menghubungkan data pemesanan',
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+        });
+
+    // 2. Jalankan Request POST via AJAX
+    $.ajax({
+        url: '/materi/checkout',
+        type: 'POST',
+        data: {
+            materi_id: id_materi,
+            opsi_paket: opsi_paket
+        },
+        success: function(response) {
+            // 3. Tampilkan Alert Sukses
+            Swal.fire({
+                icon: 'success',
+                title: 'Checkout Berhasil!',
+                text: 'Pesanan Anda telah tercatat.',
+                showConfirmButton: false,
+                timer: 2000
+            }).then(() => {
+                // 4. Refresh & Redirect balik ke halaman materi
+                window.location.reload();
+            });
+        },
+        error: function(xhr, status, error) {
+            // Jika ada error (misal 404 atau 500)
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Terjadi kesalahan saat memproses data.',
+            });
+        }
+    });
+
 
     });
 
@@ -62,7 +130,21 @@ function update_info_paket(){
 
 }
 
+function konsultasi_wa_materi(){
 
+    $(document).on('click', '#konsultasi-wa-materi', function(e) {
+        let judul = $('#title-materi').text();
+        let waNumber = '6285795569337';
+        let pesan = `Halo, saya ingin berkonsultasi mengenai "${judul}".`;
+        let waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(pesan)}`;
+        
+        // Buka tautan WhatsApp di tab baru
+        window.open(waUrl, '_blank');
+        
+    });
+
+
+}
 
 function submit_comments(){
 

@@ -16,7 +16,7 @@
   <link href="https://fonts.googleapis.com" rel="preconnect">
   <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <!-- Vendor CSS Files -->
   <link href="/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -48,8 +48,8 @@
           <li><a href="#services">Pelayanan</a></li>
           <li><a href="#features">Keunggulan</a></li>
           <li><a href="#pricing">Pilihan Harga</a></li>
-          
           <li><a href="#contact">Kontak Kami</a></li>
+          <li><a href="#" data-bs-toggle="modal" data-bs-target="#loginModal" >Login</a></li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
@@ -631,7 +631,54 @@
   <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="assets/js/animated.js<?=$random;?>"></script>
 
-  <!-- Main JS File -->
+  
+   <?php if(!empty($show_registration)): ?>
+    <script>
+      $(document).ready(function(){
+        
+        Swal.fire({
+        title: 'Mohon tunggu...',
+        text: 'Sedang memproses registrasi',
+        timer: 2000,
+        timerProgressBar: true,
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading()
+        }
+      }).then(() => {
+            $('#registerModal').modal('show');
+
+            // isi data
+            $('#nama_lengkap').val('<?= $nama_lengkap; ?>');
+            $('#email_user').val('<?= $email; ?>');
+            $('#no_wa').focus();
+
+      });
+
+      $(document).on('change', '#jenis-text', function(){
+          var jenis = $(this).val();
+          // hidden value set to
+          $('#jenis').val(jenis);
+          
+          var keterangan = '';
+          if(jenis == 'gratis'){
+            keterangan = '*Note: Akses materi gratis tanpa biaya.';
+          } else if(jenis == 'pelajar'){
+            keterangan = '*Note: Akses materi khusus pelajar dengan biaya terjangkau.';
+          } else if(jenis == 'pengajar reguler'){
+            keterangan = '*Note: Akses untuk pengajar dengan fokus 4 peserta per materi.';
+          } else if(jenis == 'pengajar master'){
+            keterangan = '*Note: Akses unlimited untuk pengajar master.';
+          }
+
+          $('#keterangan-jenis').text(keterangan);
+
+      });
+
+    });
+    </script>
+    <?php endif; ?>
+
   <script src="assets/js/main.js<?=$random;?>"></script>
 
 </body>

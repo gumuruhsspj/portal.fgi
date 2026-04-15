@@ -59,6 +59,7 @@ class Home extends BaseController
 
         // get error variable from url
         $error = $this->request->getGet('error');
+        $status_register = $this->request->getGet('register');
 
         if($error == 'invalid'){
             $data['message'] = 'Login username & password salah!';
@@ -68,6 +69,14 @@ class Home extends BaseController
         if($error == 'no-cridentials'){
             $data['message'] = 'Harap login dulu agar bisa masuk!';
             $data['error'] = $error;
+        }
+
+        if($status_register == 'new'){
+            $nama_lengkap = $this->request->getGet('nama_lengkap');
+            $email = $this->request->getGet('email');
+            $data['email'] = $email;
+            $data['nama_lengkap'] = $nama_lengkap;
+            $data['show_registration'] = true;
         }
 
         return view('landing-page', $data);
@@ -85,6 +94,50 @@ class Home extends BaseController
           $data['menu_program_afiliasi_active']  = "active";
 
         return view('info_program_afiliasi', $data);
+
+    }
+
+    public function management_quiz_materi(){
+        $this->is_logged_in();
+
+        $data = $this->get_user_data();
+        $id = $this->request->getGet('materi_id');
+         
+         $data_materi = $this->model_materi->get_by(['id'=>$id]);
+         
+         // data returned is in object instead of array
+         $data_all_quiz = $this->model_materi->get_all_quiz_by_materi_id($id);
+
+         $data['judul_materi'] = $data_materi->judul;    
+         $data['id_materi'] = $data_materi->id;
+         $data['management_data'] = $data_all_quiz;
+         
+         $data['jumlah_data'] = !empty($data_all_quiz) ? sizeof($data_all_quiz) : 0;
+
+         $data['link_management_open'] = 'menu-open';
+         $data['link_management_materi_active'] = 'active';
+         $data['random'] = '?' . rand(0,11);
+ 
+         return view('management_quiz', $data);
+
+    }
+
+     public function management_pembayaran(){
+        $this->is_logged_in();
+
+        $data = $this->get_user_data();
+      
+         $data_saldo = $this->model_history_saldo->get_all();
+        
+         $data['management_data'] = $data_saldo;
+         
+         $data['jumlah_data'] = !empty($data_saldo) ? sizeof($data_saldo) : 0;
+
+         $data['link_management_open'] = 'menu-open';
+         $data['link_management_pembayaran_active'] = 'active';
+         $data['random'] = '?' . rand(0,11);
+ 
+         return view('management_pembayaran', $data);
 
     }
 
@@ -168,11 +221,14 @@ class Home extends BaseController
 
     }
 
+    
      public function management_materi(){
 
         $this->is_logged_in();
 
          $data = $this->get_user_data();
+
+      
 
          $username = $this->session->get('username');
          $as = $this->session->get('usertype');
@@ -289,12 +345,28 @@ class Home extends BaseController
           $this->is_logged_in();
 
          $data = $this->get_user_data();
+
+         $cat = $this->request->getGet('kategori');
+
+        if(isset($cat)){
+            $cat = str_replace('-', ' ', $cat );
+            // gedein huruf
+            $cat = ucwords($cat);
+
+            $filter = array('kategori' => $cat);
+
+            $data_materi = $this->model_materi->get_all_by($filter);
+        }else{
+            $data_materi = $this->model_materi->get_all();
+        }
+         
+         $data['data_materi'] = $data_materi;
+
          $data['title'] = "Seluruh Materi";
          $data['menu_materi_open'] = "menu-open";
          $data['menu_seluruh_materi_active'] = "active";
          $data['menu_materi_terpilih_active'] = "";
          
-
          return view('all_materi', $data);
 
     }
@@ -308,15 +380,17 @@ class Home extends BaseController
         $data = $this->get_user_data();
         $us = $data['username'];
 
+        // check dulu ini student udah daftar blm di table_student_materi
+        
         // pastikan user ini terdaftar dalam id materi tersebut
-        $data_student_materi = $this->model_materi->get_by_student($us);
+        $data_student_materi = $this->model_materi->get_subscribed_materi($id_materi, $us);
 
         if($data_student_materi != false){
 
             $data['title'] = $data_student_materi->judul;
 
             $filter  = array(
-                'id_materi' => $data_student_materi->id_materi
+                'id_materi' => $data_student_materi->id
             );
 
             $data_detail_materi = $this->model_materi->get_all_detail_by_username($us);
@@ -324,9 +398,9 @@ class Home extends BaseController
 
             if($data_detail_materi != false){
 
-                if($data_detail_materi->status=='pending' ){
+                if($data_student_materi->status=='pending' ){
                     $data['error'] = "Materi ini belum bisa anda akses! Harap lunasi dulu pembayarannya.";   
-                }else if($data_detail_materi->status=='delete request' || $data_detail_materi->status=='error'){
+                }else if($data_student_materi->status=='delete request' || $data_student_materi->status=='error'){
                     $data['error'] = "Terjadi Kesalahan!";   
                 }
 
@@ -336,6 +410,7 @@ class Home extends BaseController
             }
 
         }else{
+            $data['title'] = "-";
             $data['error'] = "Anda belum mendaftar untuk materi ini!";
         }
 
@@ -404,7 +479,7 @@ class Home extends BaseController
          $data['participate'] = $materi_terdaftar != false ? true : false;
 
          $data['data_materi'] = $data_materi;
-
+         
         return view('single_materi', $data);
 
     }
@@ -546,7 +621,7 @@ class Home extends BaseController
         $data_all_users = $this->model_user->get_all();
         $data_cs = $this->model_customer_services->get_all();
         $data_chat = $this->model_chat->get_all_by_status('new');
-        $data_materi = $this->model_materi->get_all();
+        
         $data_progress_materi = null;
         $data_member_afiliasi = null;
         $data_daily_notes = null;
@@ -604,7 +679,8 @@ class Home extends BaseController
         $tmale = $data_all_users!=false ? sizeof(get_data_as_key_value($data_all_users, 'gender', 'male')) : 0;
         $tfmale = $data_all_users!=false ? sizeof(get_data_as_key_value($data_all_users, 'gender', 'female')) : 0;
 
-        $tmateri = $data_materi!=false ? sizeof($data_materi) : 0;
+        $tmateri = $this->model_materi->countAll();
+        $saldo = $this->model_history_saldo->get_saldo_by($data_user->id);
 
         $tprogress_materi = $data_progress_materi!=false ? $score_progress_materi : 0;
         $tpendapatan_afiliasi = $data_member_afiliasi!=false ? $cash_paid : 0;
@@ -620,17 +696,17 @@ class Home extends BaseController
             $data_wa = $this->combine_both_data($data_group_wa, $data_wa);
         }
        
-
         $data = array(
             'total_male' => $tmale,
             'total_female' => $tfmale,
             'total_materi' => $tmateri,
+            'saldo' => $saldo,
             'total_users' => $tmale+$tfmale,
             'total_progress_materi' => $tprogress_materi,
             'total_pendapatan_afiliasi' => $tpendapatan_afiliasi,
             'data_group_diskusi_tg' => $data_tg,
             'data_group_diskusi_wa' => $data_wa,
-            'data_materi' => $data_materi,
+            
             'data_daily_notes' => $data_daily_notes,
             'data_chat' => $data_chat,
             'data_notification' => $data_notification,
@@ -643,6 +719,7 @@ class Home extends BaseController
             'username'  => $usname,
             'id_user' => $data_user->id,
             'propic'    => $propic,
+            'balance' => $data_user->balance,
             'wa_cs01_name' => $data_cs[0]->nama,
             'wa_cs02_name' => $data_cs[1]->nama,
             'wa_cs01_link' => $this->generate_wa_link($data_cs[0]->whatsapp),

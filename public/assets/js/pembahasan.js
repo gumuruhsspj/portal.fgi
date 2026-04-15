@@ -3,6 +3,8 @@ const _URL_UPDATE_BAB_PEMBAHASAN    = "/manage/materi/pembahasan/bab/update";
 const _URL_DELETE_BAB_PEMBAHASAN    = "/manage/materi/pembahasan/bab/delete";
 const _URL_ADD_PEMBAHASAN           = "/manage/materi/pembahasan/add";
 const _URL_DELETE_PEMBAHASAN        = "/manage/materi/pembahasan/delete";
+const _URL_EDIT_PEMBAHASAN        = "/manage/materi/pembahasan/edit";
+const _URL_UPDATE_PEMBAHASAN        = "/manage/materi/pembahasan/update";
 const _URL_NEXT_NO_URUT_PEMBAHASAN  = "/manage/materi/pembahasan/no-urut/next";
 
 function inputOnBab(){
@@ -26,7 +28,7 @@ let id_materi = $('#id_materi').val();
 incrementTotalData();
 
     return `
-     <div class="col-md-4 mb-4 card-item" data-id-materi="${id_materi}" data-id="">
+     <div class="col-md-6 mb-4 card-item" data-id-materi="${id_materi}" data-id="">
             <div class="card h-100">
                 <div class="card-body" style="margin-left: 15px;">
                     <input type="checkbox" class="form-check-input selected-card mb-2">
@@ -196,12 +198,7 @@ $(document).ready(function() {
         
     });
   
-    // saat modal pembahasan muncul
-    $('#modalPembahasan').on('show.bs.modal', function(event) {
-       
-        $('#formPembahasan')[0].reset();
-
-    });
+   
 
     // delete pembahasan yg dipilih
     $(document).on('click', '.remove-pembahasan', function(){ 
@@ -291,7 +288,13 @@ $(document).ready(function() {
         // temporary stored
         _card_used = card;
 
+        // reset form   
+        $('#formPembahasan')[0].reset();
+
         let id_babna = card.data("id");
+        let id_materina = card.data('id-materi');
+
+        $('#materi_id').val(id_materina);
         $('#pembahasan_id_bab').val(id_babna);
         $('#pembahasan_id_user').val($('#id_user').val());
         
@@ -314,15 +317,68 @@ $(document).ready(function() {
 
     });
   
+    // edit pembahasan
+    $(document).on('click', '.edit-pembahasan', function(){ 
+
+        let idna = $(this).data('id');
+
+        let el = $(this).closest('li');
+
+        // AJAX get data pembahasan dari backend
+        $.ajax({
+            url: _URL_EDIT_PEMBAHASAN,
+            method: "POST",
+            data: {id: idna},
+            dataType: "json",
+            success: function(response) {
+
+                console.log("Pembahasan fetched successfully:", response);
+
+                // isi form dengan data yg didapat
+                $('#formPembahasan')[0].reset();
+
+                $('#pembahasan_id').val(response.data.id);
+                $('#pembahasan_id_bab').val(response.data.id_bab);
+                $('#pembahasan_id_user').val(response.data.id_user);
+                $('#pembahasan_ordering_index').val(response.data.ordering_index);
+                $('#judul').val(response.data.judul);
+                
+                // render ke editor  <trix-editor  
+             
+                $('#deskripsi').val(response.data.deskripsi);
+                document.querySelector('trix-editor[input="deskripsi"]').editor.loadHTML(response.data.deskripsi);
+
+                // simpan card yg digunakan
+                _card_used = el.closest('.card-item');
+
+                // tampilkan modal
+                $('#modalPembahasan').modal('show');
+
+            },
+            error: function(xhr, status, error) {
+                console.error("Error fetching pembahasan:", error);
+            }
+        });
+
+    });
+
     // add pembahasan form works
     $('#formPembahasan').on('submit', function(event) {
         event.preventDefault();
         const formData = $(this).serialize();
 
         let judul = $(this).find('#judul').val();
+        let urlTarget = _URL_ADD_PEMBAHASAN;
+
+        let idmaterina = $(this).find('#materi_id').val();
+        let idna = $(this).find('#pembahasan_id').val();
+
+        if(idna){
+            urlTarget = _URL_UPDATE_PEMBAHASAN;
+        }
 
         $.ajax({
-            url: _URL_ADD_PEMBAHASAN,
+            url: urlTarget,
             type: 'POST',
             data: formData,
             dataType: 'json',
@@ -345,6 +401,13 @@ $(document).ready(function() {
                                 <i class="fas fa-trash-alt"></i>
                             </button>
                           </li>`;
+                
+                if(idna){
+                    // update existing item
+                    _card_used.find(`.list-group-item button[data-id='${idna}']`).closest('li').replaceWith(el);
+                    return;
+                }
+
                 _card_used.find('.list-group').append(el);
             },
             error: function(xhr, status, error) {

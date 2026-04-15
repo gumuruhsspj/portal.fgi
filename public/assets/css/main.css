@@ -1454,5 +1454,9 @@ background-image: url('/assets/img/keunggulan-6.jpg');
   padding: 15px 30px;
 }
 
+#keterangan-jenis{
+  font-style: italic;
+  font-size: 0.9rem;
+}
 
 /* for login purposes */

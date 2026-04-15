@@ -94,7 +94,7 @@
                   <img class="card-img-top" src="/assets/img/uploads/materi/<?= $dmateri->icon ;?>" alt="Dist Photo 1">
                   <div class="card-img-overlay d-flex flex-column justify-content-end">
                     <a href="/materi?title=<?= string_to_url($dmateri->judul) ;?>"><h5 class="card-title text-primary text-white"><?= strtoupper($dmateri->judul);?></h5></a>
-                    <a href="/materi/kategori/<?= string_to_url($dmateri->kategori) ;?>"><h5 class="card-title text-primary text-white"><?= $dmateri->kategori;?></h5></a>
+                    <a href="/all-materi?kategori=<?= string_to_url($dmateri->kategori) ;?>"><h5 class="card-title text-primary text-white"><?= $dmateri->kategori;?></h5></a>
                     <p class="card-text text-white pb-2 pt-1"><?= $dmateri->deskripsi;?></p>
                     <span>Last update <?= calculate_time_elapsed($dmateri->date_created); ?></span>
                   </div>

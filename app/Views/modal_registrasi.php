@@ -13,8 +13,19 @@
         </div>
         <div class="modal-body">
         	<div class="mb-3">
-            <label for="jenis" class="form-label">Akun Pilihan : </label>
-            <b><span id="jenis-text"> </span></b>
+            <label for="jenis" class="form-label">Akun Pilihan* : </label>
+            <?php if(!empty($show_registration)) : ?>
+               <select class="form-control" id="jenis-text">
+                <option value="gratis">Gratis</option>
+                <option value="pelajar">Pelajar</option>
+                <option value="pengajar reguler">Pengajar Reguler</option>
+                <option value="pengajar master">Pengajar Master</option>
+               </select>
+               <span id="keterangan-jenis"> </span>
+            <?php else : ?>
+                <b><span id="jenis-text"> </span></b>
+            <?php endif; ?>
+            
           </div>
 
           <div class="mb-3">

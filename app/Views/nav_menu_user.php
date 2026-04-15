@@ -1,12 +1,16 @@
 <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-        <div class="image">
-          <img id="sidebar-propic" src="/assets/img/uploads/propic/<?= $settings_user_data->propic; ?>" class="img-circle elevation-2" alt="User Image">
-        </div>
-        <div class="info">
-          <a data-bs-toggle="modal" data-bs-target="#settingsModal" href="#" id="username-link" title="<?= $username;?>" class="d-block"><?= ucfirst($nama_lengkap);?></a>
-          <span id="usertype" ><?= $usertype;?></span>
-        </div>
-      </div>
+    <div class="image">
+        <img id="sidebar-propic" src="/assets/img/uploads/propic/<?= $settings_user_data->propic; ?>" class="img-circle elevation-2" alt="User Image">
+    </div>
+    <div class="info">
+        <a data-bs-toggle="modal" data-bs-target="#settingsModal" href="#" title="<?= $username;?>" class="d-block"><?= $nama_lengkap;?></a>
+        <span id="usertype" class="d-block text-muted" style="font-size: 0.8rem;"><?= ucwords($usertype); ?></span>
+        
+        <span class="d-block text-warning" style="font-size: 0.9rem; font-weight: bold;">
+            <i class="fas fa-wallet mr-1"></i> Rp <?= number_format($saldo, 0, ',', '.'); ?>
+        </span>
+    </div>
+</div>
 
 <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">

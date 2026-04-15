@@ -114,7 +114,7 @@
                 <!-- JS akan append card-card disini -->
                  <?php if(!empty($management_data)) : ?>
         <?php foreach($management_data as $data) : ?>
-            <div class="col-md-4 mb-4 card-item" data-id-materi="<?= $data->id_materi ;?>" data-id="<?= $data->id ;?>">
+            <div class="col-md-6 mb-4 card-item" data-id-materi="<?= $data->id_materi ;?>" data-id="<?= $data->id ;?>">
             <div class="card h-100">
                 <div class="card-body" style="margin-left: 15px;">
                     <input type="checkbox" class="form-check-input selected-card mb-2">

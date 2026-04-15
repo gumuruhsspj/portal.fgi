@@ -214,6 +214,11 @@
 <!-- ./wrapper -->
 
 <!-- REQUIRED SCRIPTS -->
+ <?php if(isset($error)): ?>
+  <script> setTimeout(function(){
+    window.location.href = "/all-materi";
+  }, 2000);</script>
+  <?php endif; ?>
 
 <!-- jQuery -->
 <script src="/assets/js/jquery371.min.js"></script>

@@ -1,12 +1,16 @@
 <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-        <div class="image">
-          <img id="sidebar-propic" src="/assets/img/uploads/propic/<?= $settings_user_data->propic; ?>" class="img-circle elevation-2" alt="User Image">
-        </div>
-        <div class="info">
-          <a data-bs-toggle="modal" data-bs-target="#settingsModal" href="#" title="<?= $username;?>" class="d-block"><?= $nama_lengkap;?></a>
-           <span id="usertype" ><?= $usertype;?></span>
-        </div>
-      </div>
+    <div class="image">
+        <img id="sidebar-propic" src="/assets/img/uploads/propic/<?= $settings_user_data->propic; ?>" class="img-circle elevation-2" alt="User Image">
+    </div>
+    <div class="info">
+        <a data-bs-toggle="modal" data-bs-target="#settingsModal" href="#" title="<?= $username;?>" class="d-block"><?= $nama_lengkap;?></a>
+        <span id="usertype" class="d-block text-muted" style="font-size: 0.8rem;"><?= ucwords($usertype); ?></span>
+        
+        <span class="d-block text-warning" style="font-size: 0.9rem; font-weight: bold;">
+            <i class="fas fa-wallet mr-1"></i> Rp <?= number_format($saldo, 0, ',', '.'); ?>
+        </span>
+    </div>
+</div>
 
     
 
@@ -44,6 +48,12 @@
                 <a href="/manage/materi" class="nav-link <?= isset($link_management_materi_active) ? 'active' : '' ;?>">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Materi</p>
+                </a>
+              </li>
+               <li class="nav-item">
+                <a href="/manage/pembayaran" class="nav-link <?= isset($link_management_pembayaran_active) ? 'active' : '' ;?>">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Pembayaran</p>
                 </a>
               </li>
               <li class="nav-item">

@@ -5,6 +5,13 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
+
+ $routes->get('auth/google', 'Auth::googleLogin');
+ $routes->get('auth/google/callback', 'Auth::googleCallback');
+
+ // antisipasi user blm ada datanya paksa buat daftar ulang
+ $routes->get('/register', 'Home::register');
+
 $routes->get('/', 'Home::index');
 $routes->get('/logout', 'Works::logout');
 $routes->get('/homepage', 'Home::display_home');
@@ -15,8 +22,13 @@ $routes->get('/manage/user', 'Home::management_user');
 $routes->get('/manage/group', 'Home::management_group_diskusi');
 $routes->get('/manage/perangkat', 'Home::management_perangkat_tautan');
 $routes->get('/manage/materi', 'Home::management_materi');
+$routes->get('/manage/materi/kategori', 'Home::management_materi_kategori');
+$routes->get('/manage/pembayaran', 'Home::management_pembayaran');
 $routes->get('/manage/materi/pembahasan', 'Home::management_pembahasan_materi');
+$routes->get('/manage/materi/quiz', 'Home::management_quiz_materi');
 
+
+$routes->post('/manage/pembayaran/update', 'Works::pembayaran_update');
 
 $routes->post('/manage/materi/add', 'Works::materi_add');
 $routes->post('/manage/materi/delete', 'Works::materi_delete');
@@ -38,6 +50,11 @@ $routes->post('/manage/materi/pembahasan/delete', 'Works::pembahasan_delete');
 $routes->post('/manage/materi/pembahasan/edit', 'Works::pembahasan_edit');
 $routes->post('/manage/materi/pembahasan/update', 'Works::pembahasan_update');
 
+$routes->post('/manage/materi/quiz/add', 'Works::materi_quiz_add');
+$routes->post('/manage/materi/quiz/update', 'Works::materi_quiz_update');
+$routes->post('/manage/materi/quiz/delete', 'Works::materi_quiz_delete');
+$routes->post('/manage/materi/quiz/edit', 'Works::materi_quiz_edit');
+
 $routes->post('/manage/materi/comments-rating/all', 'Works::comments_rating_all');
 $routes->post('/manage/materi/comments-rating/delete', 'Works::comments_rating_delete');
 
@@ -46,8 +63,11 @@ $routes->get('/materi', 'Home::display_single_materi');
 $routes->get('/materi/kategori', 'Home::display_materi_kategori');
 $routes->get('/materi/start', 'Home::display_start_materi');
 
+
 // called by student
 $routes->post('/materi/cancel', 'Works::delete_request_materi');
+$routes->post('/materi/checkout', 'Works::checkout_materi');
+
 $routes->post('/comments-rating/add', 'Works::comments_rating_add');
 $routes->post('/comments-rating/all', 'Works::comments_rating_all');
 $routes->get('/riwayat-saldo', 'Home::management_saldo_history');

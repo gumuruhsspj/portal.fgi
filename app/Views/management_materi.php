@@ -150,6 +150,7 @@
     <hr>
     <li><a class="dropdown-item paket-single" data-id="<?= $row->id; ?>" href="#">Paket</a></li>
     <li><a class="dropdown-item pembahasan-single" data-id="<?= $row->id; ?>" href="#">Pembahasan</a></li>
+    <li><a class="dropdown-item quiz-single" data-id="<?= $row->id; ?>" href="#">Quiz</a></li>
     
   </ul>
 </div>
