@@ -17,6 +17,7 @@ class MateriModel extends Model
         'attachment',
         'username',
         'url',
+        'status',
         'biaya_pokok',
         'biaya_belajar_sendiri',
         'biaya_kasus_custom',
@@ -27,6 +28,7 @@ class MateriModel extends Model
         'id_materi'
     ];   
 
+    private $table_materi_custom_name = "table_materi_custom";
     private $table_student_materi_name = "table_student_materi";
     private $table_kategori_name = "table_kategori_materi";
     
@@ -34,7 +36,7 @@ class MateriModel extends Model
     private $table_bab_materi_name = "table_bab_materi";
     private $table_quiz_materi_name = "table_quiz_materi";
     private $table_pembahasan_materi_name = "table_pembahasan_materi";
-
+    private $table_pembahasan_custom_name = "table_pembahasan_custom";
 
 public function add_student_materi($data){
 
@@ -89,6 +91,29 @@ public function add_student_materi($data){
 
         return false;
     }
+
+    public function get_navigasi_pembahasan($id_bab, $current_ordering_index) {
+    $builder = $this->db->table($this->table_pembahasan_materi_name);
+
+    // Cari yang Sebelumnya (Back)
+    $prev = $this->db->table($this->table_pembahasan_materi_name)
+        ->where('id_bab', $id_bab)
+        ->where('ordering_index <', $current_ordering_index)
+        ->orderBy('ordering_index', 'DESC')
+        ->get()->getRow();
+
+    // Cari yang Selanjutnya (Next)
+    $next = $this->db->table($this->table_pembahasan_materi_name)
+        ->where('id_bab', $id_bab)
+        ->where('ordering_index >', $current_ordering_index)
+        ->orderBy('ordering_index', 'ASC')
+        ->get()->getRow();
+
+    return [
+        'prev_id' => $prev ? $prev->id : null,
+        'next_id' => $next ? $next->id : null
+    ];
+}
 
     public function get_pembahasan_by($filter){
         $builder = $this->db->table($this->table_pembahasan_materi_name);
@@ -291,6 +316,38 @@ public function add_student_materi($data){
     }
 }
 
+public function get_all_custom($username = null, $id_materi = null)
+{
+    $builder = $this->db->table($this->table . ' as tm');
+
+    $tmc = $this->table_materi_custom_name . ' as tmc';
+
+    // 1. Tentukan SELECT, JOIN, dan WHERE (tanpa eksekusi)
+    $builder->select('tmc.id, tm.judul, tm.kategori, tmc.nama_template, tmc.date_created');
+    $builder->join($tmc, 'tmc.id_materi = tm.id', 'inner');
+    
+    if ($username != null) {
+        $builder->where('tm.username', $username);
+    }
+
+    if($id_materi != null){
+        $builder->where('tm.id', $id_materi);
+    }
+
+    // 2. Eksekusi query
+    $query = $builder->get();
+
+    // 3. Cek hasil dari objek $query yang sudah dieksekusi
+    $results = $query->getResult();
+    
+    // Gunakan fungsi count() dari array hasil
+    if (count($results) > 0) {
+        return $results;
+    } else {
+        return false;
+    }
+}
+
     
      public function get_all_comments_rating($id_materi)
     {
@@ -313,7 +370,26 @@ public function add_student_materi($data){
         }
     }
 
-     
+    public function update_status($id_materi, $status){
+
+         $builder = $this->db->table($this->table_student_materi_name); 
+
+            $data = [
+                'status' => $status
+            ];
+
+            $filter = [
+                'id_materi' => $id_materi
+            ];
+  
+        $query = $builder->update($data, $filter);
+          if($query){
+            return true;
+        }
+
+        return false;
+
+    } 
 
     // single data
    public function get_subscribed_materi($id_materi, $username) {
@@ -322,12 +398,15 @@ public function add_student_materi($data){
 
     // 2. Pilih kolom yang mau diambil
     // Ambil semua dari materi, dan beberapa dari student_materi (misal: paket, status, tgl_beli)
-    $builder->select($this->table . '.*, ' . $this->table_student_materi_name . '.status');
+    $builder->select($this->table . '.*, ' . $this->table_student_materi_name . '.status, ' .
+    $this->table_student_materi_name . '.paket, ' .
+    $this->table_student_materi_name . '.url_alive as custom_url_alive');
 
     // 3. Join ke table_student_materi (Tabel B)
     // Relasi: table_materi.id = table_student_materi.id_materi
     $builder->join($this->table_student_materi_name, 
                    $this->table . '.id = ' . $this->table_student_materi_name . '.id_materi');
+    
 
     // 4. Filter spesifik untuk user dan materi tersebut
     $filter = [
@@ -385,7 +464,7 @@ public function add_student_materi($data){
     $builder = $this->db->table($tbl_pm);
 
     // 1. Pilih kolom: Semua dari pembahasan, ambil judul dari materi
-    $builder->select($tbl_pm . '.*, ' . $tbl_m . '.judul as nama_materi, ' . $tbl_sm . '.status');
+    $builder->select($tbl_pm . '.judul, ' . $tbl_pm . '.id as id_pembahasan, ' . $tbl_m . '.judul as nama_materi, ' . $tbl_m . '.deskripsi as deskripsi_utama, '  . $tbl_m . '.attachment, ' . $tbl_sm . '.status');
     
     // 2. Join Pertama: Pembahasan ke Materi (untuk dapetin detail materi)
     $builder->join($tbl_m, $tbl_m . '.id = ' . $tbl_pm . '.id_materi');
@@ -441,24 +520,19 @@ public function add_student_materi($data){
         }
     }
 
-      public function get_by($dataFilter)
-    {
-        $builder = $this->db->table($this->table);
+  public function get_by($dataFilter)
+{
+    $builder = $this->db->table($this->table);
+    $builder->where($dataFilter);
+    $query = $builder->get();
+    $row = $query->getRow();
 
-        $builder->where($dataFilter);
-
-        $query = $builder->get();
-        $manyData = $builder->countAllResults();
-
-        if($manyData > 0){
-
-            return $query->getRow();
-
-        }else {
-            return false;
-        }
-
+    if ($row === null) {
+        return false;
     }
+
+    return new \ArrayObject((array) $row, \ArrayObject::ARRAY_AS_PROPS);
+}
 
         public function get_all_by($dataFilter)
     {

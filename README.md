@@ -1,7 +1,7 @@
 
 -----
 
-## 🚀 Portal F-Group Indonesia: Jembatan Karier Digital Bangsa
+## 🚀 Portal FGroup Indonesia: Jembatan Karier Digital Bangsa
 
 **portal.fgroupindonesia.com** adalah **E-Platform Pembelajaran Digital** yang didedikasikan untuk memberdayakan seluruh warga negara Indonesia. Visi kami adalah menjembatani kesenjangan keterampilan dan menjadikan setiap pengguna sebagai **kandidat terbaik** yang siap bersaing di pasar kerja, baik secara lokal maupun global, melalui kursus dan pelatihan berkualitas tinggi.
 

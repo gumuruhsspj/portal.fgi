@@ -1,54 +1,14 @@
 <?php
 
 namespace App\Controllers;
-use App\Models\MateriModel;
-use App\Models\GroupDiskusiModel;
-use App\Models\PerangkatTautanModel;
-use App\Models\UserModel;
-use App\Models\ProgramAfiliasiModel;
-use App\Models\MemberAfiliasiModel;
-use App\Models\InfoAfiliasiModel;
-use App\Models\CustomerServicesModel;
-use App\Models\SystemNotificationModel;
-use App\Models\ChatModel;
-use App\Models\DailyNotesModel;
-use App\Models\ProgressMateriModel;
-use App\Models\HistorySaldoModel;
 
 class Home extends BaseController
 {
    
-   // private $session;
-    private $model_materi;
-    private $model_history_saldo;
-    private $model_user;
-    private $model_group_diskusi;
-    private $model_perangkat_tautan;
-    private $model_program_afiliasi;
-    private $model_member_afiliasi;
-    private $model_info_afiliasi;
-    private $model_customer_services;
-    private $model_system_notification;
-    private $model_chat;
-    private $model_daily_notes;
-    private $model_progress_materi;
-
      public function __construct(){
 
        // $this->session = session();
-        $this->model_history_saldo = new HistorySaldoModel();
-        $this->model_materi = new MateriModel();
-        $this->model_user = new UserModel();
-        $this->model_group_diskusi = new GroupDiskusiModel();
-        $this->model_perangkat_tautan = new PerangkatTautanModel();
-        $this->model_program_afiliasi = new ProgramAfiliasiModel();
-        $this->model_member_afiliasi = new MemberAfiliasiModel();
-        $this->model_info_afiliasi = new InfoAfiliasiModel();
-        $this->model_customer_services = new CustomerServicesModel();
-        $this->model_system_notification = new SystemNotificationModel();
-        $this->model_chat = new ChatModel();
-        $this->model_daily_notes = new DailyNotesModel();
-        $this->model_progress_materi = new ProgressMateriModel();
+     
 
     }
 
@@ -255,6 +215,41 @@ class Home extends BaseController
 
     }
 
+     public function management_materi_custom(){
+
+        $this->is_logged_in();
+
+         $data = $this->get_user_data();
+
+         $username = $this->session->get('username');
+         $as = $this->session->get('usertype');
+
+         $id_materi = $this->request->getGet('materi_id');
+         $filter = ['id' => $id_materi];
+         $data_materi_utama = $this->model_materi->get_by($filter);
+
+         if(!$this->is_admin()){
+            $data_materi = $this->model_materi->get_all_custom($username, $id_materi);
+         }else{
+            $data_materi = $this->model_materi->get_all_custom();
+         }
+
+        $data_user = $this->model_user->get_all();
+
+        $data['management_data'] = $data_materi;
+        $data['title_materi_utama'] = $data_materi_utama->judul ?? '';
+        $data['link_management_open'] = 'menu-open';
+        $data['link_management_materi_active'] = 'active';
+
+        $data['usertype'] = $as;
+        $data['data_user'] = $data_user;
+        $data['random'] = '?' . rand(1,1000);
+        
+        //echo var_dump($username);
+        return view('management_materi_custom', $data);
+
+    }
+
       public function management_group_diskusi(){
 
         $this->is_logged_in();
@@ -310,18 +305,7 @@ class Home extends BaseController
 
     }
 
-    private function combine_both_data($data_source, $data_result){
-
-            $data_nama = get_data_as_key($data_source, 'nama' );
-            $data_url = get_data_as_key($data_source, 'url');
-
-            for($i=0; $i<sizeof($data_nama); $i++){
-                $data_result [] = get_data_as_achor($data_nama[$i], $data_url[$i]);
-            }
-
-            return $data_result;
-
-    }
+   
 
     public function display_all_perangkat_tautan(){
 
@@ -384,19 +368,45 @@ class Home extends BaseController
         
         // pastikan user ini terdaftar dalam id materi tersebut
         $data_student_materi = $this->model_materi->get_subscribed_materi($id_materi, $us);
+        $url = '';
 
         if($data_student_materi != false){
 
             $data['title'] = $data_student_materi->judul;
+            $paket = $data_student_materi->paket;
+
+            if($paket == 'paket_kasus_custom'){
+                    $url = $data_student_materi->custom_url_alive;
+            }else {
+                    $url = $data_student_materi->url_alive;
+            }
 
             $filter  = array(
                 'id_materi' => $data_student_materi->id
             );
 
             $data_detail_materi = $this->model_materi->get_all_detail_by_username($us);
-
+            $size = 0;
 
             if($data_detail_materi != false){
+
+            //$filePath = FCPATH . 'uploads/materi/' . $data_detail_materi[0]->attachment;
+           $fileName = $data_student_materi->attachment; 
+           $filePath = WRITEPATH . 'uploads' . DIRECTORY_SEPARATOR . 'materi' . DIRECTORY_SEPARATOR . $fileName;
+           $sizeDisplay = "0 KB";
+
+            if (file_exists($filePath)) {
+                $bytes = filesize($filePath);
+                
+                // Konversi ke format yang enak dibaca (KB/MB)
+                if ($bytes >= 1048576) {
+                    $sizeDisplay = number_format($bytes / 1048576, 2) . ' MB';
+                } elseif ($bytes >= 1024) {
+                    $sizeDisplay = number_format($bytes / 1024, 1) . ' KB';
+                } else {
+                    $sizeDisplay = $bytes . ' Bytes';
+                }
+            }
 
                 if($data_student_materi->status=='pending' ){
                     $data['error'] = "Materi ini belum bisa anda akses! Harap lunasi dulu pembayarannya.";   
@@ -404,6 +414,9 @@ class Home extends BaseController
                     $data['error'] = "Terjadi Kesalahan!";   
                 }
 
+                $data['id_materi'] = $data_student_materi->id;
+                $data['data_file_size'] = $sizeDisplay;
+                $data['url_alive'] = $url;
                 $data['data_detail_materi'] = $data_detail_materi;
             }else {
                 $data['error'] = "Materi ini belum lengkap! Hubungi admin untuk lebih lanjut.";    
@@ -417,6 +430,8 @@ class Home extends BaseController
         return view('start_materi', $data);
 
     }
+
+   
 
     public function management_saldo_history(){
 
@@ -610,134 +625,9 @@ class Home extends BaseController
 
     }
 
-    public function get_user_data(){
+   
 
-        $as      = $this->session->get('usertype');
-        $usname  = $this->session->get('username');
-        $propic  = $this->session->get('propic');
-        $nama_lengkap  = $this->session->get('nama_lengkap');
-
-        $data_user = $this->model_user->get_by_username($usname);
-        $data_all_users = $this->model_user->get_all();
-        $data_cs = $this->model_customer_services->get_all();
-        $data_chat = $this->model_chat->get_all_by_status('new');
-        
-        $data_progress_materi = null;
-        $data_member_afiliasi = null;
-        $data_daily_notes = null;
-
-        if($as == 'peserta'){
-            // this is as a student
-            $tgl = date('Y-m-d');
-
-            $filter_daily_notes = array(
-                'username' => $usname,
-                'DATE(date_created)' => $tgl
-            );
-
-            $data_progress_materi = $this->model_progress_materi->get_all_by_username($usname);
-            $data_member_afiliasi = $this->model_member_afiliasi->get_all_by_username($usname);
-            $data_daily_notes = $this->model_daily_notes->get_all_by($filter_daily_notes);
-
-            if($data_progress_materi != false){
-
-                $score_progress_materi = $this->calculate_progress_materi($data_progress_materi);
-
-            }
-
-             if($data_member_afiliasi != false){
-
-                $cash_paid = $this->calculate_cash_paid($data_member_afiliasi);
-
-            }
-
-        }
-
-        $filter_tg = array(
-            'jenis' => 'telegram'
-        );
-
-        $filter_wa = array(
-            'jenis' => 'wa'
-        );
-
-        $data_group_tg = $this->model_group_diskusi->get_all_by($filter_tg);        
-        $data_group_wa = $this->model_group_diskusi->get_all_by($filter_wa);        
-
-        if($usname == 'admin'){
-            $data_notification = $this->model_system_notification->get_all();
-        }else {
-            $data_notification = $this->model_system_notification->get_all_by_username($usname);
-        }
-
-        $t = $data_notification!=false ? sizeof($data_notification) : 0;
-        $c = $data_chat!=false ? sizeof($data_chat) : 0;
-
-        $tt = $data_group_tg!=false ? sizeof($data_group_tg) : 0;
-        $twa = $data_group_wa!=false ? sizeof($data_group_wa) : 0;
-
-        $tmale = $data_all_users!=false ? sizeof(get_data_as_key_value($data_all_users, 'gender', 'male')) : 0;
-        $tfmale = $data_all_users!=false ? sizeof(get_data_as_key_value($data_all_users, 'gender', 'female')) : 0;
-
-        $tmateri = $this->model_materi->countAll();
-        $saldo = $this->model_history_saldo->get_saldo_by($data_user->id);
-
-        $tprogress_materi = $data_progress_materi!=false ? $score_progress_materi : 0;
-        $tpendapatan_afiliasi = $data_member_afiliasi!=false ? $cash_paid : 0;
-
-        $data_tg = array();
-        $data_wa = array();
-
-        if($tt!=0){
-            $data_tg = $this->combine_both_data($data_group_tg, $data_tg);
-       }
-
-       if($twa!=0){
-            $data_wa = $this->combine_both_data($data_group_wa, $data_wa);
-        }
-       
-        $data = array(
-            'total_male' => $tmale,
-            'total_female' => $tfmale,
-            'total_materi' => $tmateri,
-            'saldo' => $saldo,
-            'total_users' => $tmale+$tfmale,
-            'total_progress_materi' => $tprogress_materi,
-            'total_pendapatan_afiliasi' => $tpendapatan_afiliasi,
-            'data_group_diskusi_tg' => $data_tg,
-            'data_group_diskusi_wa' => $data_wa,
-            
-            'data_daily_notes' => $data_daily_notes,
-            'data_chat' => $data_chat,
-            'data_notification' => $data_notification,
-            'total_data_notification' => $t,
-            'total_data_chat' => $c,
-            'total_telegram_group' => $tt,
-            'total_whatsapp_group' => $twa,
-            'nama_lengkap' => $nama_lengkap,
-            'usertype'  => $as,
-            'username'  => $usname,
-            'id_user' => $data_user->id,
-            'propic'    => $propic,
-            'balance' => $data_user->balance,
-            'wa_cs01_name' => $data_cs[0]->nama,
-            'wa_cs02_name' => $data_cs[1]->nama,
-            'wa_cs01_link' => $this->generate_wa_link($data_cs[0]->whatsapp),
-            'wa_cs02_link' => $this->generate_wa_link($data_cs[1]->whatsapp),
-            'wa_cs01_display' => 'wa_cs01_' . $data_cs[0]->status,
-            'wa_cs02_display' => 'wa_cs02_' . $data_cs[1]->status
-        );
-
-        $data['settings_user_data'] = $data_user;
-
-        return $data;
-    }
-
-    private function generate_wa_link($numberPhone){
-
-        return "https://wa.me/" . $numberPhone . "?text=hello!";
-
-    }
+  
 
 
      public function display_home()

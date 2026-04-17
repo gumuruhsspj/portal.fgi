@@ -94,7 +94,7 @@
               <div class="card card-info col-md-3">
           <div class="card-header">
             <h3 class="card-title">
-              Detail Pembahasan
+              Poin Pembahasan
             </h3>
           </div>
 
@@ -103,16 +103,31 @@
             <div class="card card-info card-outline">
            
               <div class="card-body">
-                <?php if($data_detail_materi != false) : ?>
-                <?php foreach($data_detail_materi as $dmateri): ?>
-                <div class="custom-control custom-checkbox">
-                  <input class="custom-control-input" type="checkbox" id="customCheckbox1" disabled="">
-                  <label for="customCheckbox1" class="custom-control-label"><?=$dmateri->judul;?></label>
+                <?php if($data_detail_materi != false) : 
+                  $total_data = count($data_detail_materi); 
+                
+                  foreach($data_detail_materi as $key => $dmateri):
+                // Jika index adalah 0, maka dia di awal (tidak ada back)
+                $has_back = ($key > 0) ? "true" : "false";
+                
+                // Jika index adalah total_data - 1, maka dia di ujung (tidak ada next)
+                $has_next = ($key < $total_data - 1) ? "true" : "false"; ?>
+                <div class="custom-control custom-checkbox" >
+                  <input data-id="<?= $dmateri->id_pembahasan; ?>" class="custom-control-input" type="checkbox" disabled="">
+                  <label data-has-next="<?= $has_next ?>" data-has-back="<?= $has_back ?>"
+                  data-target-id="<?= $dmateri->id_pembahasan; ?>" class="custom-control-label"><?=$dmateri->judul;?></label>
                 </div>
                 <?php endforeach; ?>
                 <?php endif; ?>
               </div>
-            </div>        
+            </div>  
+            
+            <?php if(isset($url_alive)): ?>
+            <button data-url="<?= $url_alive; ?>" data-id="<?= $id_materi; ?>" type="button" class="btn btn-primary btn-connect">
+                <i class="fas fa-video"></i> CONNECT
+            </button>
+            <?php endif; ?>
+            <button data-id="<?= $id_materi; ?>" type="button" class="btn btn-success btn-complete"><i class="fas fa-check"></i> SAYA SELESAI</button>
           </div>
             <?php endif; ?>
         </div>
@@ -124,8 +139,7 @@
               <h3 class="card-title" id="judul-detail-materi">Permulaan</h3>
 
               <div class="card-tools">
-                <a href="#" class="btn btn-tool" title="Previous"><i class="fas fa-chevron-left"></i></a>
-                <a href="#" class="btn btn-tool" title="Next"><i class="fas fa-chevron-right"></i></a>
+                
               </div>
             </div>
             <!-- /.card-header -->
@@ -135,22 +149,22 @@
               <div class="mailbox-controls with-border text-center">
                 <div class="btn-group">
                   
-                  <button type="button" class="btn btn-default btn-sm" data-container="body" title="Reply">
+                  <button type="button" class="btn btn-default btn-sm btn-back btn-nav" data-container="body" title="Back">
                     <i class="fas fa-reply"></i>
                   </button>
-                  <button type="button" class="btn btn-default btn-sm" data-container="body" title="Forward">
+                  <button data-target-id="<?=$data_detail_materi[0]->id_pembahasan ;?>" type="button" class="btn btn-default btn-sm btn-next btn-nav" data-container="body" title="Next">
                     <i class="fas fa-share"></i>
                   </button>
                 </div>
                 <!-- /.btn-group -->
-                <button type="button" class="btn btn-default btn-sm" title="Print">
+                <button type="button" class="btn-print btn btn-default btn-sm" title="Print">
                   <i class="fas fa-print"></i>
                 </button>
               </div>
               <!-- /.mailbox-controls -->
               <div class="mailbox-read-message">
               
-                <p id="deskripsi-detail-materi">Deskripsi disini</p>
+                <p >Deskripsi</p>
 
               </div>
               <!-- /.mailbox-read-message -->
@@ -162,24 +176,30 @@
                   <span class="mailbox-attachment-icon"><i class="far fa-file-pdf"></i></span>
 
                   <div class="mailbox-attachment-info">
-                    <a href="#" class="mailbox-attachment-name"><i class="fas fa-paperclip"></i> Sep2014-report.pdf</a>
+                    <a href="#" data-id="<?=$id_materi;?>" class="link-download mailbox-attachment-name"><i class="fas fa-paperclip"></i> <?= $data_detail_materi[0]->attachment; ?></a>
                         <span class="mailbox-attachment-size clearfix mt-1">
-                          <span>1,245 KB</span>
-                          <a href="#" class="btn btn-default btn-sm float-right"><i class="fas fa-cloud-download-alt"></i></a>
+                          <span><?=$data_file_size; ?></span>
+                          <a href="#" data-id="<?=$id_materi;?>" class="btn btn-default btn-sm float-right link-download"><i class="fas fa-cloud-download-alt"></i></a>
                         </span>
                   </div>
                 </li>
                
               </ul>
+
+              <div id="deskripsi-detail-materi">
+                <p> <?= $data_detail_materi[0]->deskripsi_utama; ?> </p>  
+              </div>
+              
             </div>
             <!-- /.card-footer -->
             <div class="card-footer">
               <div class="float-right">
-                <button type="button" class="btn btn-default"><i class="fas fa-reply"></i> Back</button>
-                <button type="button" class="btn btn-default"><i class="fas fa-share"></i> Next</button>
+                <button type="button" class="btn btn-default btn-back btn-nav"><i class="fas fa-reply"></i> Back</button>
+                <button data-target-id="<?=$data_detail_materi[0]->id_pembahasan ;?>" type="button" class="btn btn-default btn-next btn-nav"><i class="fas fa-share"></i> Next</button>
+                <button data-id="<?= $id_materi; ?>" type="button" class="btn btn-success btn-complete"><i class="fas fa-check"></i> SAYA SELESAI</button>
               </div>
               
-              <button type="button" class="btn btn-default"><i class="fas fa-print"></i> Print</button>
+              <button type="button" class="btn btn-default btn-print"><i class="fas fa-print"></i> Print</button>
             </div>
             <!-- /.card-footer -->
           </div>
@@ -223,6 +243,8 @@
 <!-- jQuery -->
 <script src="/assets/js/jquery371.min.js"></script>
 <script src="/assets/js/jquery-ui.min.js"></script>
+<script src="/assets/js/sweetalert2@11.js"></script>
+
 <!-- Bootstrap -->
 <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- AdminLTE -->
@@ -232,6 +254,7 @@
 <script src="/assets/vendor/chart.js/Chart.min.js"></script>
 <script src="/assets/js/settings.js"></script>
 <script src="/assets/js/customer-services.js"></script>
+<script src="/assets/js/start-materi.js"></script>
 
 
 <script src="/assets/js/pages/dashboard3.js"></script>

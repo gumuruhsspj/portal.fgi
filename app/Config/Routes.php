@@ -22,19 +22,27 @@ $routes->get('/manage/user', 'Home::management_user');
 $routes->get('/manage/group', 'Home::management_group_diskusi');
 $routes->get('/manage/perangkat', 'Home::management_perangkat_tautan');
 $routes->get('/manage/materi', 'Home::management_materi');
+$routes->get('/manage/materi/custom', 'Home::management_materi_custom');
 $routes->get('/manage/materi/kategori', 'Home::management_materi_kategori');
 $routes->get('/manage/pembayaran', 'Home::management_pembayaran');
 $routes->get('/manage/materi/pembahasan', 'Home::management_pembahasan_materi');
 $routes->get('/manage/materi/quiz', 'Home::management_quiz_materi');
 
-
 $routes->post('/manage/pembayaran/update', 'Works::pembayaran_update');
+
+// working now 17-april-2026
+$routes->post('/manage/materi/custom/add', 'Works::materi_custom_add');
+$routes->post('/manage/materi/custom/delete', 'Works::materi_custom_delete');
+$routes->post('/manage/materi/custom/update', 'Works::materi_custom_update');
+$routes->post('/manage/materi/custom/edit', 'Works::materi_custom_edit');
 
 $routes->post('/manage/materi/add', 'Works::materi_add');
 $routes->post('/manage/materi/delete', 'Works::materi_delete');
 $routes->post('/manage/materi/update', 'Works::materi_update');
-$routes->post('/manage/materi/paket/update', 'Works::materi_paket_update');
 $routes->post('/manage/materi/edit', 'Works::materi_edit');
+
+$routes->post('/manage/materi/paket/update', 'Works::materi_paket_update');
+
 $routes->post('/manage/materi/icon/add', 'Works::materi_icon_add');
 $routes->post('/manage/materi/attachment/add', 'Works::materi_attachment_add');
 $routes->post('/manage/materi/kategori/all', 'Works::materi_kategori_all');
@@ -62,9 +70,13 @@ $routes->post('/manage/materi/comments-rating/delete', 'Works::comments_rating_d
 $routes->get('/materi', 'Home::display_single_materi');
 $routes->get('/materi/kategori', 'Home::display_materi_kategori');
 $routes->get('/materi/start', 'Home::display_start_materi');
+$routes->get('/materi/download/(:num)', 'Works::download_materi/$1');
+
 
 
 // called by student
+$routes->post('/materi/pembahasan/completed', 'Works::pembahasan_completed');
+$routes->post('/materi/pembahasan', 'Works::pembahasan_display');
 $routes->post('/materi/cancel', 'Works::delete_request_materi');
 $routes->post('/materi/checkout', 'Works::checkout_materi');
 

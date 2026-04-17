@@ -1,18 +1,7 @@
 <?php
 
 namespace App\Controllers;
-use App\Models\MateriModel;
-use App\Models\UserModel;
-use App\Models\PerangkatTautanModel;
-use App\Models\GroupDiskusiModel;
-use App\Models\ProgramAfiliasiModel;
-use App\Models\InfoAfiliasiModel;
-use App\Models\CustomerServicesModel;
-use App\Models\DailyNotesModel;
-use App\Models\SupportTicketsModel;
-use App\Models\SystemNotificationModel;
-use App\Models\SubscriptionModel;
-use App\Models\HistorySaldoModel;
+
 
 use App\Libraries\EmailPostSender;
 
@@ -20,35 +9,13 @@ use App\Libraries\EmailPostSender;
 class Works extends BaseController
 {
     // private $session;
-     private $model_materi;
-     private $model_user;
-     private $model_group_diskusi;
-     private $model_perangkat_tautan;
-     private $model_program_afiliasi;
-     private $model_info_afiliasi;
-     private $model_customer_services;
-     private $model_daily_notes;
-     private $model_support_tickets;
-     private $model_system_notif;
-     private $model_subscription;
-     private $model_history_saldo;
+   
 
      private $link_logo = 'https://portal.fgroupindonesia.com/assets/img/logo.jpg';
     
     public function __construct(){
 
-         $this->model_history_saldo = new HistorySaldoModel();
-         $this->model_materi = new MateriModel();
-         $this->model_user = new UserModel();
-         $this->model_group_diskusi = new GroupDiskusiModel();
-         $this->model_perangkat_tautan = new PerangkatTautanModel();
-         $this->model_program_afiliasi = new ProgramAfiliasiModel();
-         $this->model_info_afiliasi = new InfoAfiliasiModel();
-         $this->model_customer_services = new CustomerServicesModel();
-         $this->model_daily_notes = new DailyNotesModel();
-         $this->model_support_tickets = new SupportTicketsModel();
-         $this->model_system_notif = new SystemNotificationModel();
-         $this->model_subscription = new SubscriptionModel();
+     
 
     }
 
@@ -517,6 +484,7 @@ class Works extends BaseController
 
     }
 
+
     public function materi_delete(){
 
         $id          = $this->request->getPost('id');
@@ -703,6 +671,35 @@ class Works extends BaseController
 
     }
 
+     public function download_materi($id_materi) 
+{
+    $this->is_logged_in(); // Pastikan sudah login
+
+    $data = $this->get_user_data();
+    $us = $data['username'];
+
+    // Validasi apakah user terdaftar untuk materi ini
+    $data_student_materi = $this->model_materi->get_subscribed_materi($id_materi, $us);
+
+    // Cek status pembayaran juga
+    if($data_student_materi && $data_student_materi->status != 'error' && $data_student_materi->status != 'delete request'){
+        
+        $fileName = $data_student_materi->attachment; 
+        $filePath = WRITEPATH . 'uploads' . DIRECTORY_SEPARATOR . 'materi' . DIRECTORY_SEPARATOR . $fileName;
+
+        //echo $filePath;
+
+        if (file_exists($filePath)) {
+            // CodeIgniter 4 Response Download
+            return $this->response->download($filePath, null);
+        } else {
+            return "File tidak ditemukan di server.";
+        }
+    }
+
+    return "Akses ditolak";
+}
+
     public function pembahasan_bab_add(){
 
         $result = array(
@@ -751,6 +748,57 @@ class Works extends BaseController
 
         $result['status'] = 'valid';
         $result['data'] = $next_no_urut;
+
+        echo json_encode($result);
+
+    }
+
+  public function pembahasan_display(){
+    // Ambil ID dari request POST
+    $id = $this->request->getPost('id_pembahasan');
+
+    // 1. Ambil data pembahasan saat ini
+    $current_data = $this->model_materi->get_pembahasan_by(['id' => $id]);
+
+    if ($current_data) {
+        // 2. Cek apakah ada pembahasan sebelum dan sesudahnya
+        // Kita kirim id_bab dan ordering_index dari data yang baru kita ambil
+        $navigasi = $this->model_materi->get_navigasi_pembahasan(
+            $current_data->id_bab, 
+            $current_data->ordering_index
+        );
+
+        return $this->response->setJSON([
+            'status' => 'success',
+            'data'   => $current_data,
+            'hasNext' => ($navigasi['next_id'] !== null), // true jika ada id-nya
+            'hasBack' => ($navigasi['prev_id'] !== null), // true jika ada id-nya
+            'next_id' => $navigasi['next_id'], // kirim ID-nya biar frontend bisa request lagi
+            'prev_id' => $navigasi['prev_id']
+        ]);
+    } else {
+        return $this->response->setJSON([
+            'status' => 'error',
+            'message' => 'Data tidak ditemukan'
+        ], 404);
+    }
+}
+
+    public function pembahasan_completed(){
+
+     $result = array(
+            'status' => 'error',
+            'message' => 'materi error'
+        );
+
+        $id = $this->request->getPost('id_materi');
+
+      $result_update = $this->model_materi->update_status($id, 'completed');
+
+     if(!empty($result_update)){
+            $result['status'] = 'success';
+            $result['message'] = 'status materi student berhasil diupdate!';
+        }
 
         echo json_encode($result);
 
@@ -924,6 +972,98 @@ class Works extends BaseController
                 'message' => 'Gagal mengunggah file bukti pembayaran.'
             ]);
         }
+    }
+
+
+public function materi_custom_delete(){
+
+        $id          = $this->request->getPost('id');
+
+        $returned_value = $this->model_materi->delete_custom_existing($id);
+
+         $result = array(
+            'status' => 'error'
+        );
+
+        if($returned_value){
+            $result['status'] = 'success';
+        }
+
+        echo json_encode($result);
+
+    }
+
+ public function materi_custom_edit(){
+
+         $id          = $this->request->getPost('id');
+
+         $filter = array(
+            'id' => $id
+         );
+
+         $returned_value = $this->model_materi->get_custom_by($filter);
+
+          $result = array(
+            'status' => 'error'
+            );
+
+         if($returned_value){
+            $result['status'] = 'success';
+            $result['data'] = $returned_value;
+         }
+
+         echo json_encode($result);
+
+
+    }
+
+ public function materi_custom_update(){
+
+        $result = array(
+            'status' => 'error'
+        );
+
+        $id = $this->request->getPost('id');
+        $nt = $this->request->getPost('nama_template');
+        $d = $this->request->getPost('deskripsi');
+        
+     $data = array(
+          'nama_template' => $nt,
+          'deskripsi' => $d
+          );
+
+  
+     $this->model_materi->update_custom_existing($data, $id);
+
+     $result['status'] = 'success';
+
+      echo json_encode($result);
+
+    }
+
+    public function materi_custom_add(){
+
+        $result = array(
+            'status' => 'error'
+        );
+
+        $id = $this->request->getPost('id_materi');
+        $nt = $this->request->getPost('nama_template');
+        $d = $this->request->getPost('deskripsi');
+        
+     $data = array(
+          'id_materi' => $id,
+          'nama_template' => $nt,
+          'deskripsi' => $d
+          );
+
+  
+     $this->model_materi->insert_custom_new($data);
+
+     $result['status'] = 'success';
+
+      echo json_encode($result);
+
     }
 
     public function materi_add(){

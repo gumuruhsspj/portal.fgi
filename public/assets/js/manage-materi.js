@@ -678,16 +678,45 @@ function calculateTax(){
 
 function linkPembahasan(){
 
-	$('body').on('click', '.pembahasan-single', function(e){
+	  $('.pembahasan-single').on('click', function(e) {
 
 		e.preventDefault();
 
-		let idna = $(this).attr('data-id');
+			let idna = $(this).attr('data-id');
 		
+                Swal.fire({
+                    title: 'Pilih Jenis Pembahasan',
+                    text: 'Silakan pilih tipe pembahasan yang Anda inginkan',
+                    icon: 'question',
+                    showDenyButton: true,
+                    showCancelButton: false,
+                    confirmButtonText: 'Umum',
+                    denyButtonText: 'Custom',
+                    confirmButtonColor: '#3085d6',
+                    denyButtonColor: '#d33',
+                    background: '#fff',
+                    allowOutsideClick: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        bukaPembahasanUmum(idna);
+                    } else if (result.isDenied) {
+                        bukaPembahasanCustom(idna);
+                    }
+                });
+            });
+
+}
+
+function bukaPembahasanUmum(idna){
+
 		location.href = '/manage/materi/pembahasan?materi_id=' + idna;
 		
-	});
+}
 
+function bukaPembahasanCustom(idna){
+
+		location.href = '/manage/materi/custom?materi_id=' + idna;
+		
 }
 
 

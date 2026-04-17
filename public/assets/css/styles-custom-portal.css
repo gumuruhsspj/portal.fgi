@@ -1,3 +1,11 @@
+.custom-checkbox * {
+    cursor : pointer !important;
+}
+
+.custom-checkbox *:hover {
+    background-color: yellow;
+}
+
 #nama-materi-perangkat {
 
 	width: 100%;
@@ -212,3 +220,5 @@ trix-editor {
 
 
 /* bagian management materi pembahasan */
+
+/* bagian fixing footer */

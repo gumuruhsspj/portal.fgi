@@ -64,7 +64,7 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0">Materi</h1>
+            <h1 class="m-0">Materi Custom : <?= $title_materi_utama; ?></h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
@@ -87,7 +87,7 @@
               <div class="card-header border-0">
                 <h3 class="card-title">Total Overall: <span><?= (isset($management_data) && $management_data!=false) ? count($management_data) : 0; ?> data.</span></h3>
                 <div class="card-tools">
-                  <a href="#" data-bs-toggle="modal" data-bs-target="#materiModal" class="btn btn-tool btn-sm">
+                  <a href="#" data-bs-toggle="modal" data-bs-target="#materiCustomModal" class="btn btn-tool btn-sm">
                     <i class="fas fa-plus"></i>
                   </a>
                    <a href="#" id="delete-selected" class="btn btn-tool btn-sm">
@@ -103,11 +103,7 @@
                   <thead>
                   <tr>
                       <th><input type="checkbox" id="select-all" class="data-selected" ></th>
-                    <th>Judul</th>
-                    <th>Kategori</th>
-                    <th>Deskripsi</th>
-                    <th>C&amp;R</th>
-                    <th>Attachment</th>
+                    <th>Judul </th>
                     <?php if(session()->get('usertype')=='admin'): ?>
                     <th>Owner</th>
                     <?php endif; ?>
@@ -124,16 +120,9 @@
                     </td>
                     <td>
                       <img src="/assets/img/uploads/materi/<?= $row->icon; ?>" alt="Product 1" class="img-circle img-size-32 mr-2">
-                      <?= $row->judul; ?>
+                      <?= $row->nama_template; ?>
                     </td>
-                    <td><?= $row->kategori; ?></td>
-                    <td><a href="#">Detail</a></td>
-                    <td><a class="link-view-comments-rating" data-id="<?= $row->id; ?>" data-bs-toggle="modal" data-bs-target="#comments-rating-modal"  href="#"><?= $row->total_comments; ?> data.</a></td>
-                    <?php if(!empty($row->attachment)): ?>
-                    <td><a href="/assets/attachment/uploads/materi/<?= $row->attachment; ?>" target="_blank">Preview</a></td>
-                  <?php else: ?>
-                    <td>-</td>
-                  <?php endif; ?>
+                  
                     <?php if(session()->get('usertype')=='admin'): ?>
                     <td><?= $row->username; ?></td>
                     <?php endif; ?>
@@ -184,16 +173,15 @@
  <?php include('footer.php'); ?>
 </div>
 <!-- ./wrapper -->
-<?php include('modal_materi_paket.php'); ?>
-<?php include('modal_materi.php'); ?>
+
+<?php include('modal_materi_custom.php'); ?>
 <?php include('modal_customer_services.php'); ?>
-<?php include('modal_comments_rating.php'); ?>
+
 
 <!-- REQUIRED SCRIPTS -->
 
 <!-- jQuery -->
 <script src="/assets/js/jquery371.min.js"></script>
-<script src="/assets/js/sweetalert2@11.js"></script>
 
 <!-- Bootstrap -->
 <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

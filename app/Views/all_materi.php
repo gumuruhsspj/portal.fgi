@@ -183,7 +183,7 @@
                           </a>
                         <?php endif; ?>
                          
-                         <?php if($duser->status != 'error' || $duser->status != 'delete request'): ?>  
+                         <?php if($duser->status != 'completed' && $duser->status != 'error' && $duser->status != 'delete request'): ?>  
                           <a class="btn btn-danger btn-sm" href="#">
                               <i class="fa-solid fa-xmark"></i>
                               </i>
