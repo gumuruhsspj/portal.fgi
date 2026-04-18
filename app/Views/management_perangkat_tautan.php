@@ -40,10 +40,7 @@
   <!-- Main Sidebar Container -->
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
-    <a href="index3.html" class="brand-link">
-      <img src="/assets/img/fgroupindonesia.jpg" alt="FGroupIndonesia Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-      <span class="brand-text font-weight-light">FGroupIndonesia</span>
-    </a>
+    <?php include('brand_logo.php'); ?>
 
     <!-- Sidebar -->
     <div class="sidebar">
@@ -172,6 +169,7 @@
 <?php include('modal_perangkat_tautan.php'); ?>
 <?php include('modal_browse_materi.php'); ?>
 <?php include('modal_customer_services.php'); ?>
+<?php include('modal_usulan_materi.php'); ?>
 
 <!-- REQUIRED SCRIPTS -->
 
@@ -185,7 +183,7 @@
 <script src="/assets/js/manage-perangkat-tautan.js"></script>
 <script src="/assets/js/settings.js"></script>
 <script src="/assets/js/customer-services.js"></script>
-
+<script src="/assets/js/timer.js"></script>
 <script src="/assets/js/adminlte.js"></script>
 
 </body>

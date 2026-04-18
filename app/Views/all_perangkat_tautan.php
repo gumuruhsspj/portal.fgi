@@ -41,10 +41,7 @@
   <!-- Main Sidebar Container -->
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
-    <a href="/" class="brand-link">
-      <img src="/assets/img/fgroupindonesia.jpg" alt="FGroupIndonesia Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-      <span class="brand-text font-weight-light">FGroupIndonesia</span>
-    </a>
+    <?php include('brand_logo.php'); ?>
 
     <!-- Sidebar -->
     <div class="sidebar">
@@ -150,7 +147,7 @@
 <script src="/assets/js/settings.js"></script>
 <script src="/assets/js/customer-services.js"></script>
 <script src="/assets/js/manage-daily-notes.js"></script>
-
+<script src="/assets/js/timer.js"></script>
 <script src="/assets/vendor/jquery-calendar/calendar.min.js"></script>
 <script src="/assets/js/pages/dashboard3.js"></script>
 <script src="/assets/js/saldo.js"></script>

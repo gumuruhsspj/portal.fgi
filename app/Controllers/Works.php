@@ -110,7 +110,12 @@ class Works extends BaseController
         return $this->response->setJSON(['status' => 'failed', 'message' => 'Data tidak ditemukan!']);
     }
 
-    $target_id_user = $history['id_user']; // Pemilik saldo yang sebenarnya
+    $target_id_user = $history['id_user'];
+
+    $filter = array(
+        'status' => 'approved',
+        'id_user' => $target_id_user
+    );
     
     $data = ['status' => $status];
     
@@ -123,11 +128,9 @@ class Works extends BaseController
 
     // 3. Update Balance User si PEMILIK transaksi
     if ($hasil) {
-        $balance = $this->model_history_saldo->get_saldo_by($target_id_user);
         
-        $up = ['balance' => $balance];
-        $this->model_user->update($target_id_user, $up);
-        
+        $this->model_history_saldo->recalc_saldo_chain($target_id_user);
+
         $respond = [
             'status' => 'success',
             'message' => 'Update berhasil!'
@@ -708,6 +711,7 @@ class Works extends BaseController
         );
 
         $id_materi = $this->request->getPost('id_materi');
+        $id_materi_custom = $this->request->getPost('id_materi_custom');
         $id_user = $this->request->getPost('id_user');
         $judul = $this->request->getPost('judul');
         $deskripsi = $this->request->getPost('deskripsi');
@@ -718,6 +722,10 @@ class Works extends BaseController
           'judul'       => $judul,
           'deskripsi'  => $deskripsi
      );
+
+     if(!empty($id_materi_custom)){
+        $data['id_materi_custom'] = $id_materi_custom;
+     }
 
      $this->model_materi->insert_new_pembahasan_bab($data);
 
@@ -737,7 +745,14 @@ class Works extends BaseController
         );
 
         $id_bab = $this->request->getPost('id_bab');
-        $data = $this->model_materi->get_highest_ordering_index($id_bab);
+        $id_custom = $this->request->getPost('id_materi_custom');
+
+        // ambil bab untuk umum? atau custom?
+        if(empty($id_custom)){
+            $data = $this->model_materi->get_highest_ordering_index($id_bab);
+        } else {
+            $data = $this->model_materi->get_custom_highest_ordering_index($id_bab, $id_custom);
+        }
 
         if($data){
             $next_no_urut = $data->ordering_index + 1;
@@ -862,8 +877,10 @@ class Works extends BaseController
             'message' => 'error'
         );
 
+        
         $id_bab = $this->request->getPost('id_bab');
         $id_materi = $this->request->getPost('id_materi');
+        $id_materi_custom = $this->request->getPost('id_materi_custom');
         $id_user = $this->request->getPost('id_user');
         $ordering_index = $this->request->getPost('ordering_index');
         $judul = $this->request->getPost('judul');
@@ -878,7 +895,19 @@ class Works extends BaseController
           'deskripsi'  => $deskripsi
      );
 
-     $no_id = $this->model_materi->insert_new_pembahasan($data);
+     if(!empty($id_materi_custom)){
+        // berarti pembahasan custom
+        $data['id_materi_custom'] = $id_materi_custom;
+        
+        // ga pake 2 column ini klo custom
+        unset($data['id_materi']);
+        unset($data['id_user']);
+
+        $no_id = $this->model_materi->insert_new_custom_pembahasan($data);
+     }else {
+        // berarti pembahasan umum
+        $no_id = $this->model_materi->insert_new_pembahasan($data);
+     }
 
       $result['status'] = 'valid';
       $result['message'] = 'pembahasan berhasil ditambahkan!';
@@ -974,24 +1003,32 @@ class Works extends BaseController
         }
     }
 
-
-public function materi_custom_delete(){
-
-        $id          = $this->request->getPost('id');
-
-        $returned_value = $this->model_materi->delete_custom_existing($id);
-
-         $result = array(
-            'status' => 'error'
-        );
-
-        if($returned_value){
+public function materi_custom_delete()
+{
+    $result = ['status' => 'error'];
+    
+    // Cek apakah request mengirim array ids (untuk multiple delete)
+    $ids = $this->request->getPost('ids');
+    if (!empty($ids) && is_array($ids)) {
+        $allDeleted = true;
+        foreach ($ids as $id) {
+            if (!$this->model_materi->delete_custom_existing($id)) {
+                $allDeleted = false;
+            }
+        }
+        if ($allDeleted) {
             $result['status'] = 'success';
         }
-
-        echo json_encode($result);
-
+    } else {
+        // Single delete
+        $id = $this->request->getPost('id');
+        if ($id && $this->model_materi->delete_custom_existing($id)) {
+            $result['status'] = 'success';
+        }
     }
+    
+    echo json_encode($result);
+}
 
  public function materi_custom_edit(){
 

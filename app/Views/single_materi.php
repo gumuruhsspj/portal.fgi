@@ -264,7 +264,7 @@
 
   <!-- Main Footer -->
 <?php include('footer.php'); ?>
-
+<?php include('modal_usulan_materi.php'); ?>
 <?php include('modal_customer_services.php'); ?>
 <?php include('modal_isi_ulang_saldo.php'); ?>
 <?php include('modal_konfirmasi_pembayaran.php'); ?>
@@ -288,7 +288,7 @@
 <script src="/assets/js/settings.js"></script>
 <script src="/assets/js/customer-services.js"></script>
 <script src="/assets/js/single-materi.js"></script>
-
+<script src="/assets/js/timer.js"></script>
 <script src="/assets/js/pages/dashboard3.js"></script>
 <script src="/assets/js/saldo.js"></script>
 </body>

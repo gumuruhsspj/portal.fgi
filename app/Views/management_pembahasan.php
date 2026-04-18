@@ -41,10 +41,7 @@
   <!-- Main Sidebar Container -->
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
-    <a href="index3.html" class="brand-link">
-      <img src="/assets/img/fgroupindonesia.jpg" alt="FGroupIndonesia Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-      <span class="brand-text font-weight-light">FGroupIndonesia</span>
-    </a>
+   <?php include('brand_logo.php'); ?>
 
     <!-- Sidebar -->
     <div class="sidebar">
@@ -67,8 +64,14 @@
           <div class="col-sm-6">
             <h1 class="m-0">Pembahasan </h1>
             <h4 class="m-4">Judul : <?= !empty($judul_materi) ? $judul_materi : ''; ?></h4>
+
+            <?php if(!empty($judul_materi_custom)): ?>
+            <h5 class="m-4">Custom : <?= $judul_materi_custom; ?></h5>
+            <?php endif; ?>
+
             <input type="hidden" id="id_user" value="<?= session()->get('id'); ?>">
             <input type="hidden" id="id_materi" value="<?= $id_materi; ?>">
+            <input type="hidden" id="id_materi_custom" value="<?= $id_materi_custom; ?>">
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
@@ -191,6 +194,7 @@
 <?php include('modal_customer_services.php'); ?>
 <?php include('modal_comments_rating.php'); ?>
 <?php include('modal_pembahasan.php'); ?>
+<?php include('modal_usulan_materi.php'); ?>
 
 
 <!-- REQUIRED SCRIPTS -->
@@ -206,7 +210,7 @@
 <script src="/assets/js/manage-materi.js<?=$random;?>"></script>
 <script src="/assets/js/settings.js<?=$random;?>"></script>
 <script src="/assets/js/customer-services.js<?=$random;?>"></script>
-
+<script src="/assets/js/timer.js"></script>
 
 <script src="/assets/js/trix.umd.min.js<?=$random;?>"></script>
 <script src="/assets/js/adminlte.js<?=$random;?>"></script>

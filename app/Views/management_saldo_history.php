@@ -34,10 +34,7 @@
 
   <!-- Sidebar -->
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
-    <a href="#" class="brand-link">
-      <img src="/assets/img/fgroupindonesia.jpg" class="brand-image img-circle elevation-3" alt="Logo">
-      <span class="brand-text font-weight-light">FGroupIndonesia</span>
-    </a>
+    <?php include('brand_logo.php'); ?>
 
     <div class="sidebar">
       <?php if(session()->get('usertype') == 'peserta'): ?>
@@ -65,7 +62,7 @@
     <div>
         <div class="text-muted small">Saldo Terkini</div>
         <div class="fw-bold fs-3" id="balance">
-            <?= as_rupiah(session()->get('balance')); ?>
+            <?= as_rupiah($balance); ?>
         </div>
     </div>
 </div>
@@ -114,8 +111,9 @@
                   <th><input type="checkbox" id="select-all"></th>
                 <?php endif; ?>
                   <th>No.</th>
-                  <th>Status</th>
+                  
                   <th>Jenis</th>
+                  <th>Status</th>
                   <th>Keterangan</th>
                   <th>Saldo Sebelum</th>
                   <th>Nominal</th>
@@ -138,12 +136,13 @@
                   <td><input type="checkbox" class="data-selected" data-id="<?= $row->id; ?>"></td>
                 <?php endif; ?>
                 <td><?= $nomer++; ?></td>
-                  <td><?= $row->status; ?></td>
-                  <td><?= $row->jenis; ?></td>
+                <td><?= $row->jenis; ?></td>  
+                <td><?= $row->status; ?></td>
+                  
                   <td><?= $row->keterangan; ?></td>
                   <td><?= as_rupiah($row->saldo_sebelum); ?></td>
                   <td><?= as_rupiah($row->nominal); ?></td>
-                  <td><?= as_rupiah($row->saldo_setelah); ?></td>
+                  <td><b><?= as_rupiah($row->saldo_setelah); ?> </b></td>
                   <?php if(session()->get('usertype') == 'admin'): ?>
                   <td><?= $row->username; ?></td>
                   <?php endif; ?>
@@ -154,7 +153,6 @@
                     <div class="dropdown">
                       <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"></button>
                       <ul class="dropdown-menu">
-                        <li><a class="dropdown-item edit-single" data-id="<?= $row->id; ?>" href="#">Edit</a></li>
                         <li><a class="dropdown-item delete-single" data-id="<?= $row->id; ?>" href="#">Delete</a></li>
                       </ul>
                     </div>
@@ -179,6 +177,7 @@
   
  <?php include('modal_isi_ulang_saldo.php'); ?>
 <?php include('modal_konfirmasi_pembayaran.php'); ?>
+<?php include('modal_usulan_materi.php'); ?>
 
 </div>
 
@@ -192,7 +191,7 @@
 
 <script src="/assets/js/sweetalert2@11.js"></script>
 <script src="/assets/js/adminlte.js"></script>
-
+<script src="/assets/js/timer.js"></script>
 <script src="/assets/js/cleave.min.js"></script>
 <script src="/assets/js/pages/dashboard3.js"></script>
 <script src="/assets/js/saldo.js"></script>

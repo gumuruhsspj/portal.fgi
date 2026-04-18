@@ -158,6 +158,7 @@ abstract class BaseController extends Controller
         $data_all_users = $this->model_user->get_all();
         $data_cs = $this->model_customer_services->get_all();
         $data_chat = $this->model_chat->get_all_by_status('new');
+         
         
         $data_progress_materi = null;
         $data_member_afiliasi = null;
@@ -172,8 +173,12 @@ abstract class BaseController extends Controller
                 'DATE(date_created)' => $tgl
             );
 
-            $data_progress_materi = $this->model_progress_materi->get_all_by_username($usname);
-            $data_member_afiliasi = $this->model_member_afiliasi->get_all_by_username($usname);
+            $filter_progress = array(
+                'id_user' => $data_user->id
+            );
+
+            $data_progress_materi = $this->model_progress_materi->get_all_by($filter_progress);
+            $data_member_afiliasi = $this->model_member_afiliasi->get_all_by($filter_progress);
             $data_daily_notes = $this->model_daily_notes->get_all_by($filter_daily_notes);
 
             if($data_progress_materi != false){
@@ -188,6 +193,11 @@ abstract class BaseController extends Controller
 
             }
 
+             $filter_saldo = array('id_user' => $data_user->id, 'status' => 'approved');
+             $saldo = $this->model_history_saldo->get_saldo_by($filter_saldo);
+
+        }else {
+            $saldo = $this->model_user->get_total_balance();
         }
 
         $filter_tg = array(
@@ -217,7 +227,8 @@ abstract class BaseController extends Controller
         $tfmale = $data_all_users!=false ? sizeof(get_data_as_key_value($data_all_users, 'gender', 'female')) : 0;
 
         $tmateri = $this->model_materi->countAll();
-        $saldo = $this->model_history_saldo->get_saldo_by($data_user->id);
+
+        
 
         $tprogress_materi = $data_progress_materi!=false ? $score_progress_materi : 0;
         $tpendapatan_afiliasi = $data_member_afiliasi!=false ? $cash_paid : 0;

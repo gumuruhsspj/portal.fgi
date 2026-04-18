@@ -22,6 +22,21 @@ class UserModel extends Model
         'propic'
     ];   
 
+    public function get_total_balance()
+    {
+        $builder = $this->db->table($this->table);
+        $builder->selectSum('balance');
+        $query = $builder->get();
+        
+        $result = $query->getRow();
+
+        $result = new \ArrayObject((array)$result, \ArrayObject::ARRAY_AS_PROPS);
+
+        return $result->balance ?? 0;
+
+    }
+
+
     public function get_all()
     {
         $builder = $this->db->table($this->table);

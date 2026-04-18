@@ -11,6 +11,7 @@
                     
                     <input type="hidden" id="pembahasan_id" name="id" >
                     <input type="hidden" id="materi_id" name="id_materi" >
+                    <input type="hidden" id="custom_id" name="id_materi_custom" value="<?=$id_materi_custom ?? ''?>" >
                     <input type="hidden" id="pembahasan_id_bab" name="id_bab" >
                     <input type="hidden" id="pembahasan_id_user" name="id_user" >
 

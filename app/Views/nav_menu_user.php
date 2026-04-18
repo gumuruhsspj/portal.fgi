@@ -12,6 +12,10 @@
     </div>
 </div>
 
+ <span class="d-block text-info text-center" >
+          <label id="current-date-time">  </label>
+  </span>
+
 <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <!-- Add icons to the links using the .nav-icon class
@@ -98,7 +102,7 @@
           <li class="nav-header">Online CS</li>
           <li class="nav-item">
             <a target="_blank" title="<?= $wa_cs01_name;?>" href="<?= $wa_cs01_link; ?>" class="nav-link <?= $wa_cs01_display;?>">
-             <i class="nav-icon fa-solid fa-comment"></i>
+              <i class="nav-icon fas fa-headset"></i>
               <p>
                 CS #01
               </p>
@@ -106,7 +110,7 @@
           </li>
           <li class="nav-item">
             <a target="_blank" title="<?= $wa_cs02_name;?>" href="<?= $wa_cs02_link; ?>" class="nav-link <?= $wa_cs02_display;?>">
-                 <i class="nav-icon fa-solid fa-comment"></i>
+                  <i class="nav-icon fas fa-headset"></i>
               <p>
                 CS #02
               </p>

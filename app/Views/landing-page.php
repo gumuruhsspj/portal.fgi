@@ -69,7 +69,7 @@
             <p>Mempermudah akses data manajemen, jadwal, hingga materi yang bisa diakses kapan saja, dan dimanapun bersama <b>FGroupIndonesia</b>!</p>
             <div class="d-flex">
               <a href="#" data-bs-toggle="modal" data-bs-target="#loginModal" class="btn-get-started">Login</a>
-              <a href="https://www.youtube.com/watch?v=Y7f98aduVJ8" class="glightbox btn-watch-video d-flex align-items-center"><i class="bi bi-play-circle"></i><span>Fakta Kerja</span></a>
+              <a href="#" data-bs-toggle="modal" data-bs-target="#videoModal" class="glightbox btn-watch-video d-flex align-items-center"><i class="bi bi-play-circle"></i><span>Fakta Kerja</span></a>
             </div>
             <?php 
               if(!empty($error)){
@@ -622,6 +622,7 @@
   <?php include('modal_login.php'); ?>
   <?php include('modal_registrasi.php'); ?>
   <?php include('modal_kenapa_kursus.php'); ?>
+  <?php include('modal_video_intro.php'); ?>
 
   <!-- Vendor JS Files -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

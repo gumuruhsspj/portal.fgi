@@ -38,10 +38,7 @@
   <!-- Main Sidebar Container -->
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
-    <a href="/" class="brand-link">
-      <img src="/assets/img/fgroupindonesia.jpg" alt="FGroupIndonesia Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-      <span class="brand-text font-weight-light">FGroupIndonesia</span>
-    </a>
+    <?php include('brand_logo.php'); ?>
 
     <!-- Sidebar -->
     <div class="sidebar">
@@ -63,6 +60,9 @@
         <div class="row mb-2">
           <div class="col-sm-6">
             <h1 class="m-0"><?= $title;?></h1>
+            <?php if($title!='Materi Terpilih'): ?>
+            <h4 > Kategori : <?= $category ?? 'Semua';?></h4> 
+            <?php endif; ?>
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
@@ -119,10 +119,13 @@
                       <th style="width: 20%">
                           Nama Materi
                       </th>
-                      <th style="width: 30%">
+                      <th >
                           Kategori
                       </th>
                       <th>
+                          Paket
+                      </th>
+                      <th style="width: 30%">
                           Deskripsi
                       </th>
                       <th style="width: 8%" class="text-center">
@@ -151,6 +154,9 @@
                       </td>
                       <td>
                          <?= $duser->kategori; ?>
+                      </td>
+                       <td>
+                         <?= $duser->paket; ?>
                       </td>
                       <td class="project_progress">
                           <?= $duser->deskripsi; ?>
@@ -183,6 +189,14 @@
                           </a>
                         <?php endif; ?>
                          
+                        <?php  if($duser->status == 'completed'): ?>
+                          <a class="btn btn-primary btn-sm" href="/materi/start/?id=<?=$duser->id_materi ;?>">
+                              <i class="fa-solid fa-play"></i>
+                              </i>
+                              Simak Lagi
+                          </a>
+                        <?php endif; ?>
+
                          <?php if($duser->status != 'completed' && $duser->status != 'error' && $duser->status != 'delete request'): ?>  
                           <a class="btn btn-danger btn-sm" href="#">
                               <i class="fa-solid fa-xmark"></i>
@@ -250,7 +264,7 @@
 <script src="/assets/vendor/chart.js/Chart.min.js"></script>
 <script src="/assets/js/settings.js"></script>
 <script src="/assets/js/customer-services.js"></script>
-
+<script src="/assets/js/timer.js"></script>
 <script src="/assets/js/pages/dashboard3.js"></script>
 <script src="/assets/js/saldo.js"></script>
 

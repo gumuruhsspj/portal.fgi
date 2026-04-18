@@ -46,6 +46,25 @@ class MemberAfiliasiModel extends Model
 
     }
 
+     public function get_all_by($filter)
+    {
+        $builder = $this->db->table($this->table_name);
+
+        $builder->where($filter);
+
+        $query = $builder->get();
+         $manyData = $builder->countAllResults();
+
+        if($manyData > 0){
+
+            return $query->getResult();
+
+        }else {
+            return false;
+        }
+
+    }
+
      public function get_by($dataFilter)
     {
         $builder = $this->db->table($this->table_name);

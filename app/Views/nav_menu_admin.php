@@ -9,10 +9,19 @@
         <span class="d-block text-warning" style="font-size: 0.9rem; font-weight: bold;">
             <i class="fas fa-wallet mr-1"></i> Rp <?= number_format($saldo, 0, ',', '.'); ?>
         </span>
+
+        
     </div>
+
+   
+    
 </div>
 
-    
+ <span class="d-block text-info text-center" >
+          <label id="current-date-time">  </label>
+  </span>
+
+ 
 
 <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
@@ -21,7 +30,7 @@
           
            <li class="nav-item">
             <a href="/homepage" class="nav-link <?= isset($link_dashboard_active) ? 'active' : '' ;?>">
-              <i class="nav-icon fas fa-book"></i>
+              <i class="nav-icon fa-thin fa-house"></i>
               <p>
                Dashboard
               </p>
@@ -84,35 +93,19 @@
           </li>
           <li class="nav-item">
             <a href="/customer-services" data-bs-toggle="modal" data-bs-target="#customerServicesModal" class="nav-link <?= isset($link_customer_service_active) ? 'active' : '' ;?>">
-              <i class="nav-icon far fa-image"></i>
+              <i class="nav-icon fas fa-headset"></i>
               <p>
                Customer Services
               </p>
             </a>
           </li>
 
-          <li class="nav-header">Saldo</li>
-          <li class="nav-item">
-            <a  href="/riwayat-saldo" class="nav-link <?= isset($menu_riwayat_saldo_active) ? $menu_riwayat_saldo_active : "" ;?>">
-             <i class="nav-icon fa-solid fa-clock-rotate-left"></i>
-              <p>
-                Riwayat Saldo
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a  href="#" class="nav-link" data-bs-target="#isiSaldoModal" data-bs-toggle="modal" >
-            <i class="nav-icon fa-solid fa-file-invoice-dollar"></i>
-              <p>
-                Isi Ulang
-              </p>
-            </a>
-          </li>
+         
          
           <li class="nav-header">Online CS</li>
           <li class="nav-item">
             <a target="_blank" title="<?= $wa_cs01_name;?>" href="<?= $wa_cs01_link; ?>" class="nav-link <?= $wa_cs01_display;?>">
-              <i class="nav-icon fas fa-calendar-alt"></i>
+              <i class="nav-icon fas fa-headset"></i>
               <p>
                 CS #01
               </p>
@@ -120,7 +113,7 @@
           </li>
           <li class="nav-item">
             <a target="_blank" title="<?= $wa_cs02_name;?>" href="<?= $wa_cs02_link; ?>" class="nav-link <?= $wa_cs02_display;?>">
-              <i class="nav-icon far fa-image"></i>
+              <i class="nav-icon fas fa-headset"></i>
               <p>
                 CS #02
               </p>

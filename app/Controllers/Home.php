@@ -87,7 +87,12 @@ class Home extends BaseController
 
         $data = $this->get_user_data();
       
-         $data_saldo = $this->model_history_saldo->get_all();
+       
+        // hitung saja ada brp balance yg user miliki
+        // karena sistemnya uang user ada di admin (pemilik system)
+        
+
+        $data_saldo = $this->model_history_saldo->get_all();
         
          $data['management_data'] = $data_saldo;
          
@@ -96,7 +101,7 @@ class Home extends BaseController
          $data['link_management_open'] = 'menu-open';
          $data['link_management_pembayaran_active'] = 'active';
          $data['random'] = '?' . rand(0,11);
- 
+        
          return view('management_pembayaran', $data);
 
     }
@@ -108,11 +113,16 @@ class Home extends BaseController
          $data = $this->get_user_data();
 
          $id = $this->request->getGet('materi_id');
+         $cid = $this->request->getGet('custom_id');
          
-         $data_materi = $this->model_materi->get_by(['id'=>$id]);
+         $filter1 = ['id'=>$id];
+         $data_materi = $this->model_materi->get_by($filter1);
+
+         $filter2 = ['id'=>$cid];
+         $data_materi_custom = $this->model_materi->get_custom_by($filter2);
          
          // data returned is in object instead of array
-         $data_all_bab = $this->model_materi->get_all_bab_by_materi_id($id);
+         $data_all_bab = $this->model_materi->get_all_bab_by_materi_id($id, $cid);
 
          // loop lagi
          $data_all_pembahasan = array();
@@ -121,8 +131,13 @@ class Home extends BaseController
             $data_all_pembahasan[$data_bab->id] = $this->model_materi->get_all_pembahasan_by_bab_id($data_bab->id);
          }
          
-         $data['judul_materi'] = $data_materi->judul;    
+         $data['judul_materi'] = $data_materi->judul;   
+
+         $data['judul_materi_custom'] = $data_materi_custom->nama_template ?? '';    
+
          $data['id_materi'] = $data_materi->id;
+         $data['id_materi_custom'] = $cid;
+
          $data['management_data'] = $data_all_bab;
          $data['management_pembahasan'] = $data_all_pembahasan;
         $data['jumlah_data'] = sizeof($data_all_bab);
@@ -242,6 +257,7 @@ class Home extends BaseController
         $data['link_management_materi_active'] = 'active';
 
         $data['usertype'] = $as;
+        $data['id_materi'] = $id_materi;
         $data['data_user'] = $data_user;
         $data['random'] = '?' . rand(1,1000);
         
@@ -347,6 +363,7 @@ class Home extends BaseController
          $data['data_materi'] = $data_materi;
 
          $data['title'] = "Seluruh Materi";
+         $data['category'] = $cat;
          $data['menu_materi_open'] = "menu-open";
          $data['menu_seluruh_materi_active'] = "active";
          $data['menu_materi_terpilih_active'] = "";
@@ -363,11 +380,12 @@ class Home extends BaseController
 
         $data = $this->get_user_data();
         $us = $data['username'];
+        $id_user = $data['id_user'];
 
         // check dulu ini student udah daftar blm di table_student_materi
         
         // pastikan user ini terdaftar dalam id materi tersebut
-        $data_student_materi = $this->model_materi->get_subscribed_materi($id_materi, $us);
+        $data_student_materi = $this->model_materi->get_subscribed_materi($id_materi, $id_user);
         $url = '';
 
         if($data_student_materi != false){
@@ -382,10 +400,14 @@ class Home extends BaseController
             }
 
             $filter  = array(
-                'id_materi' => $data_student_materi->id
+                'id_user' => $id_user
             );
 
-            $data_detail_materi = $this->model_materi->get_all_detail_by_username($us);
+            if($paket != 'paket_kasus_custom'){
+                $data_detail_materi = $this->model_materi->get_all_detail_by($filter);
+            }else {
+                $data_detail_materi = $this->model_materi->get_all_custom_detail_by($filter);
+            }
             $size = 0;
 
             if($data_detail_materi != false){
@@ -431,28 +453,35 @@ class Home extends BaseController
 
     }
 
-   
-
     public function management_saldo_history(){
 
             $this->is_logged_in();
     
             $data = $this->get_user_data();
         
-            $data_history_saldo = $this->model_history_saldo->findAll();
+            $data_history_saldo = $this->model_history_saldo->get_history_with_user();
+            $balance = 0;
 
             if($data['usertype'] != 'admin' ){
-                $filter_data = array(
-                    'id_user' => $data['username']
+                $filter_1 = array(
+                    'id_user' => $data['id_user']
+                );
+
+                $filter_2 = array(
+                    'id_user' => $data['id_user'],
+                    'status' => 'approved'
                 );
     
-                $data_history_saldo = $this->model_history_saldo->get_all_by($filter_data);
+                $data_history_saldo = $this->model_history_saldo->get_all_by($filter_1);
+                $balance = $this->model_history_saldo->get_saldo_by($filter_2);
             }
 
             $data['management_data'] = $data_history_saldo;
-           
+            $data['nomer'] = 1;
+            $data['balance'] = $balance;
             $data['menu_riwayat_saldo_active'] = 'active';
     
+            //echo var_dump($data_history_saldo);
             return view('management_saldo_history', $data);
 
     }
@@ -637,7 +666,6 @@ class Home extends BaseController
         
         $data = $this->get_user_data();
         $data['menu_dashboard_active'] = 'active';
-
 
         if($data['usertype'] == 'peserta'){
             return view('homepage_student', $data);

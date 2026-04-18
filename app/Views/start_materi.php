@@ -227,6 +227,7 @@
 
   <!-- Main Footer -->
   <?php include('footer.php'); ?>
+  <?php include('modal_usulan_materi.php'); ?>
  <?php include('modal_customer_services.php'); ?>
 
 </div>
@@ -255,7 +256,7 @@
 <script src="/assets/js/settings.js"></script>
 <script src="/assets/js/customer-services.js"></script>
 <script src="/assets/js/start-materi.js"></script>
-
+<script src="/assets/js/timer.js"></script>
 
 <script src="/assets/js/pages/dashboard3.js"></script>
 </body>

@@ -40,10 +40,7 @@
   <!-- Main Sidebar Container -->
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
-    <a href="index3.html" class="brand-link">
-      <img src="/assets/img/fgroupindonesia.jpg" alt="FGroupIndonesia Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-      <span class="brand-text font-weight-light">FGroupIndonesia</span>
-    </a>
+   <?php include('brand_logo.php'); ?>
 
     <!-- Sidebar -->
     <div class="sidebar">
@@ -102,7 +99,7 @@
                 <table id="table-management-materi" class="table table-striped table-valign-middle">
                   <thead>
                   <tr>
-                      <th><input type="checkbox" id="select-all" class="data-selected" ></th>
+                      <th><input type="checkbox" id="select-all"  ></th>
                     <th>Judul </th>
                     <?php if(session()->get('usertype')=='admin'): ?>
                     <th>Owner</th>
@@ -137,10 +134,7 @@
     <li><a class="dropdown-item edit-single" data-id="<?= $row->id; ?>" href="#">Edit </a></li>
     <li><a class="dropdown-item delete-single" data-id="<?= $row->id; ?>" href="#">Delete</a></li>
     <hr>
-    <li><a class="dropdown-item paket-single" data-id="<?= $row->id; ?>" href="#">Paket</a></li>
-    <li><a class="dropdown-item pembahasan-single" data-id="<?= $row->id; ?>" href="#">Pembahasan</a></li>
-    <li><a class="dropdown-item quiz-single" data-id="<?= $row->id; ?>" href="#">Quiz</a></li>
-    
+    <li><a class="dropdown-item pembahasan-single" data-id-materi="<?=$id_materi;?>" data-id="<?= $row->id; ?>" href="#">Pembahasan</a></li>    
   </ul>
 </div>
                     </td>
@@ -176,21 +170,23 @@
 
 <?php include('modal_materi_custom.php'); ?>
 <?php include('modal_customer_services.php'); ?>
+<?php include('modal_usulan_materi.php'); ?>
 
 
 <!-- REQUIRED SCRIPTS -->
 
 <!-- jQuery -->
 <script src="/assets/js/jquery371.min.js"></script>
+<script src="/assets/js/sweetalert2@11.js"></script>
 
 <!-- Bootstrap -->
 <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="/assets/vendor/datatables/jquery.dataTables.min.js"></script>
 <!-- AdminLTE -->
-<script src="/assets/js/manage-materi.js<?=$random;?>"></script>
+<script src="/assets/js/manage-materi-custom.js<?=$random;?>"></script>
 <script src="/assets/js/settings.js<?=$random;?>"></script>
 <script src="/assets/js/customer-services.js<?=$random;?>"></script>
-
+<script src="/assets/js/timer.js"></script>
 <script src="/assets/js/adminlte.js<?=$random;?>"></script>
 
 </body>

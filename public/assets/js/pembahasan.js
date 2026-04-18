@@ -90,6 +90,9 @@ $(document).ready(function() {
         let id_userna = $('#id_user').val();
         let id_babna = card.data("id");
         let id_materina = card.data("id-materi");
+
+        let id_materi_custom = $('#id_materi_custom').val();
+
         let judul_na = card.find(".judul").val();
         let deskripsi_na = card.find(".deskripsi").val();
         let btn_save = card.find('.save-card');
@@ -115,6 +118,12 @@ $(document).ready(function() {
                 judul: judul_na,
                 deskripsi: deskripsi_na
             };
+
+            if(id_materi_custom){
+                dataNa.id_materi_custom = id_materi_custom;
+            }
+
+            //alert(id_materi_custom);
 
             urlTarget = _URL_ADD_BAB_PEMBAHASAN;
         }
@@ -293,16 +302,23 @@ $(document).ready(function() {
 
         let id_babna = card.data("id");
         let id_materina = card.data('id-materi');
+        let id_materi_customna = $('#id_materi_custom').val();
 
         $('#materi_id').val(id_materina);
         $('#pembahasan_id_bab').val(id_babna);
         $('#pembahasan_id_user').val($('#id_user').val());
         
+        let dataNa = {id_bab: id_babna};
+
+        if(id_materi_customna){
+            dataNa.id_materi_custom = id_materi_customna;
+        }
+
         // panggil ajax untuk dptin nomor urut brikutnya
         $.ajax({
             url: _URL_NEXT_NO_URUT_PEMBAHASAN,
             method: 'POST',
-            data: {id_bab: id_babna},
+            data: dataNa,
             dataType: 'json',
             success: function(response) {
                 console.log("Next urut fetched successfully:", response);
@@ -372,6 +388,7 @@ $(document).ready(function() {
 
         let idmaterina = $(this).find('#materi_id').val();
         let idna = $(this).find('#pembahasan_id').val();
+        let idmatericustomna = $(this).find('#custom_id');
 
         if(idna){
             urlTarget = _URL_UPDATE_PEMBAHASAN;
