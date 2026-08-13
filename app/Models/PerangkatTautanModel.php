@@ -28,7 +28,7 @@ class PerangkatTautanModel extends Model
         }
     }
 
-     public function get_all_by_username($username)
+     public function get_all_by_userid($id_user)
     {
         $builder = $this->db->table($this->table_name);
 
@@ -36,7 +36,7 @@ class PerangkatTautanModel extends Model
         $builder->join($this->table_student_materi_name, $this->table_name.'.id_materi=' . $this->table_student_materi_name . '.id_materi');
 
         $data = array(
-            $this->table_student_materi_name . '.username' => $username
+            $this->table_student_materi_name . '.id_user' => $id_user
         );
 
         $builder->where($data);

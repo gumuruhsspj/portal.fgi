@@ -1,0 +1,256 @@
+INFO - 2026-04-22 04:34:37 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2026-04-22 04:34:39 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2026-04-22 04:34:39 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2026-04-22 04:34:39 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2026-04-22 04:34:39 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2026-04-22 04:40:11 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2026-04-22 04:40:12 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2026-04-22 04:41:35 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2026-04-22 04:41:35 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2026-04-22 04:42:41 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-04-22 04:42:41 --> mysqli_sql_exception: Unknown column 'table_student_materi.username' in 'where clause' in C:\xampp\htdocs\portal-fgroupindonesia\system\Database\MySQLi\Connection.php:308
+Stack trace:
+#0 C:\xampp\htdocs\portal-fgroupindonesia\system\Database\MySQLi\Connection.php(308): mysqli->query('SELECT *, `tabl...', 0)
+#1 C:\xampp\htdocs\portal-fgroupindonesia\system\Database\BaseConnection.php(722): CodeIgniter\Database\MySQLi\Connection->execute('SELECT *, `tabl...')
+#2 C:\xampp\htdocs\portal-fgroupindonesia\system\Database\BaseConnection.php(636): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT *, `tabl...')
+#3 C:\xampp\htdocs\portal-fgroupindonesia\system\Database\BaseBuilder.php(1629): CodeIgniter\Database\BaseConnection->query('SELECT *, `tabl...', Array, false)
+#4 C:\xampp\htdocs\portal-fgroupindonesia\app\Models\MateriModel.php(536): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\portal-fgroupindonesia\app\Controllers\Home.php(549): App\Models\MateriModel->get_all_by_student('gumuruh')
+#6 C:\xampp\htdocs\portal-fgroupindonesia\system\CodeIgniter.php(933): App\Controllers\Home->display_selected_materi()
+#7 C:\xampp\htdocs\portal-fgroupindonesia\system\CodeIgniter.php(509): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Home))
+#8 C:\xampp\htdocs\portal-fgroupindonesia\system\CodeIgniter.php(355): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp\htdocs\portal-fgroupindonesia\system\Boot.php(312): CodeIgniter\CodeIgniter->run()
+#10 C:\xampp\htdocs\portal-fgroupindonesia\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 C:\xampp\htdocs\portal-fgroupindonesia\public\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 {main}
+CRITICAL - 2026-04-22 04:42:41 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'table_student_materi.username' in 'where clause'
+[Method: GET, Route: materi-terpilih]
+in SYSTEMPATH\Database\BaseConnection.php on line 676.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1629): CodeIgniter\Database\BaseConnection->query('SELECT *, `table_student_materi`.`paket`
+FROM `table_materi`
+JOIN `table_student_materi` ON `table_materi`.`id`=`table_student_materi`.`id_materi`
+WHERE `table_student_materi`.`username` = :table_student_materi.username:', [...], false)
+ 2 APPPATH\Models\MateriModel.php(536): CodeIgniter\Database\BaseBuilder->get()
+ 3 APPPATH\Controllers\Home.php(549): App\Models\MateriModel->get_all_by_student('gumuruh')
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Home->display_selected_materi()
+ 5 SYSTEMPATH\CodeIgniter.php(509): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Home))
+ 6 SYSTEMPATH\CodeIgniter.php(355): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(312): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-04-22 04:42:41 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'table_student_materi.username' in 'where clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 313.
+ 1 SYSTEMPATH\Database\BaseConnection.php(722): CodeIgniter\Database\MySQLi\Connection->execute('SELECT *, `table_student_materi`.`paket`
+FROM `table_materi`
+JOIN `table_student_materi` ON `table_materi`.`id`=`table_student_materi`.`id_materi`
+WHERE `table_student_materi`.`username` = \'gumuruh\'')
+ 2 SYSTEMPATH\Database\BaseConnection.php(636): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT *, `table_student_materi`.`paket`
+FROM `table_materi`
+JOIN `table_student_materi` ON `table_materi`.`id`=`table_student_materi`.`id_materi`
+WHERE `table_student_materi`.`username` = \'gumuruh\'')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1629): CodeIgniter\Database\BaseConnection->query('SELECT *, `table_student_materi`.`paket`
+FROM `table_materi`
+JOIN `table_student_materi` ON `table_materi`.`id`=`table_student_materi`.`id_materi`
+WHERE `table_student_materi`.`username` = :table_student_materi.username:', [...], false)
+ 4 APPPATH\Models\MateriModel.php(536): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH\Controllers\Home.php(549): App\Models\MateriModel->get_all_by_student('gumuruh')
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Home->display_selected_materi()
+ 7 SYSTEMPATH\CodeIgniter.php(509): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Home))
+ 8 SYSTEMPATH\CodeIgniter.php(355): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(312): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-04-22 04:42:41 --> [Caused by] mysqli_sql_exception: Unknown column 'table_student_materi.username' in 'where clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 308.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(308): mysqli->query('SELECT *, `table_student_materi`.`paket`
+FROM `table_materi`
+JOIN `table_student_materi` ON `table_materi`.`id`=`table_student_materi`.`id_materi`
+WHERE `table_student_materi`.`username` = \'gumuruh\'', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(722): CodeIgniter\Database\MySQLi\Connection->execute('SELECT *, `table_student_materi`.`paket`
+FROM `table_materi`
+JOIN `table_student_materi` ON `table_materi`.`id`=`table_student_materi`.`id_materi`
+WHERE `table_student_materi`.`username` = \'gumuruh\'')
+ 3 SYSTEMPATH\Database\BaseConnection.php(636): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT *, `table_student_materi`.`paket`
+FROM `table_materi`
+JOIN `table_student_materi` ON `table_materi`.`id`=`table_student_materi`.`id_materi`
+WHERE `table_student_materi`.`username` = \'gumuruh\'')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1629): CodeIgniter\Database\BaseConnection->query('SELECT *, `table_student_materi`.`paket`
+FROM `table_materi`
+JOIN `table_student_materi` ON `table_materi`.`id`=`table_student_materi`.`id_materi`
+WHERE `table_student_materi`.`username` = :table_student_materi.username:', [...], false)
+ 5 APPPATH\Models\MateriModel.php(536): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\Home.php(549): App\Models\MateriModel->get_all_by_student('gumuruh')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Home->display_selected_materi()
+ 8 SYSTEMPATH\CodeIgniter.php(509): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Home))
+ 9 SYSTEMPATH\CodeIgniter.php(355): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(312): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+INFO - 2026-04-22 04:42:49 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2026-04-22 04:42:51 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2026-04-22 04:42:53 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-04-22 04:42:53 --> mysqli_sql_exception: Unknown column 'table_student_materi.username' in 'where clause' in C:\xampp\htdocs\portal-fgroupindonesia\system\Database\MySQLi\Connection.php:308
+Stack trace:
+#0 C:\xampp\htdocs\portal-fgroupindonesia\system\Database\MySQLi\Connection.php(308): mysqli->query('SELECT *, `tabl...', 0)
+#1 C:\xampp\htdocs\portal-fgroupindonesia\system\Database\BaseConnection.php(722): CodeIgniter\Database\MySQLi\Connection->execute('SELECT *, `tabl...')
+#2 C:\xampp\htdocs\portal-fgroupindonesia\system\Database\BaseConnection.php(636): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT *, `tabl...')
+#3 C:\xampp\htdocs\portal-fgroupindonesia\system\Database\BaseBuilder.php(1629): CodeIgniter\Database\BaseConnection->query('SELECT *, `tabl...', Array, false)
+#4 C:\xampp\htdocs\portal-fgroupindonesia\app\Models\MateriModel.php(536): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\portal-fgroupindonesia\app\Controllers\Home.php(549): App\Models\MateriModel->get_all_by_student('gumuruh')
+#6 C:\xampp\htdocs\portal-fgroupindonesia\system\CodeIgniter.php(933): App\Controllers\Home->display_selected_materi()
+#7 C:\xampp\htdocs\portal-fgroupindonesia\system\CodeIgniter.php(509): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Home))
+#8 C:\xampp\htdocs\portal-fgroupindonesia\system\CodeIgniter.php(355): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp\htdocs\portal-fgroupindonesia\system\Boot.php(312): CodeIgniter\CodeIgniter->run()
+#10 C:\xampp\htdocs\portal-fgroupindonesia\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 C:\xampp\htdocs\portal-fgroupindonesia\public\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 {main}
+CRITICAL - 2026-04-22 04:42:53 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'table_student_materi.username' in 'where clause'
+[Method: GET, Route: materi-terpilih]
+in SYSTEMPATH\Database\BaseConnection.php on line 676.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1629): CodeIgniter\Database\BaseConnection->query('SELECT *, `table_student_materi`.`paket`
+FROM `table_materi`
+JOIN `table_student_materi` ON `table_materi`.`id`=`table_student_materi`.`id_materi`
+WHERE `table_student_materi`.`username` = :table_student_materi.username:', [...], false)
+ 2 APPPATH\Models\MateriModel.php(536): CodeIgniter\Database\BaseBuilder->get()
+ 3 APPPATH\Controllers\Home.php(549): App\Models\MateriModel->get_all_by_student('gumuruh')
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Home->display_selected_materi()
+ 5 SYSTEMPATH\CodeIgniter.php(509): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Home))
+ 6 SYSTEMPATH\CodeIgniter.php(355): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(312): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-04-22 04:42:53 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'table_student_materi.username' in 'where clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 313.
+ 1 SYSTEMPATH\Database\BaseConnection.php(722): CodeIgniter\Database\MySQLi\Connection->execute('SELECT *, `table_student_materi`.`paket`
+FROM `table_materi`
+JOIN `table_student_materi` ON `table_materi`.`id`=`table_student_materi`.`id_materi`
+WHERE `table_student_materi`.`username` = \'gumuruh\'')
+ 2 SYSTEMPATH\Database\BaseConnection.php(636): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT *, `table_student_materi`.`paket`
+FROM `table_materi`
+JOIN `table_student_materi` ON `table_materi`.`id`=`table_student_materi`.`id_materi`
+WHERE `table_student_materi`.`username` = \'gumuruh\'')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1629): CodeIgniter\Database\BaseConnection->query('SELECT *, `table_student_materi`.`paket`
+FROM `table_materi`
+JOIN `table_student_materi` ON `table_materi`.`id`=`table_student_materi`.`id_materi`
+WHERE `table_student_materi`.`username` = :table_student_materi.username:', [...], false)
+ 4 APPPATH\Models\MateriModel.php(536): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH\Controllers\Home.php(549): App\Models\MateriModel->get_all_by_student('gumuruh')
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Home->display_selected_materi()
+ 7 SYSTEMPATH\CodeIgniter.php(509): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Home))
+ 8 SYSTEMPATH\CodeIgniter.php(355): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(312): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-04-22 04:42:53 --> [Caused by] mysqli_sql_exception: Unknown column 'table_student_materi.username' in 'where clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 308.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(308): mysqli->query('SELECT *, `table_student_materi`.`paket`
+FROM `table_materi`
+JOIN `table_student_materi` ON `table_materi`.`id`=`table_student_materi`.`id_materi`
+WHERE `table_student_materi`.`username` = \'gumuruh\'', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(722): CodeIgniter\Database\MySQLi\Connection->execute('SELECT *, `table_student_materi`.`paket`
+FROM `table_materi`
+JOIN `table_student_materi` ON `table_materi`.`id`=`table_student_materi`.`id_materi`
+WHERE `table_student_materi`.`username` = \'gumuruh\'')
+ 3 SYSTEMPATH\Database\BaseConnection.php(636): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT *, `table_student_materi`.`paket`
+FROM `table_materi`
+JOIN `table_student_materi` ON `table_materi`.`id`=`table_student_materi`.`id_materi`
+WHERE `table_student_materi`.`username` = \'gumuruh\'')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1629): CodeIgniter\Database\BaseConnection->query('SELECT *, `table_student_materi`.`paket`
+FROM `table_materi`
+JOIN `table_student_materi` ON `table_materi`.`id`=`table_student_materi`.`id_materi`
+WHERE `table_student_materi`.`username` = :table_student_materi.username:', [...], false)
+ 5 APPPATH\Models\MateriModel.php(536): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\Home.php(549): App\Models\MateriModel->get_all_by_student('gumuruh')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Home->display_selected_materi()
+ 8 SYSTEMPATH\CodeIgniter.php(509): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Home))
+ 9 SYSTEMPATH\CodeIgniter.php(355): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(312): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+INFO - 2026-04-22 04:46:10 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2026-04-22 04:46:17 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2026-04-22 04:46:18 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-04-22 04:46:18 --> mysqli_sql_exception: Unknown column 'table_student_materi.username' in 'where clause' in C:\xampp\htdocs\portal-fgroupindonesia\system\Database\MySQLi\Connection.php:308
+Stack trace:
+#0 C:\xampp\htdocs\portal-fgroupindonesia\system\Database\MySQLi\Connection.php(308): mysqli->query('SELECT *\nFROM `...', 0)
+#1 C:\xampp\htdocs\portal-fgroupindonesia\system\Database\BaseConnection.php(722): CodeIgniter\Database\MySQLi\Connection->execute('SELECT *\nFROM `...')
+#2 C:\xampp\htdocs\portal-fgroupindonesia\system\Database\BaseConnection.php(636): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT *\nFROM `...')
+#3 C:\xampp\htdocs\portal-fgroupindonesia\system\Database\BaseBuilder.php(1629): CodeIgniter\Database\BaseConnection->query('SELECT *\nFROM `...', Array, false)
+#4 C:\xampp\htdocs\portal-fgroupindonesia\app\Models\PerangkatTautanModel.php(44): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\portal-fgroupindonesia\app\Controllers\Home.php(334): App\Models\PerangkatTautanModel->get_all_by_username('gumuruh')
+#6 C:\xampp\htdocs\portal-fgroupindonesia\system\CodeIgniter.php(933): App\Controllers\Home->display_all_perangkat_tautan()
+#7 C:\xampp\htdocs\portal-fgroupindonesia\system\CodeIgniter.php(509): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Home))
+#8 C:\xampp\htdocs\portal-fgroupindonesia\system\CodeIgniter.php(355): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp\htdocs\portal-fgroupindonesia\system\Boot.php(312): CodeIgniter\CodeIgniter->run()
+#10 C:\xampp\htdocs\portal-fgroupindonesia\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 C:\xampp\htdocs\portal-fgroupindonesia\public\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 {main}
+CRITICAL - 2026-04-22 04:46:18 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'table_student_materi.username' in 'where clause'
+[Method: GET, Route: perangkat-tautan]
+in SYSTEMPATH\Database\BaseConnection.php on line 676.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1629): CodeIgniter\Database\BaseConnection->query('SELECT *
+FROM `table_perangkat_tautan`
+JOIN `table_student_materi` ON `table_perangkat_tautan`.`id_materi`=`table_student_materi`.`id_materi`
+WHERE `table_student_materi`.`username` = :table_student_materi.username:', [...], false)
+ 2 APPPATH\Models\PerangkatTautanModel.php(44): CodeIgniter\Database\BaseBuilder->get()
+ 3 APPPATH\Controllers\Home.php(334): App\Models\PerangkatTautanModel->get_all_by_username('gumuruh')
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Home->display_all_perangkat_tautan()
+ 5 SYSTEMPATH\CodeIgniter.php(509): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Home))
+ 6 SYSTEMPATH\CodeIgniter.php(355): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(312): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-04-22 04:46:18 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'table_student_materi.username' in 'where clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 313.
+ 1 SYSTEMPATH\Database\BaseConnection.php(722): CodeIgniter\Database\MySQLi\Connection->execute('SELECT *
+FROM `table_perangkat_tautan`
+JOIN `table_student_materi` ON `table_perangkat_tautan`.`id_materi`=`table_student_materi`.`id_materi`
+WHERE `table_student_materi`.`username` = \'gumuruh\'')
+ 2 SYSTEMPATH\Database\BaseConnection.php(636): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT *
+FROM `table_perangkat_tautan`
+JOIN `table_student_materi` ON `table_perangkat_tautan`.`id_materi`=`table_student_materi`.`id_materi`
+WHERE `table_student_materi`.`username` = \'gumuruh\'')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1629): CodeIgniter\Database\BaseConnection->query('SELECT *
+FROM `table_perangkat_tautan`
+JOIN `table_student_materi` ON `table_perangkat_tautan`.`id_materi`=`table_student_materi`.`id_materi`
+WHERE `table_student_materi`.`username` = :table_student_materi.username:', [...], false)
+ 4 APPPATH\Models\PerangkatTautanModel.php(44): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH\Controllers\Home.php(334): App\Models\PerangkatTautanModel->get_all_by_username('gumuruh')
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Home->display_all_perangkat_tautan()
+ 7 SYSTEMPATH\CodeIgniter.php(509): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Home))
+ 8 SYSTEMPATH\CodeIgniter.php(355): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(312): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-04-22 04:46:18 --> [Caused by] mysqli_sql_exception: Unknown column 'table_student_materi.username' in 'where clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 308.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(308): mysqli->query('SELECT *
+FROM `table_perangkat_tautan`
+JOIN `table_student_materi` ON `table_perangkat_tautan`.`id_materi`=`table_student_materi`.`id_materi`
+WHERE `table_student_materi`.`username` = \'gumuruh\'', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(722): CodeIgniter\Database\MySQLi\Connection->execute('SELECT *
+FROM `table_perangkat_tautan`
+JOIN `table_student_materi` ON `table_perangkat_tautan`.`id_materi`=`table_student_materi`.`id_materi`
+WHERE `table_student_materi`.`username` = \'gumuruh\'')
+ 3 SYSTEMPATH\Database\BaseConnection.php(636): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT *
+FROM `table_perangkat_tautan`
+JOIN `table_student_materi` ON `table_perangkat_tautan`.`id_materi`=`table_student_materi`.`id_materi`
+WHERE `table_student_materi`.`username` = \'gumuruh\'')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1629): CodeIgniter\Database\BaseConnection->query('SELECT *
+FROM `table_perangkat_tautan`
+JOIN `table_student_materi` ON `table_perangkat_tautan`.`id_materi`=`table_student_materi`.`id_materi`
+WHERE `table_student_materi`.`username` = :table_student_materi.username:', [...], false)
+ 5 APPPATH\Models\PerangkatTautanModel.php(44): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\Home.php(334): App\Models\PerangkatTautanModel->get_all_by_username('gumuruh')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Home->display_all_perangkat_tautan()
+ 8 SYSTEMPATH\CodeIgniter.php(509): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Home))
+ 9 SYSTEMPATH\CodeIgniter.php(355): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(312): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+INFO - 2026-04-22 04:47:51 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2026-04-22 04:47:55 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2026-04-22 04:47:57 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2026-04-22 04:47:58 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2026-04-22 04:48:01 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2026-04-22 04:48:06 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.

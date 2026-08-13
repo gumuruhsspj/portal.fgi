@@ -1,16 +1,16 @@
-const _URL_ADD_MATERI		= "/manage/materi/add";
-const _URL_DELETE_MATERI 	= "/manage/materi/delete";
-const _URL_EDIT_MATERI 		= "/manage/materi/edit";
-const _URL_UPDATE_MATERI 	= "/manage/materi/update";
-const _URL_UPDATE_PAKET_MATERI 	= "/manage/materi/paket/update";
-const _URL_ALL_KATEGORI_MATERI 	= "/manage/materi/kategori/all";
-const _URL_ADD_KATEGORI_MATERI 	= "/manage/materi/kategori/add";
-const _URL_DELETE_KATEGORI_MATERI 	= "/manage/materi/kategori/delete";
+const _URL_ADD_MATERI		= _URL_MAIN_WEBSITE+ "manage/materi/add";
+const _URL_DELETE_MATERI 	= _URL_MAIN_WEBSITE+ "manage/materi/delete";
+const _URL_EDIT_MATERI 		= _URL_MAIN_WEBSITE+ "manage/materi/edit";
+const _URL_UPDATE_MATERI 	= _URL_MAIN_WEBSITE+ "manage/materi/update";
+const _URL_UPDATE_PAKET_MATERI 	= _URL_MAIN_WEBSITE+ "manage/materi/paket/update";
+const _URL_ALL_KATEGORI_MATERI 	= _URL_MAIN_WEBSITE+ "manage/materi/kategori/all";
+const _URL_ADD_KATEGORI_MATERI 	= _URL_MAIN_WEBSITE+ "manage/materi/kategori/add";
+const _URL_DELETE_KATEGORI_MATERI 	= _URL_MAIN_WEBSITE+ "manage/materi/kategori/delete";
 
-const _URL_ALL_COMMENTS_RATING_MATERI 	= "/manage/materi/comments-rating/all";
+const _URL_ALL_COMMENTS_RATING_MATERI 	= _URL_MAIN_WEBSITE+ "manage/materi/comments-rating/all";
 
-const _URL_ADD_ATTACHMENT_MATERI 	= "/manage/materi/attachment/add";
-const _URL_ADD_ICON_MATERI 			= "/manage/materi/icon/add";
+const _URL_ADD_ATTACHMENT_MATERI 	= _URL_MAIN_WEBSITE+ "manage/materi/attachment/add";
+const _URL_ADD_ICON_MATERI 			= _URL_MAIN_WEBSITE+ "manage/materi/icon/add";
 
 
 const _DEBUG = true;

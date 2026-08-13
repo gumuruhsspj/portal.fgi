@@ -1,135 +1,114 @@
-<?php 
+<?php
+
 namespace App\Models;
+
 use CodeIgniter\Model;
 
 class MemberAfiliasiModel extends Model
 {
-    
-	private $table_name = "table_member_afiliasi";
+    protected $table            = 'table_member_afiliasi';
+    protected $primaryKey       = 'id';
+    protected $useAutoIncrement = true;
+    protected $returnType       = 'array';
+    protected $useSoftDeletes   = false;
+    protected $protectFields    = true;
+    protected $allowedFields    = ['id_program', 'id_user', 'kode_referal', 'status', 'user_count_total', 'user_count_confirmed_total', 'user_cash_paid', 'code'];
 
-    public function get_all()
+    // Dates
+    protected $useTimestamps = true;
+    protected $dateFormat    = 'datetime';
+    protected $createdField  = 'date_created';
+    protected $updatedField  = 'date_modified';
+
+// Tambahkan method berikut di dalam class MemberAfiliasiModel
+
+    /**
+     * Update data rekening member afiliasi
+     */
+    public function update_rekening($member_id, $data)
     {
-        $builder = $this->db->table($this->table_name);
-
-        $query = $builder->get();
-        $manyData = $builder->countAllResults();
-
-        if($manyData > 0){
-
-        	return $query->getResult();
-
-        }else {
-        	return false;
-        }
+        return $this->update($member_id, $data);
     }
 
-     public function get_all_by_username($username)
+    /**
+     * Ambil data rekening member berdasarkan user_id dan program_id (opsional)
+     */
+    public function get_rekening_by_user($user_id)
     {
-        $builder = $this->db->table($this->table_name);
-
-        $data = array(
-            'username' => $username
-        );
-
-        $builder->where($data);
-
-        $query = $builder->get();
-         $manyData = $builder->countAllResults();
-
-        if($manyData > 0){
-
-            return $query->getResult();
-
-        }else {
-            return false;
-        }
-
+        return $this->where('id_user', $user_id)
+            ->where('status', 'active')
+            ->orderBy('id', 'DESC')
+            ->first();
     }
 
-     public function get_all_by($filter)
+    /**
+     * Ambil status rekening untuk ditampilkan
+     */
+    public function get_rekening_status($user_id)
     {
-        $builder = $this->db->table($this->table_name);
-
-        $builder->where($filter);
-
-        $query = $builder->get();
-         $manyData = $builder->countAllResults();
-
-        if($manyData > 0){
-
-            return $query->getResult();
-
-        }else {
-            return false;
+        $data = $this->get_rekening_by_user($user_id);
+        if ($data) {
+            return [
+                'status' => $data['status_rekening'] ?? 'pending',
+                'nama_bank' => $data['nama_bank'] ?? '',
+                'nama_pemilik' => $data['nama_pemilik'] ?? '',
+                'nomor_rekening' => $data['nomor_rekening'] ?? '',
+                'foto_ktp' => $data['foto_ktp'] ?? '',
+                'foto_selfie' => $data['foto_selfie'] ?? '',
+                'member_id' => $data['id']
+            ];
         }
-
+        return null;
     }
 
-     public function get_by($dataFilter)
+    public function get_all_by($dataFilter)
     {
-        $builder = $this->db->table($this->table_name);
+        $builder = $this->db->table($this->table);
 
         $builder->where($dataFilter);
 
         $query = $builder->get();
         $manyData = $builder->countAllResults();
 
-        if($manyData > 0){
+        if ($manyData > 0) {
 
-            return $query->getResult()[0];
-
-        }else {
-            return false;
-        }
-
-    }
-
-    public function valid($data){
-        $builder = $this->db->table($this->table_name);
-
-        $builder->where($data);
-
-        $manyData = $builder->countAllResults();
-
-        if($manyData > 0){
-            return true;
-        }else {
+            return $query->getResult();
+        } else {
             return false;
         }
     }
 
-    public function insert_new($data){
-        $query = $this->db->table($this->table_name)->insert($data);
-         
-         if($query){
-            return true;
+    /**
+     * Generate kode referal unik (8 karakter alfanumerik)
+     */
+    public function generate_kode_referal($id_user, $id_program)
+    {
+        $base = substr(md5($id_user . $id_program . rand(1000, 9999)), 0, 8);
+        // Pastikan unik
+        while ($this->where('kode_referal', $base)->first()) {
+            $base = substr(md5($id_user . $id_program . rand(1000, 9999)), 0, 8);
         }
-
-        return false;
+        return $base;
     }
 
-    public function update_existing($data, $id)
+    /**
+     * Cek apakah user sudah join program tertentu
+     */
+    public function isJoin($id_user, $id_program)
     {
-        $query = $this->db->table($this->table_name)->update($data, array('id' => $id));
-        
-        if($query){
-            return true;
-        }
-
-        return false;
-
+        return $this->where(['id_user' => $id_user, 'id_program' => $id_program, 'status' => 'active'])->first() ? true : false;
     }
 
-    public function delete_existing($id)
+    /**
+     * Ambil keanggotaan user beserta program
+     */
+    public function get_member_with_program($id_user)
     {
-        $query = $this->db->table($this->table_name)->delete(array('id' => $id));
-       
-       if($query){
-            return true;
-        }
-
-        return false;
-    } 
-
-  
+        $builder = $this->db->table($this->table . ' m');
+        $builder->select('m.*, p.nama as program_nama, p.deskripsi as program_deskripsi');
+        $builder->join('table_program_afiliasi p', 'p.id = m.id_program_afiliasi', 'left');
+        $builder->where('m.id_user', $id_user);
+        $builder->where('m.status', 'active');
+        return $builder->get()->getResultArray();
+    }
 }

@@ -520,7 +520,7 @@ public function get_all_custom($username = null, $id_materi = null)
     return false;
 }
 
-     public function get_all_by_student($username = null)
+     public function get_all_by_student($id_user = null)
     {
         $builder = $this->db->table($this->table);
 
@@ -528,7 +528,7 @@ public function get_all_custom($username = null, $id_materi = null)
         $builder->join($this->table_student_materi_name, $this->table.'.id=' . $this->table_student_materi_name . '.id_materi');
 
         $data = array(
-            $this->table_student_materi_name . '.username' => $username
+            $this->table_student_materi_name . '.id_user' => $id_user
         );
 
         $builder->where($data);

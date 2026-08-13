@@ -1,25 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Management Info Afiliasi (<?= $usertype; ?>) Portal - Kursus Komputer</title>
- <link href="/assets/img/favicon.ico" rel="icon">
-        <link href="/assets/img/favicon.ico" rel="apple-touch-icon">
-        
+  <link href="<?= base_url() ?>assets/img/favicon.ico" rel="icon">
+  <link href="<?= base_url() ?>assets/img/favicon.ico" rel="apple-touch-icon">
+
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <!-- Font Awesome Icons -->
-  <link rel="stylesheet" href="/assets/vendor/fontawesome-free/css/all.min.css">
-  <link rel="stylesheet" href="/assets/vendor/datatables/dataTables.dataTables.min.css">
+  <link rel="stylesheet" href="<?= base_url() ?>assets/vendor/fontawesome-free/css/all.min.css">
+  <link rel="stylesheet" href="<?= base_url() ?>assets/vendor/datatables/dataTables.dataTables.min.css">
   <!-- IonIcons -->
   <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
   <!-- Theme style -->
-  <link rel="stylesheet" href="/assets/vendor/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="<?= base_url() ?>assets/vendor/bootstrap/css/bootstrap.min.css">
 
-  <link rel="stylesheet" href="/assets/css/adminlte.min.css">
-  <link rel="stylesheet" href="/assets/css/styles-custom-homepage.css">
-  <link rel="stylesheet" href="/assets/css/styles-custom-portal.css">
+  <link rel="stylesheet" href="<?= base_url() ?>assets/css/adminlte.min.css">
+  <link rel="stylesheet" href="<?= base_url() ?>assets/css/styles-custom-homepage.css">
+  <link rel="stylesheet" href="<?= base_url() ?>assets/css/styles-custom-portal.css">
 </head>
 <!--
 `body` tag options:
@@ -30,159 +31,161 @@
   * sidebar-collapse
   * sidebar-mini
 -->
+
 <body class="hold-transition sidebar-mini">
-<div class="wrapper">
-  <!-- Navbar -->
-  <?php include('nav_menu_upper.php'); ?>
-  <!-- /.navbar -->
+  <div class="wrapper">
+    <!-- Navbar -->
+    <?php include('nav_menu_upper.php'); ?>
+    <!-- /.navbar -->
 
-  <!-- Main Sidebar Container -->
-  <aside class="main-sidebar sidebar-dark-primary elevation-4">
-    <!-- Brand Logo -->
-    <?php include('brand_logo.php'); ?>
+    <!-- Main Sidebar Container -->
+    <aside class="main-sidebar sidebar-dark-primary elevation-4">
+      <!-- Brand Logo -->
+      <?php include('brand_logo.php'); ?>
 
-    <!-- Sidebar -->
-    <div class="sidebar">
-     
+      <!-- Sidebar -->
+      <div class="sidebar">
 
-      <!-- Sidebar Menu -->
-    <?php include('nav_menu_admin.php'); ?>
 
-      <!-- /.sidebar-menu -->
-    </div>
-    <!-- /.sidebar -->
-  </aside>
+        <!-- Sidebar Menu -->
+        <?php include('nav_menu_admin.php'); ?>
 
-  <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <div class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1 class="m-0">Info Afiliasi</h1>
-          </div><!-- /.col -->
-          <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="#">Management</a></li>
-              <li class="breadcrumb-item"><a href="#">Info Afiliasi</a></li>
-              
-            </ol>
-          </div><!-- /.col -->
-        </div><!-- /.row -->
-      </div><!-- /.container-fluid -->
-    </div>
-    <!-- /.content-header -->
+        <!-- /.sidebar-menu -->
+      </div>
+      <!-- /.sidebar -->
+    </aside>
 
-    <!-- Main content -->
-    <div class="content">
-      <div class="container-fluid">
-      
-        <div class="row">
-          <div class="col">
-            <div class="card">
-              <div class="card-header border-0">
-                <h3 class="card-title">Total Data : <span>0</span></h3>
-                 <div class="card-tools">
-                  <a href="#" data-bs-toggle="modal" data-bs-target="#infoAfiliasiModal" class="btn btn-tool btn-sm">
-                    <i class="fas fa-plus"></i>
-                  </a>
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+      <!-- Content Header (Page header) -->
+      <div class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <h1 class="m-0">Info Afiliasi</h1>
+            </div><!-- /.col -->
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item"><a href="#">Management</a></li>
+                <li class="breadcrumb-item"><a href="#">Info Afiliasi</a></li>
+
+              </ol>
+            </div><!-- /.col -->
+          </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+      </div>
+      <!-- /.content-header -->
+
+      <!-- Main content -->
+      <div class="content">
+        <div class="container-fluid">
+
+          <div class="row">
+            <div class="col">
+              <div class="card">
+                <div class="card-header border-0">
+                  <h3 class="card-title">Total Data : <span>0</span></h3>
+                  <div class="card-tools">
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#infoAfiliasiModal" class="btn btn-tool btn-sm">
+                      <i class="fas fa-plus"></i>
+                    </a>
                     <a href="#" id="delete-selected" class="btn btn-tool btn-sm">
-                    <i class="fas fa-window-close"></i>
-                  </a>
-                  <a href="#" id="refresh-data" class="btn btn-tool btn-sm">
-                    <i class="fas fa-random"></i>
-                  </a>
+                      <i class="fas fa-window-close"></i>
+                    </a>
+                    <a href="#" id="refresh-data" class="btn btn-tool btn-sm">
+                      <i class="fas fa-random"></i>
+                    </a>
+                  </div>
                 </div>
-              </div>
-              <div class="card-body table-responsive p-0">
-                <table id="table-management-info-afiliasi" class="table table-striped table-valign-middle">
-                  <thead>
-                  <tr>
-                      <th><input type="checkbox" id="select-all" class="data-selected" ></th>
+                <div class="card-body table-responsive p-0">
+                  <table id="table-management-info-afiliasi" class="table table-striped table-valign-middle">
+                    <thead>
+                      <tr>
+                        <th><input type="checkbox" id="select-all" class="data-selected"></th>
 
-                    <th>Judul</th>
-                    <th>Berita</th>
-                    <th>Status</th>
-                    <th>Date Created</th>
-                    <th>Actions</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                    <?php if(isset($management_data) && !empty($management_data)): ?>
-                    <?php foreach($management_data as $row): ?>
-                  <tr>
-                    <td>
-                       <input type="checkbox" class="data-selected" data-id="<?= $row->id ;?>" > 
-                     </td>
-                    <td><?= $row->judul; ?> </td>
-                    <td><?= $row->berita; ?></td>
-                    <td><?php if($row->status == 'enable'): ?>
-                      <img class="status-icon" data-value="<?= $row->status; ?>" src="/assets/img/ok-icon.png" >
-                    <?php else : ?>
-                      <img class="status-icon" data-value="<?= $row->status; ?>" src="/assets/img/delete-icon.png" >
-                    <?php endif; ?>
-                      </td>
-                    <td><?= $row->date_created; ?></td>
-                    <td>
-                     <div class="dropdown">
-                      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                        
-                      </button>
-                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                        <li><a class="dropdown-item edit-single" data-id="<?= $row->id; ?>" href="#">Edit</a></li>
-                        <li><a class="dropdown-item delete-single" data-id="<?= $row->id; ?>" href="#">Delete</a></li>
-                        
-                      </ul>
-                    </div>
-                    </td>
-                  </tr>
-                  <?php endforeach; ?>
-                  <?php endif; ?>
-                  </tbody>
-                </table>
+                        <th>Judul</th>
+                        <th>Berita</th>
+                        <th>Status</th>
+                        <th>Date Created</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <?php if (isset($management_data) && !empty($management_data)): ?>
+                        <?php foreach ($management_data as $row): ?>
+                          <tr>
+                            <td>
+                              <input type="checkbox" class="data-selected" data-id="<?= $row->id; ?>">
+                            </td>
+                            <td><?= $row->judul; ?> </td>
+                            <td><?= $row->berita; ?></td>
+                            <td><?php if ($row->status == 'enable'): ?>
+                                <img class="status-icon" data-value="<?= $row->status; ?>" src="<?= base_url() ?>assets/img/ok-icon.png">
+                              <?php else : ?>
+                                <img class="status-icon" data-value="<?= $row->status; ?>" src="<?= base_url() ?>assets/img/delete-icon.png">
+                              <?php endif; ?>
+                            </td>
+                            <td><?= $row->date_created; ?></td>
+                            <td>
+                              <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                  <li><a class="dropdown-item edit-single" data-id="<?= $row->id; ?>" href="#">Edit</a></li>
+                                  <li><a class="dropdown-item delete-single" data-id="<?= $row->id; ?>" href="#">Delete</a></li>
+
+                                </ul>
+                              </div>
+                            </td>
+                          </tr>
+                        <?php endforeach; ?>
+                      <?php endif; ?>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
+
+
+          <!-- /.row -->
         </div>
-
-
-        <!-- /.row -->
+        <!-- /.container-fluid -->
       </div>
-      <!-- /.container-fluid -->
+      <!-- /.content -->
     </div>
-    <!-- /.content -->
+    <!-- /.content-wrapper -->
+
+    <!-- Control Sidebar -->
+    <aside class="control-sidebar control-sidebar-dark">
+      <!-- Control sidebar content goes here -->
+    </aside>
+    <!-- /.control-sidebar -->
+
+    <!-- Main Footer -->
+    <?php include('footer.php'); ?>
+
   </div>
-  <!-- /.content-wrapper -->
-
-  <!-- Control Sidebar -->
-  <aside class="control-sidebar control-sidebar-dark">
-    <!-- Control sidebar content goes here -->
-  </aside>
-  <!-- /.control-sidebar -->
-
-  <!-- Main Footer -->
-  <?php include('footer.php'); ?>
-
-</div>
-<!-- ./wrapper -->
-<?php include('modal_info_afiliasi.php'); ?>
+  <!-- ./wrapper -->
+  <?php include('modal_info_afiliasi.php'); ?>
   <?php include('modal_customer_services.php'); ?>
   <?php include('modal_usulan_materi.php'); ?>
 
-<!-- REQUIRED SCRIPTS -->
+  <!-- REQUIRED SCRIPTS -->
 
-<!-- jQuery -->
-<script src="/assets/js/jquery371.min.js"></script>
-<!-- Bootstrap -->
-<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="/assets/vendor/datatables/jquery.dataTables.min.js"></script>
+  <!-- jQuery -->
+  <script src="<?= base_url() ?>assets/js/jquery371.min.js"></script>
+  <!-- Bootstrap -->
+  <script src="<?= base_url() ?>assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="<?= base_url() ?>assets/vendor/datatables/jquery.dataTables.min.js"></script>
 
-<script src="/assets/js/manage-info-afiliasi.js"></script>
-<script src="/assets/js/settings.js"></script>
-<script src="/assets/js/customer-services.js"></script>
-<script src="/assets/js/timer.js"></script>
-<script src="/assets/js/adminlte.js"></script>
+  <script src="<?= base_url() ?>assets/js/manage-info-afiliasi.js"></script>
+  <script src="<?= base_url() ?>assets/js/settings.js"></script>
+  <script src="<?= base_url() ?>assets/js/customer-services.js"></script>
+  <script src="<?= base_url() ?>assets/js/timer.js"></script>
+  <script src="<?= base_url() ?>assets/js/adminlte.js"></script>
 
 </body>
+
 </html>

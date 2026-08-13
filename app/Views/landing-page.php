@@ -9,8 +9,8 @@
   <meta name="keywords" content="">
 
   <!-- Favicons -->
-  <link href="/assets/img/favicon.ico" rel="icon">
-  <link href="/assets/img/favicon.ico" rel="apple-touch-icon">
+  <link href="<?= base_url('assets/img/favicon.ico'); ?>" rel="icon">
+  <link href="<?= base_url('assets/img/favicon.ico'); ?>" rel="apple-touch-icon">
 
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com" rel="preconnect">
@@ -19,13 +19,24 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <!-- Vendor CSS Files -->
-  <link href="/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="<?= base_url('assets/vendor/bootstrap/css/bootstrap.min.css'); ?>" rel="stylesheet">
+  <link href="<?= base_url('assets/vendor/bootstrap-icons/bootstrap-icons.css'); ?>" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-  
+
 
   <!-- Main CSS File -->
-  <link href="/assets/css/main.css" rel="stylesheet">
+  <link href="<?= base_url('assets/css/main.css'); ?>" rel="stylesheet">
+
+  <style>
+    #loginModal .modal-footer {
+      padding: 1rem 1.5rem;
+    }
+
+    #loginModal .modal-footer .btn {
+      min-width: 160px;
+      /* sesuaikan jika ingin lebar tombol seragam */
+    }
+  </style>
 
 </head>
 
@@ -36,9 +47,9 @@
 
       <div href="/" class="logo align-items-center">
         <!-- Uncomment the line below if you also wish to use an image logo -->
-         <img src="assets/img/logo.jpg" alt=""> 
+        <img src="assets/img/logo.jpg" alt="">
         <h1 class="sitename">FGroupIndonesia</h1>
-        <p class="box-motto">Training &amp; Digital Solutions Provider</p> 
+        <p class="box-motto">Training &amp; Digital Solutions Provider</p>
       </div>
 
       <nav id="navmenu" class="navmenu">
@@ -49,7 +60,7 @@
           <li><a href="#features">Keunggulan</a></li>
           <li><a href="#pricing">Pilihan Harga</a></li>
           <li><a href="#contact">Kontak Kami</a></li>
-          <li><a href="#" data-bs-toggle="modal" data-bs-target="#loginModal" >Login</a></li>
+          <li><a href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Login</a></li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
@@ -71,10 +82,10 @@
               <a href="#" data-bs-toggle="modal" data-bs-target="#loginModal" class="btn-get-started">Login</a>
               <a href="#" data-bs-toggle="modal" data-bs-target="#videoModal" class="glightbox btn-watch-video d-flex align-items-center"><i class="bi bi-play-circle"></i><span>Fakta Kerja</span></a>
             </div>
-            <?php 
-              if(!empty($error)){
-                echo '<div class="alert alert-danger mt-3" role="alert">'.$message.'</div>';
-              }
+            <?php
+            if (!empty($error)) {
+              echo '<div class="alert alert-danger mt-3" role="alert">' . $message . '</div>';
+            }
             ?>
           </div>
           <div class="col-lg-6 order-1 order-lg-2">
@@ -132,24 +143,25 @@
             <p class="who-we-are">Kenapa Harus Kursus Komputer?</p>
             <h3>Strategi Tepat</h3>
             <p class="fst-italic">
-              Mengembangkan potensi, mengasah skills, dan juga mendapatkan langsung 
+              Mengembangkan potensi, mengasah skills, dan juga mendapatkan langsung
             </p>
             <ul>
-              <li><i class="bi bi-check-circle"></i> 
+              <li><i class="bi bi-check-circle"></i>
                 <span>Praktek Ilmu Komputer.</span>
               </li>
-              <li><i class="bi bi-check-circle"></i> 
+              <li><i class="bi bi-check-circle"></i>
                 <span>Memperoleh Penjadwalan yang teratur.</span>
               </li>
-              <li><i class="bi bi-check-circle"></i> 
-                <span>Mendapatkan Kesempatan Berkarir Lebih baik.</span></li>
+              <li><i class="bi bi-check-circle"></i>
+                <span>Mendapatkan Kesempatan Berkarir Lebih baik.</span>
+              </li>
             </ul>
             <a href="#" data-bs-toggle="modal" data-bs-target="#KursusKomputerModal" class="read-more"><span>Read More</span><i class="bi bi-arrow-right"></i></a>
           </div>
 
           <div class="col-lg-6 about-images" data-aos="fade-up" data-aos-delay="200">
             <div class="row gy-4">
-               <div class="col-lg-6">
+              <div class="col-lg-6">
                 <div class="row gy-4">
                   <div class="col-lg-12">
                     <img src="assets/img/about-company-1.jpg" class="img-fluid" alt="">
@@ -286,7 +298,7 @@
         <div class="row gy-5 justify-content-between">
 
           <div class="col-xl-5" id="picture-feature" data-aos="zoom-out" data-aos-delay="100">
-            
+
           </div>
 
           <div class="col-xl-6 d-flex">
@@ -388,7 +400,7 @@
                 <li>Informasi Loker Uptodate</li>
                 <li>Diskusi Whatsapp</li>
                 <li>Sertifikat Komputer*</li>
-               
+
               </ul>
               <a href="#" data-jenis="Pelajar" data-bs-toggle="modal" data-bs-target="#registerModal" class="btn-buy">Daftar Sekarang!</a>
             </div>
@@ -406,7 +418,7 @@
                 <li>Akses Asset Digital</li>
                 <li>Email Notification</li>
                 <li>Diskusi Whatsapp</li>
-                
+
               </ul>
               <a href="#" data-jenis="Pengajar Reguler" data-bs-toggle="modal" data-bs-target="#registerModal" class="btn-buy">Daftar Sekarang!</a>
             </div>
@@ -424,7 +436,7 @@
                 <li>Akses Asset Digital</li>
                 <li>Email Notification</li>
                 <li>Diskusi Whatsapp</li>
-                
+
               </ul>
               <a href="#" data-jenis="Pengajar Master" data-bs-toggle="modal" data-bs-target="#registerModal" class="btn-buy">Daftar Sekarang!</a>
             </div>
@@ -464,8 +476,9 @@
               </div><!-- End Faq item-->
 
               <div class="faq-item">
-                <h3><span class="num">2.</span> 
-                  <span>Apakah ada expired date untuk tiap aksesnya?</span></h3>
+                <h3><span class="num">2.</span>
+                  <span>Apakah ada expired date untuk tiap aksesnya?</span>
+                </h3>
                 <div class="faq-content">
                   <p>Tidak ada limit expired date bagi tiap peserta yang telah memperoleh akses digital disini!</p>
                 </div>
@@ -473,8 +486,9 @@
               </div><!-- End Faq item-->
 
               <div class="faq-item">
-                <h3><span class="num">3.</span> 
-                  <span>Dimana saya bisa mendapatkan informasi paket pilihan materi yang ingin dipelajari?</span></h3>
+                <h3><span class="num">3.</span>
+                  <span>Dimana saya bisa mendapatkan informasi paket pilihan materi yang ingin dipelajari?</span>
+                </h3>
                 <div class="faq-content">
                   <p>Klik Langsung pada katalog yang disediakan dari <a href="https://wa.me/c/6285795569337">Link Official Whatsapp ini</a>.</p>
                 </div>
@@ -598,16 +612,16 @@
 
     <div class="container">
       <div class="copyright text-center ">
-              
+
       </div>
       <div class="social-links d-flex justify-content-center">
         <a href="https://twitter.com/fgroupindonesia"><i class="bi bi-twitter-x"></i></a>
         <a href="https://facebook.com/fgroupindonesia"><i class="bi bi-facebook"></i></a>
         <a href="https://instagram.com/fgroup.indonesia"><i class="bi bi-instagram"></i></a>
-        
+
       </div>
       <div class="credits">
-      <p>© <?= date('Y'); ?> <span>Copyright</span> <strong class="px-1 sitename">FGroupIndonesia</strong> <span>All Rights Reserved</span></p>
+        <p>© <?= date('Y'); ?> <span>Copyright</span> <strong class="px-1 sitename">FGroupIndonesia</strong> <span>All Rights Reserved</span></p>
       </div>
     </div>
 
@@ -626,61 +640,60 @@
 
   <!-- Vendor JS Files -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="assets/js/jquery371.min.js<?=$random;?>"></script>
-   
+  <script src="<?= base_url('assets/js/jquery371.min.js' . $random); ?>"></script>
 
-  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="assets/js/animated.js<?=$random;?>"></script>
+  <script src="<?= base_url('assets/vendor/bootstrap/js/bootstrap.bundle.min.js'); ?>"></script>
+  <script src="<?= base_url('assets/js/animated.js' . $random); ?>"></script>
 
-  
-   <?php if(!empty($show_registration)): ?>
+
+  <?php if (!empty($show_registration)): ?>
     <script>
-      $(document).ready(function(){
-        
+      $(document).ready(function() {
+
         Swal.fire({
-        title: 'Mohon tunggu...',
-        text: 'Sedang memproses registrasi',
-        timer: 2000,
-        timerProgressBar: true,
-        allowOutsideClick: false,
-        didOpen: () => {
-          Swal.showLoading()
-        }
-      }).then(() => {
-            $('#registerModal').modal('show');
+          title: 'Mohon tunggu...',
+          text: 'Sedang memproses registrasi',
+          timer: 2000,
+          timerProgressBar: true,
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading()
+          }
+        }).then(() => {
+          $('#registerModal').modal('show');
 
-            // isi data
-            $('#nama_lengkap').val('<?= $nama_lengkap; ?>');
-            $('#email_user').val('<?= $email; ?>');
-            $('#no_wa').focus();
+          // isi data
+          $('#nama_lengkap').val('<?= $nama_lengkap; ?>');
+          $('#email_user').val('<?= $email; ?>');
+          $('#no_wa').focus();
 
-      });
+        });
 
-      $(document).on('change', '#jenis-text', function(){
+        $(document).on('change', '#jenis-text', function() {
           var jenis = $(this).val();
           // hidden value set to
           $('#jenis').val(jenis);
-          
+
           var keterangan = '';
-          if(jenis == 'gratis'){
+          if (jenis == 'gratis') {
             keterangan = '*Note: Akses materi gratis tanpa biaya.';
-          } else if(jenis == 'pelajar'){
+          } else if (jenis == 'pelajar') {
             keterangan = '*Note: Akses materi khusus pelajar dengan biaya terjangkau.';
-          } else if(jenis == 'pengajar reguler'){
+          } else if (jenis == 'pengajar reguler') {
             keterangan = '*Note: Akses untuk pengajar dengan fokus 4 peserta per materi.';
-          } else if(jenis == 'pengajar master'){
+          } else if (jenis == 'pengajar master') {
             keterangan = '*Note: Akses unlimited untuk pengajar master.';
           }
 
           $('#keterangan-jenis').text(keterangan);
 
+        });
+
       });
-
-    });
     </script>
-    <?php endif; ?>
+  <?php endif; ?>
 
-  <script src="assets/js/main.js<?=$random;?>"></script>
+  <script src="<?= base_url('assets/js/main.js' . $random); ?>"></script>
 
 </body>
 

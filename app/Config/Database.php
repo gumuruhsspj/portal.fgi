@@ -27,6 +27,7 @@ class Database extends Config
     public array $default = [
         'DSN'          => '',
         'hostname'     => 'localhost',
+        // below is for local usage
         'username'     => 'root',
         'password'     => '',
         'database'     => 'db_fgi_portal_v3',
