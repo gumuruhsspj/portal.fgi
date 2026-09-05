@@ -67,6 +67,10 @@
                         <input class="form-control nexus-input" type="password" name="pass" placeholder="Ketik Password" required>
                     </div>
 
+                    <div class="text-end mt-1">
+                        <a href="#" id="fp-open-modal" class="fp-link" style="font-size:0.8rem;">Lupa Password?</a>
+                    </div>
+
 
 
                 </div>

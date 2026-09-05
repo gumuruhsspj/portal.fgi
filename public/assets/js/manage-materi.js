@@ -350,7 +350,7 @@ function sendRequestForm(datana, URLna){
                     		 location.reload();
                     	}else if(URLna == _URL_ADD_ICON_MATERI){
                     		let filena = dataObtained.filename;
-                    		let urlna = '/assets/img/uploads/materi/' + filena;
+                    		let urlna = _URL_MAIN_WEBSITE + 'assets/img/uploads/materi/' + filena;
                     		$('#icon-name').val(filena);
                     		$('#preview-icon-materi').attr('src', urlna);
                     		$('#preview-icon-materi').show();
@@ -634,7 +634,7 @@ function extractMateriData(dataCome){
 
 	//alert(fileAttachment);
 
-	let urlIcon = "/assets/img/uploads/materi/" + fileIcon;
+	let urlIcon = _URL_MAIN_WEBSITE + "assets/img/uploads/materi/" + fileIcon;
 	let urlAttachment = "/assets/attachment/uploads/materi/" + fileAttachment;
 
 	$('#preview-icon-materi').attr('src', urlIcon);

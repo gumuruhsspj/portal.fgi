@@ -1,4 +1,18 @@
-RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php/$1 [L]
+# 1. Paksa ganti handler PHP ke socket 8.3 yang valid di server kamu
+<FilesMatch \.php$>
+    SetHandler "proxy:unix:/run/php/php8.3-fpm-wacr.fgroupindonesia.com.sock|fcgi://localhost"
+</FilesMatch>
+
+# 2. Force HTTPS & Arahkan traffic ke sub-folder public Laravel
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /portal/
+
+    # Paksa HTTPS jika request masih HTTP
+    RewriteCond %{HTTPS} off
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+    
+    # Jika request belum mengarah ke folder public, belokkan ke public
+    RewriteCond %{REQUEST_URI} !^/portal/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>

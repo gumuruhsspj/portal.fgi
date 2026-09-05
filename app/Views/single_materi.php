@@ -11,19 +11,19 @@
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <!-- Font Awesome Icons -->
-  <link rel="stylesheet" href="/assets/vendor/fontawesome-free/css/all.css">
+  <link rel="stylesheet" href="<?= base_url(); ?>assets/vendor/fontawesome-free/css/all.css">
 
   <!-- IonIcons -->
   <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
   <!-- Theme style -->
-  <link rel="stylesheet" href="/assets/vendor/bootstrap/css/bootstrap.min.css">
-  <link rel="stylesheet" href="/assets/css/adminlte.min.css">
+  <link rel="stylesheet" href="<?= base_url(); ?>assets/vendor/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="<?= base_url(); ?>assets/css/adminlte.min.css">
 
 
-  <link rel="stylesheet" href="/assets/css/styles-custom-homepage.css">
-  <link rel="stylesheet" href="/assets/css/styles-custom-portal.css">
+  <link rel="stylesheet" href="<?= base_url(); ?>assets/css/styles-custom-homepage.css">
+  <link rel="stylesheet" href="<?= base_url(); ?>assets/css/styles-custom-portal.css">
 
-  <link rel="stylesheet" href="/assets/css/sweetalert2.min.css">
+  <link rel="stylesheet" href="<?= base_url(); ?>assets/css/sweetalert2.min.css">
 </head>
 <!--
 `body` tag options:
@@ -92,7 +92,7 @@
                 <div class="col-12 col-sm-6">
                   <h3 class="d-inline-block d-sm-none"><?= ($data_materi != false && isset($data_materi)) ? $data_materi->judul : ""; ?></h3>
                   <div class="col-12">
-                    <img src="/assets/img/uploads/materi/<?= ($data_materi != false && isset($data_materi)) ? $data_materi->icon : ""; ?>"
+                    <img src="<?= base_url(); ?>assets/img/uploads/materi/<?= ($data_materi != false && isset($data_materi)) ? $data_materi->icon : ""; ?>"
                       class="product-image img-fluid img-card-effect" alt="Product Image">
                   </div>
 
@@ -276,23 +276,23 @@
     <!-- REQUIRED SCRIPTS -->
 
     <!-- jQuery -->
-    <script src="/assets/js/jquery371.min.js"></script>
-    <script src="/assets/js/jquery-ui.min.js"></script>
+    <script src="<?= base_url(); ?>assets/js/jquery371.min.js"></script>
+    <script src="<?= base_url(); ?>assets/js/jquery-ui.min.js"></script>
 
-    <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="<?= base_url(); ?>assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <!-- SweetAlert2 -->
-    <script src="/assets/js/sweetalert2@11.js"></script>
-    <script src="/assets/js/adminlte.js"></script>
+    <script src="<?= base_url(); ?>assets/js/sweetalert2@11.js"></script>
+    <script src="<?= base_url(); ?>assets/js/adminlte.js"></script>
 
     <!-- OPTIONAL SCRIPTS -->
-    <script src="/assets/js/cleave.min.js"></script>
-    <script src="/assets/vendor/chart.js/Chart.min.js"></script>
-    <script src="/assets/js/settings.js"></script>
-    <script src="/assets/js/customer-services.js"></script>
-    <script src="/assets/js/single-materi.js"></script>
-    <script src="/assets/js/timer.js"></script>
-    <script src="/assets/js/pages/dashboard3.js"></script>
-    <script src="/assets/js/saldo.js"></script>
+    <script src="<?= base_url(); ?>assets/js/cleave.min.js"></script>
+    <script src="<?= base_url(); ?>assets/vendor/chart.js/Chart.min.js"></script>
+    <script src="<?= base_url(); ?>assets/js/settings.js"></script>
+    <script src="<?= base_url(); ?>assets/js/customer-services.js"></script>
+    <script src="<?= base_url(); ?>assets/js/single-materi.js"></script>
+    <script src="<?= base_url(); ?>assets/js/timer.js"></script>
+    <script src="<?= base_url(); ?>assets/js/pages/dashboard3.js"></script>
+    <script src="<?= base_url(); ?>assets/js/saldo.js"></script>
 </body>
 
 </html>

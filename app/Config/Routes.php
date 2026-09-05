@@ -9,6 +9,11 @@ use CodeIgniter\Router\RouteCollection;
 $routes->get('auth/google', 'Auth::googleLogin');
 $routes->get('auth/google/callback', 'Auth::googleCallback');
 
+// Forgot Password
+$routes->post('auth/forgot-password', 'Auth::forgotPassword');
+$routes->post('auth/verify-otp', 'Auth::verifyOtp');
+$routes->post('auth/reset-password', 'Auth::resetPassword');
+
 // antisipasi user blm ada datanya paksa buat daftar ulang
 $routes->get('/register', 'Home::register');
 

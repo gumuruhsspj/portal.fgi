@@ -74,8 +74,12 @@
 
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="#">Management</a></li>
-                <li class="breadcrumb-item active">Riwayat Saldo</li>
+                <?php if ($usertype == 'admin') : ?>
+                  <li class="breadcrumb-item"><a href="#">Management</a></li>
+                  <li class="breadcrumb-item active">Riwayat Saldo</li>
+                <?php else : ?>
+
+                <?php endif; ?>
               </ol>
             </div>
           </div>

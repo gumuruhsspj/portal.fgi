@@ -83,7 +83,7 @@
 
     <li class="nav-header">Saldo</li>
     <li class="nav-item">
-      <a href="<?= base_url() ?>riwayat-saldo" class="nav-link <?= isset($menu_riwayat_saldo_active) ? $menu_riwayat_saldo_active : ""; ?>">
+      <a href="<?= base_url() ?>saldo/riwayat-saldo" class="nav-link <?= isset($menu_riwayat_saldo_active) ? $menu_riwayat_saldo_active : ""; ?>">
         <i class="nav-icon fa-solid fa-clock-rotate-left"></i>
         <p>
           Riwayat Saldo

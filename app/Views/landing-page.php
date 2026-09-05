@@ -634,6 +634,7 @@
   <div id="preloader"></div>
 
   <?php include('modal_login.php'); ?>
+  <?php include('modal_forget_pass.php'); ?>
   <?php include('modal_registrasi.php'); ?>
   <?php include('modal_kenapa_kursus.php'); ?>
   <?php include('modal_video_intro.php'); ?>
@@ -693,7 +694,12 @@
     </script>
   <?php endif; ?>
 
+  <script>
+    const _MAIN_URL = '<?= base_url(); ?>';
+  </script>
   <script src="<?= base_url('assets/js/main.js' . $random); ?>"></script>
+  <script src="<?= base_url('assets/js/forgot-pass.js' . $random); ?>"></script>
+
 
 </body>
 
