@@ -28,6 +28,13 @@
   <link href="<?= base_url('assets/css/main.css'); ?>" rel="stylesheet">
 
   <style>
+    #picture-feature {
+      transition: background-image 0.5s ease-in-out, background 0.5s ease-in-out;
+      background-size: cover;
+      background-position: center;
+      min-height: 400px;
+    }
+
     #loginModal .modal-footer {
       padding: 1rem 1.5rem;
     }
@@ -35,6 +42,10 @@
     #loginModal .modal-footer .btn {
       min-width: 160px;
       /* sesuaikan jika ingin lebar tombol seragam */
+    }
+
+    .top-70 {
+      top: 70% !important;
     }
   </style>
 
@@ -297,7 +308,7 @@
 
         <div class="row gy-5 justify-content-between">
 
-          <div class="col-xl-5" id="picture-feature" data-aos="zoom-out" data-aos-delay="100">
+          <div class="col-xl-5 feature-1" id="picture-feature" data-aos="zoom-out" data-aos-delay="100">
 
           </div>
 
@@ -696,6 +707,50 @@
 
   <script>
     const _MAIN_URL = '<?= base_url(); ?>';
+
+    (function() {
+      const el = document.getElementById('picture-feature');
+      if (!el) return;
+
+      let current = 1;
+      const total = 6;
+
+      setInterval(function() {
+        // hapus class feature-1 .. feature-6
+        for (let i = 1; i <= total; i++) {
+          el.classList.remove('feature-' + i);
+        }
+
+        // naik ke berikutnya, loop balik ke 1 kalau sudah lewat 6
+        current = current >= total ? 1 : current + 1;
+
+        // tambahkan class baru
+        el.classList.add('feature-' + current);
+      }, 2000);
+
+      // untuk display pass
+      /**
+       * Toggle Password Visibility (Show/Hide Password)
+       */
+      const toggleLoginPassword = document.querySelector('#toggleLoginPassword');
+      const loginPasswordInput = document.querySelector('#loginPassword');
+
+      if (toggleLoginPassword && loginPasswordInput) {
+        toggleLoginPassword.addEventListener('click', function() {
+          // Cek tipe input saat ini
+          const type = loginPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+          loginPasswordInput.setAttribute('type', type);
+
+          // Ganti ikon mata (fa-eye <-> fa-eye-slash)
+          const icon = this.querySelector('i');
+          if (icon) {
+            icon.classList.toggle('fa-eye');
+            icon.classList.toggle('fa-eye-slash');
+          }
+        });
+      }
+
+    })();
   </script>
   <script src="<?= base_url('assets/js/main.js' . $random); ?>"></script>
   <script src="<?= base_url('assets/js/forgot-pass.js' . $random); ?>"></script>

@@ -195,6 +195,8 @@
   <script src="<?= base_url() ?>assets/js/jquery371.min.js"></script>
   <script src="<?= base_url() ?>assets/js/sweetalert2@11.js"></script>
 
+  <script src="<?= base_url() ?>assets/js/autoNumeric.min.js"></script>
+
   <!-- Bootstrap -->
   <script src="<?= base_url() ?>assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="<?= base_url() ?>assets/vendor/datatables/jquery.dataTables.min.js"></script>

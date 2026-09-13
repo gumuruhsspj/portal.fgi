@@ -537,18 +537,11 @@ class Home extends BaseController
 
     public function display_single_materi()
     {
-
         $this->is_logged_in();
-
         $data = $this->get_user_data();
 
-        // the title is url based format
         $materi = $this->request->getGet('title');
-
-        $filter_data = array(
-            'url' => $materi
-        );
-
+        $filter_data = ['url' => $materi];
         $data_materi = $this->model_materi->get_by($filter_data);
         $data_comments = null;
 
@@ -558,9 +551,9 @@ class Home extends BaseController
             $data['data_comments'] = $data_comments;
         }
 
-        $filter_data_materi = array(
+        $filter_data_materi = [
             'id_materi' => $data_materi != false ? $data_materi->id : 0
-        );
+        ];
         $materi_terdaftar = $this->model_materi->get_student_materi_by($filter_data_materi);
 
         if ($data_materi != false) {
@@ -570,8 +563,38 @@ class Home extends BaseController
         }
 
         $data['participate'] = $materi_terdaftar != false ? true : false;
-
         $data['data_materi'] = $data_materi;
+
+        // ============ LOGIC PAKET DEFAULT ============
+        if ($data_materi != false) {
+            $paket_tersedia = [];
+            if ($data_materi->paket_bimbingan == 'yes')       $paket_tersedia[] = 'paket_bimbingan';
+            if ($data_materi->paket_kasus_custom == 'yes')    $paket_tersedia[] = 'paket_kasus_custom';
+            if ($data_materi->paket_belajar_sendiri == 'yes') $paket_tersedia[] = 'paket_belajar_sendiri';
+
+            // Priority: bimbingan > kasus_custom > belajar_sendiri
+            $default_paket = null;
+            if (in_array('paket_bimbingan', $paket_tersedia)) {
+                $default_paket = 'paket_bimbingan';
+            } elseif (in_array('paket_kasus_custom', $paket_tersedia)) {
+                $default_paket = 'paket_kasus_custom';
+            } elseif (in_array('paket_belajar_sendiri', $paket_tersedia)) {
+                $default_paket = 'paket_belajar_sendiri';
+            }
+
+            $biaya_map = [
+                'paket_bimbingan'       => (float) $data_materi->biaya_pokok,
+                'paket_kasus_custom'    => (float) $data_materi->biaya_kasus_custom,
+                'paket_belajar_sendiri' => (float) $data_materi->biaya_belajar_sendiri,
+            ];
+
+            $data['paket_tersedia'] = $paket_tersedia;
+            $data['paket_ada']      = !empty($paket_tersedia); // <-- TAMBAHAN
+            $data['default_paket']  = $default_paket;
+            $data['default_biaya']  = $default_paket ? $biaya_map[$default_paket] : 0;
+        }
+
+        // =============================================
 
         return view('single_materi', $data);
     }

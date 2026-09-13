@@ -6,9 +6,12 @@ $(document).ready(function() {
     submit_comments();
     update_info_paket();
     lanjutkan_pilihan();
-
-    // untuk konsul by wa sblm join materi
     konsultasi_wa_materi();
+
+    var $checked = $('.btn_opsi_paket:checked');
+    if ($checked.length) {
+        $checked.trigger('change');
+    }
     
 });
 
@@ -72,7 +75,7 @@ function lanjutkan_pilihan(){
 
     // 2. Jalankan Request POST via AJAX
     $.ajax({
-        url: '/materi/checkout',
+        url: _URL_MAIN_WEBSITE+'materi/checkout',
         type: 'POST',
         data: {
             materi_id: id_materi,
@@ -109,23 +112,23 @@ function lanjutkan_pilihan(){
 function update_info_paket(){
 
     $('.btn_opsi_paket').on('change', function() {
-        
+
         // 1. Bersihkan status 'active' dari SEMUA label dalam grup
-        //    (Pastikan selector ini hanya mencakup opsi paket Anda)
-        //    Selector yang aman: cari semua label di dalam .btn-group-toggle
         $(this).closest('.btn-group-toggle').find('label').removeClass('active');
-        
+
         // 2. Tambahkan kelas 'active' HANYA ke label yang baru dicentang
-        if ($(this).is(":checked")) {
+        if ($(this).is(':checked')) {
             $(this).parent().addClass('active');
-            
-            // 3. Update Biaya
-            let biaya = $(this).data('biaya');
-            $('#materi-harga').text(asRupiah(biaya));
-            let biayaPajak = biaya * 0.1; // 10% Pajak
-            $('#biayapajak').text(asRupiah(biayaPajak));
+
+            // 3. Update Biaya + Pajak
+            let biaya      = parseFloat($(this).data('biaya')) || 0;
+            let biayaPajak = biaya * 0.1;
+            let total      = biaya + biayaPajak;
+
+            $('#materi-harga').text(asRupiah(total));       // <-- total + pajak
+            $('#biayapajak').text(asRupiah(biayaPajak));    // <-- info pajak
         }
-        
+
     });
 
 }

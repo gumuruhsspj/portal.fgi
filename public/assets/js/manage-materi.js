@@ -19,6 +19,20 @@ let _display_modal = null;
 
 $( document ).ready(function() {
     
+// init formatter rupiah
+	$('.input-rupiah').each(function () {
+		new AutoNumeric(this, {
+			digitGroupSeparator: '.',
+			decimalCharacter: ',',
+			decimalPlaces: 0,           // no desimal
+			unformatOnSubmit: false,     // kita handle manual karena pakai FormData
+			modifyValueOnWheel: false,   // biar scroll mouse ngga ngubah angka
+			emptyInputBehavior: 'zero',
+			minimumValue: 0,
+			formatOnPageLoad: true
+		});
+	});
+
 	calculateTax();
 
 	linkPembahasan();
@@ -45,8 +59,19 @@ $( document ).ready(function() {
 
 		e.preventDefault();
 
-		var formData = new FormData(this); 
-		let url = $(this).attr('action');
+		// ambil nilai MURNI (angka)
+		const biayaPokok = AutoNumeric.getNumber(document.getElementById('biayaPokok')) || 0;
+		const biayaBelajarSendiri = AutoNumeric.getNumber(document.getElementById('biayaBelajarSendiri')) || 0;
+		const biayaKasusCustom = AutoNumeric.getNumber(document.getElementById('biayaKasusCustom')) || 0;
+
+		const formData = new FormData(this);
+
+		// overwrite value supaya yang dikirim ke server angka murni
+		formData.set('biaya_pokok', biayaPokok);
+		formData.set('biaya_belajar_sendiri', biayaBelajarSendiri);
+		formData.set('biaya_kasus_custom', biayaKasusCustom);
+
+		const url = $(this).attr('action');
 
 		sendRequest(formData, url);
 		printout('submitting paket form to ' + url, formData);
@@ -443,65 +468,36 @@ function sendRequestReguler(datana, URLna){
 }
 
 function extractPaketData(dataCome){
-    // 1. Tampilkan Modal
-	//printout('extract paket', dataCome);
- 
-	// a. Reset semua field (Penting untuk mode Edit)
-    $('#paketForm')[0].reset();
+    console.log('dataCome:', dataCome);   // buat debug juga
 
     $('#paketModal').modal('show');
-    
-    // 2. Atur URL Form Action (Opsional, karena kita pakai AJAX)
-    // Walaupun menggunakan AJAX, menetapkan ID record membantu jika Anda perlu mengirim ID tersebut.
-    // Jika Anda ingin mengirim ID, ubah AJAX menjadi: url: '/update/' + dataCome.materi_id,
-    // Jika tidak, gunakan hidden input di form.
-    // $('#paketForm').attr('action', _URL_UPDATE_MATERI + dataCome.materi_id);
-    
-    // --- 3. Isi Nilai Form ---
-	$('#judulMateri').val(dataCome.judul);
-   
-    
-    // b. Isi Biaya Pokok
-    $('#biayaPokok').val(dataCome.biaya_pokok).trigger('input'); 
-    // .trigger('input') penting agar perhitungan pajak (yang terikat pada event 'input') terpicu.
-    
-    // c. Isi Rilis Sertifikat (Radio Button)
-    $(`input[name="rilis_sertifikat"][value="${dataCome.rilis_sertifikat}"]`).prop('checked', true);
-    
-    // d. Isi Model Paket (Checkboxes)
-    // Uncheck semua dulu (sudah dilakukan oleh reset(), tapi ini jaga-jaga)
-    $('input[name="paket[]"]').prop('checked', false); 
 
-    // Ceklis paket yang aktif
-   if(dataCome.paket_belajar_sendiri == 'yes'){
-	$('#paket1').prop('checked', true);
-   }else{
-	$('#paket1').prop('checked', false);
-   }
+    // reset manual — TANPA trigger event 'reset' native
+    $('input[name="paket[]"]').prop('checked', false);
+    $('input[name="rilis_sertifikat"]').prop('checked', false);
 
-   if(dataCome.paket_belajar_sendiri == 'yes'){
-	$('#paket1').prop('checked', true);
-   }else{
-	$('#paket1').prop('checked', false);
-   }
+    $('#judulMateri').val(dataCome.judul);
 
-   if(dataCome.paket_bimbingan == 'yes'){
-	$('#paket2').prop('checked', true);
-   }else{
-	$('#paket2').prop('checked', false);
-   }
+    // set AutoNumeric — sekarang aman
+    AutoNumeric.set(document.getElementById('biayaPokok'),
+                    dataCome.biaya_pokok || 0);
+    AutoNumeric.set(document.getElementById('biayaBelajarSendiri'),
+                    dataCome.biaya_belajar_sendiri || 0);
+    AutoNumeric.set(document.getElementById('biayaKasusCustom'),
+                    dataCome.biaya_kasus_custom || 0);
 
-   if(dataCome.paket_kasus_custom == 'yes'){
-	$('#paket3').prop('checked', true);
-   }else{
-	$('#paket3').prop('checked', false);
-   }
+    $('#biayaPokok').trigger('input');   // hitung pajak
 
-    // 4. (Opsional) Tampilkan ID Record di Modal (untuk debugging/informasi)
+    if (dataCome.rilis_sertifikat) {
+        $(`input[name="rilis_sertifikat"][value="${dataCome.rilis_sertifikat}"]`)
+            .prop('checked', true);
+    }
+    if (dataCome.paket_belajar_sendiri == 'yes') $('#paket1').prop('checked', true);
+    if (dataCome.paket_bimbingan == 'yes')       $('#paket2').prop('checked', true);
+    if (dataCome.paket_kasus_custom == 'yes')    $('#paket3').prop('checked', true);
+
     $('#materiId').val(dataCome.id);
-
-	// set URL ke update
-	$('#paketForm').attr('action', _URL_UPDATE_PAKET_MATERI);
+    $('#paketForm').attr('action', _URL_UPDATE_PAKET_MATERI);
 }
 
 function extractCommentsData(datana){
@@ -665,15 +661,21 @@ function printout(identifier, data){
 }
 
 function calculateTax(){
-	$(document).on('input', '#biayaPokok', function(){
-		let biayaPokok = parseFloat($(this).val()) || 0;
-		let pajak = biayaPokok * 0.1; // 10% tax
-		let total = biayaPokok + pajak;
+    $(document).on('input', '#biayaPokok', function(){
+        let biayaPokok = AutoNumeric.getNumber(this) || 0;
+        let pajak = biayaPokok * 0.1;
+        let total = biayaPokok + pajak;
 
-		$('#nilaiPajak').text(pajak.toFixed(2));
+        $('#nilaiPajak').text(formatRupiah(pajak));
 
-		//alert('a');
-	});
+        // kalau mau tampil total juga:
+        // $('#nilaiTotal').text(formatRupiah(total));
+    });
+}
+
+// helper kecil buat nampilin angka di display (bukan input)
+function formatRupiah(angka){
+    return 'Rp ' + new Intl.NumberFormat('id-ID').format(Math.round(angka));
 }
 
 function linkPembahasan(){
@@ -709,13 +711,13 @@ function linkPembahasan(){
 
 function bukaPembahasanUmum(idna){
 
-		location.href = '/manage/materi/pembahasan?materi_id=' + idna;
+		location.href = _URL_MAIN_WEBSITE+ 'manage/materi/pembahasan?materi_id=' + idna;
 		
 }
 
 function bukaPembahasanCustom(idna){
 
-		location.href = '/manage/materi/custom?materi_id=' + idna;
+		location.href = _URL_MAIN_WEBSITE+ 'manage/materi/custom?materi_id=' + idna;
 		
 }
 
@@ -728,7 +730,7 @@ function linkQuiz(){
 
 		let idna = $(this).attr('data-id');
 		
-		location.href = '/manage/materi/quiz?materi_id=' + idna;
+		location.href = _URL_MAIN_WEBSITE+'manage/materi/quiz?materi_id=' + idna;
 		
 	});
 

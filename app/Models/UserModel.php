@@ -1,11 +1,13 @@
-<?php 
+<?php
+
 namespace App\Models;
+
 use CodeIgniter\Model;
 
-class UserModel extends Model
+class UserModel extends BaseModel
 {
-    
-	protected $table = "table_users";
+
+    protected $table = "table_users";
 
     protected $primaryKey = 'id';
     // fillable?
@@ -20,20 +22,19 @@ class UserModel extends Model
         'subscription_id',
         'usertype',
         'propic'
-    ];   
+    ];
 
     public function get_total_balance()
     {
         $builder = $this->db->table($this->table);
         $builder->selectSum('balance');
         $query = $builder->get();
-        
+
         $result = $query->getRow();
 
         $result = new \ArrayObject((array)$result, \ArrayObject::ARRAY_AS_PROPS);
 
         return $result->balance ?? 0;
-
     }
 
 
@@ -44,34 +45,32 @@ class UserModel extends Model
         $query = $builder->get();
         $manyData = $builder->countAllResults();
 
-        if($manyData > 0){
-
-        	return $query->getResult();
-
-        }else {
-        	return false;
-        }
-    }
-
-     public function get_all_by($filter)
-    {
-        $builder = $this->db->table($this->table);
-
-         $builder->where($filter);
-
-        $query = $builder->get();
-        $manyData = $builder->countAllResults();
-
-        if($manyData > 0){
+        if ($manyData > 0) {
 
             return $query->getResult();
-
-        }else {
+        } else {
             return false;
         }
     }
 
-     public function get_by_username($username)
+    public function get_all_by($filter)
+    {
+        $builder = $this->db->table($this->table);
+
+        $builder->where($filter);
+
+        $query = $builder->get();
+        $manyData = $builder->countAllResults();
+
+        if ($manyData > 0) {
+
+            return $query->getResult();
+        } else {
+            return false;
+        }
+    }
+
+    public function get_by_username($username)
     {
         $builder = $this->db->table($this->table);
 
@@ -82,54 +81,41 @@ class UserModel extends Model
         $builder->where($data);
 
         $query = $builder->get();
-         $manyData = $builder->countAllResults();
-
-        if($manyData > 0){
-
-            return $query->getResult()[0];
-
-        }else {
-            return false;
-        }
-
-    }
-
-     public function get_by($dataFilter)
-    {
-        $builder = $this->db->table($this->table);
-
-        $builder->where($dataFilter);
-
-        $query = $builder->get();
-        $result = $query->getResult();
         $manyData = $builder->countAllResults();
 
-        if($manyData > 0 && !empty($result)) {
-            return $result[0];
-        }else {
+        if ($manyData > 0) {
+
+            return $query->getResult()[0];
+        } else {
             return false;
         }
-
     }
 
-    public function valid($data){
+    public function get_by($dataFilter)
+    {
+        return $this->where($dataFilter)->first();
+    }
+
+    public function valid($data)
+    {
         $builder = $this->db->table($this->table);
 
         $builder->where($data);
 
         $manyData = $builder->countAllResults();
 
-        if($manyData > 0){
+        if ($manyData > 0) {
             return true;
-        }else {
+        } else {
             return false;
         }
     }
 
-    public function insert_new($data){
+    public function insert_new($data)
+    {
         $query = $this->db->table($this->table)->insert($data);
-         
-         if($query){
+
+        if ($query) {
             return true;
         }
 
@@ -139,25 +125,22 @@ class UserModel extends Model
     public function update_existing($data, $id)
     {
         $query = $this->db->table($this->table)->update($data, array('id' => $id));
-        
-        if($query){
+
+        if ($query) {
             return true;
         }
 
         return false;
-
     }
 
     public function delete_existing($id)
     {
         $query = $this->db->table($this->table)->delete(array('id' => $id));
-       
-       if($query){
+
+        if ($query) {
             return true;
         }
 
         return false;
-    } 
-
-  
+    }
 }

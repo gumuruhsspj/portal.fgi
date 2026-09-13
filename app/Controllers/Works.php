@@ -2088,6 +2088,7 @@ Jangan tambahkan teks di luar format tersebut.";
 
         $data = array(
             'judul' => $j,
+            'url' => url_title($j, '-', true),
             'kategori' => $k,
             'deskripsi' => $d,
             'attachment' => $a,

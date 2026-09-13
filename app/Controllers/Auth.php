@@ -94,6 +94,10 @@ class Auth extends Controller
 
         $userData = json_decode($userResponse, true);
 
+        if (empty($userData['email'])) {
+            return "Gagal mendapatkan email dari Google. Coba lagi atau login manual.";
+        }
+
         /* dia dpt ini 
         Array
 (
@@ -125,15 +129,18 @@ class Auth extends Controller
             $session->set('propic', $data_user->propic);
             $session->set('usertype', $data_user->usertype);
             $session->set('id', $data_user->id);
+            $session->set('id_user', $data_user->id);
             $session->set('username', $data_user->username);
             $session->set('nama_lengkap', $data_user->nama_lengkap);
-
+            $session->set('email', $data_user->email);
+            $session->set('whatsapp', $data_user->whatsapp);
+            $session->set('pass', $data_user->pass);
             return redirect()->to('/homepage');
         }
 
         //return "<pre>" . print_r($userData, true) . "</pre>";
         // pass ke depan dengan attribute untuk register
-        return redirect()->to('/?register=new&email=' . urlencode($userData['email']) . '&nama_lengkap=' . urlencode($userData['name']));
+        return redirect()->to('/register?email=' . urlencode($userData['email']) . '&nama_lengkap=' . urlencode($userData['name']));
     }
 
 
@@ -183,7 +190,7 @@ class Auth extends Controller
             'customer_email' => $email,
             'otp_code' => $token,
             'link_portal' => base_url(),
-            'link_logo' => 'https://portal.fgroupindonesia.com/assets/img/logo.jpg',
+            'link_logo' => 'https://apps.fgroupindonesia.com/portal/assets/img/fgroup96.jpg',
             'expires_in' => '10 menit'
         ];
 
@@ -191,8 +198,8 @@ class Auth extends Controller
         $result = $emailSender->sendPost(
             $htmlClient,
             $email,
-            null,
             'Kode OTP Reset Password Anda',
+            null,
             null
         );
 

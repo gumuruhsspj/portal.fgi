@@ -62,9 +62,12 @@
                         <input class="form-control nexus-input" type="text" name="username" placeholder="Ketik Username atau Email" required>
                     </div>
 
-                    <div class="mb-2">
+                    <div class="mb-2 position-relative">
                         <label class="form-label small fw-medium">Password</label>
-                        <input class="form-control nexus-input" type="password" name="pass" placeholder="Ketik Password" required>
+                        <input class="form-control nexus-input pe-5" type="password" name="pass" id="loginPassword" placeholder="Ketik Password" required>
+                        <span class="position-absolute top-70 end-0 translate-middle-y pe-3" style="cursor: pointer; z-index: 5;" id="toggleLoginPassword">
+                            <i class="fa-regular fa-eye"></i>
+                        </span>
                     </div>
 
                     <div class="text-end mt-1">
@@ -81,7 +84,7 @@
                     </div>
                     <div class="mb-2 text-muted small">Atau</div>
                     <div>
-                        <a href="/auth/google" class="btn btn-danger">
+                        <a href="<?= base_url(); ?>auth/google" class="btn btn-danger">
                             <i class="fa-brands fa-google"></i> Pakai Gmail
                         </a>
                     </div>

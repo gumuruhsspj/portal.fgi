@@ -98,11 +98,11 @@
                               <a href="<?= base_url(); ?>materi?title=<?= string_to_url($dmateri->judul); ?>">
                                 <h5 class="card-title text-primary text-white"><?= strtoupper($dmateri->judul); ?></h5>
                               </a>
-                              <a href="/all-materi?kategori=<?= string_to_url($dmateri->kategori); ?>">
+                              <a href="<?= base_url(); ?>all-materi?kategori=<?= string_to_url($dmateri->kategori); ?>">
                                 <h5 class="card-title text-primary text-white"><?= $dmateri->kategori; ?></h5>
                               </a>
                               <p class="card-text text-white pb-2 pt-1"><?= $dmateri->deskripsi; ?></p>
-                              <span>Last update <?= calculate_time_elapsed($dmateri->date_created); ?></span>
+                              <span>Last update <?= calculate_time_elapsed($dmateri->date_modified); ?></span>
                             </div>
                           </div>
                         </div>

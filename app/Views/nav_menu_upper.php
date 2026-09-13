@@ -52,7 +52,7 @@
         <?php endif; ?>
 
 
-        <a href="/all-messages" class="dropdown-item dropdown-footer">See All Messages</a>
+        <a href="<?= base_url(); ?>all-messages" class="dropdown-item dropdown-footer">See All Messages</a>
       </div>
     </li>
 

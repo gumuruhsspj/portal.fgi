@@ -90,7 +90,7 @@
         .btn {
             display: inline-block;
             background: #0d6efd;
-            color: #fff;
+            color: #fff !important;
             padding: 10px 28px;
             border-radius: 6px;
             text-decoration: none;

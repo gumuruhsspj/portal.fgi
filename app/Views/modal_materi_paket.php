@@ -1,21 +1,19 @@
-
-
 <div class="modal fade" id="paketModal" tabindex="-1" aria-labelledby="paketModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-        
-    <form id="paketForm">
-      <div class="modal-header">
-        <h5 class="modal-title" id="paketModalLabel">Paket Pembelajaran</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-       
-            <input type="hidden" id="materiId" name="materi_id" value="">
 
-            <div class="mb-3">
+      <form id="paketForm">
+        <div class="modal-header">
+          <h5 class="modal-title" id="paketModalLabel">Paket Pembelajaran</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+
+          <input type="hidden" id="materiId" name="materi_id" value="">
+
+          <div class="mb-3">
             <label for="judulMateri" class="form-label">Materi:</label>
-            <input type="text" class="form-control" id="judulMateri" name="title" readonly >
+            <input type="text" class="form-control" id="judulMateri" name="title" readonly>
           </div>
 
           <div class="mb-3">
@@ -40,19 +38,20 @@
             </div>
           </div>
 
-          <div class="mb-3">
-            <label for="biayaPokok" class="form-label">Biaya Pokok (Bimbingan):</label>
-            <input type="text" class="form-control" value="0" id="biayaPokok" name="biaya_pokok" required >
-          </div>
 
           <div class="mb-3">
             <label for="biayaBelajarSendiri" class="form-label">Biaya (Belajar Sendiri):</label>
-            <input type="text" class="form-control" value="0" id="biayaBelajarSendiri" name="biaya_belajar_sendiri" required >
+            <input type="text" class="form-control input-rupiah" id="biayaBelajarSendiri" name="biaya_belajar_sendiri" value="0" required>
           </div>
 
           <div class="mb-3">
-            <label for="biayaKasusCustom" class="form-label">Biaya  (Kasus Custom):</label>
-            <input type="text" class="form-control" value="0" id="biayaKasusCustom" name="biaya_kasus_custom" required >
+            <label for="biayaPokok" class="form-label">Biaya Pokok (Bimbingan):</label>
+            <input type="text" class="form-control input-rupiah" id="biayaPokok" name="biaya_pokok" value="0" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="biayaKasusCustom" class="form-label">Biaya (Kasus Custom):</label>
+            <input type="text" class="form-control input-rupiah" id="biayaKasusCustom" name="biaya_kasus_custom" value="0" required>
           </div>
 
           <div class="mb-3">
@@ -68,19 +67,17 @@
               </div>
             </div>
           </div>
-          
+
           <div class="alert alert-info" role="alert">
-            Pajak: 10% dari Biaya Pokok 
-            <div id="pajakDisplay">Pajak (10%): Rp <span id="nilaiPajak"> </span></div>
-            
+            Ingat, Pajak: 10% dari Salah satu Biaya diatas.
           </div>
-          
-      
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-        <button type="submit" class="btn btn-primary" id="submitUpdate">Simpan Perubahan</button>
-      </div>
+
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+          <button type="submit" class="btn btn-primary" id="submitUpdate">Simpan Perubahan</button>
+        </div>
 
       </form>
     </div>
