@@ -239,8 +239,6 @@ class Home extends BaseController
 
         $data = $this->get_user_data();
 
-
-
         $username = $this->session->get('username');
         $as = $this->session->get('usertype');
 
@@ -260,9 +258,51 @@ class Home extends BaseController
         $data['data_user'] = $data_user;
         $data['random'] = '?v=' . rand(1, 1000);
 
-
         //echo var_dump($username);
         return view('management_materi', $data);
+    }
+
+    public function management_quiz_submission()
+    {
+        $this->is_logged_in();
+        $data = $this->get_user_data();
+
+        $id_materi = $this->request->getGet('materi_id');
+
+        $data['submissions']     = $this->model_materi->get_all_quiz_attempts_with_relations($id_materi);
+        $data['materi_filter']   = $this->model_materi->get_materi_with_quiz_attempts();
+        $data['selected_materi'] = $id_materi;
+
+        $data['link_management_open'] = 'menu-open';
+        $data['link_management_quiz_submission_active'] = 'active';
+        $data['random'] = '?v=' . time();
+
+        return view('management_quiz_submission', $data);
+    }
+
+    public function management_quiz_submission_detail()
+    {
+        $this->is_logged_in();
+        $data = $this->get_user_data();
+
+        $id_materi = $this->request->getGet('id');
+        $id_user   = $this->request->getGet('id_user');
+
+        $attempt = $this->model_materi->get_quiz_attempt_by_materi_and_user($id_materi, $id_user);
+        if (!$attempt) {
+            return redirect()->to('/manage/quiz-submission')->with('error', 'Data submission tidak ditemukan.');
+        }
+
+        $data['attempt']       = $attempt;
+        $data['data_answers']  = $this->model_materi->get_quiz_answers($attempt->id);
+        $data['data_materi']   = $this->model_materi->get_by(['id' => $id_materi]);
+        $data['data_user']     = $this->model_user->find($id_user);
+
+        $data['link_management_open'] = 'menu-open';
+        $data['link_management_quiz_submission_active'] = 'active';
+        $data['random'] = '?v=' . time();
+
+        return view('management_quiz_submission_detail', $data);
     }
 
     public function management_materi_custom()
@@ -337,10 +377,11 @@ class Home extends BaseController
 
         $data = $this->get_user_data();
         $username = $this->session->get('username');
+        $id_user = $this->session->get('id_user');
         $as = $this->session->get('usertype');
 
         if (!$this->is_admin()) {
-            $data_perangkat_tautan = $this->model_perangkat_tautan->get_all_by_username($username);
+            $data_perangkat_tautan = $this->model_perangkat_tautan->get_all_by_userid($id_user);
         } else {
             $data_perangkat_tautan = $this->model_perangkat_tautan->get_all();
         }

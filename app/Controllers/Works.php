@@ -3332,6 +3332,74 @@ Jangan tambahkan teks di luar format tersebut.";
         echo json_encode($data_final);
     }
 
+    public function quiz_submission_grade()
+    {
+        $this->is_logged_in();
+        if (!$this->request->isAJAX()) {
+            return $this->response->setJSON(['status' => 'error', 'message' => 'Invalid request']);
+        }
+
+        $attempt_id = $this->request->getPost('attempt_id');
+        $scores     = $this->request->getPost('scores');   // [id_answer => score]
+        $catatan    = $this->request->getPost('catatan');  // [id_answer => text]
+
+        if (empty($attempt_id)) {
+            return $this->response->setJSON(['status' => 'error', 'message' => 'Attempt tidak valid.']);
+        }
+
+        $attempt = $this->model_materi->get_quiz_attempt_by_id($attempt_id);
+        if (!$attempt) {
+            return $this->response->setJSON(['status' => 'error', 'message' => 'Attempt tidak ditemukan.']);
+        }
+
+        // Update setiap jawaban essay yang dinilai
+        $total_essay_score = 0;
+        $essay_judged      = 0;
+
+        if (is_array($scores)) {
+            foreach ($scores as $id_answer => $score) {
+                $score = max(0, min(100, (float) $score));
+                $note  = isset($catatan[$id_answer]) ? trim((string) $catatan[$id_answer]) : '';
+
+                $this->model_materi->update_quiz_answer($id_answer, [
+                    'score'         => $score,
+                    'catatan_admin' => $note,
+                ]);
+
+                $total_essay_score += $score;
+                $essay_judged++;
+            }
+        }
+
+        // Hitung final score
+        $pg_count    = (int) $attempt->pg_questions;
+        $essay_count = (int) $attempt->essay_questions;
+        $auto_score  = (float) $attempt->auto_score;
+        $essay_avg   = $essay_judged > 0 ? ($total_essay_score / $essay_judged) : 0;
+
+        $total_questions = $pg_count + $essay_count;
+        $final_score = 0;
+        if ($total_questions > 0) {
+            $final_score = (($auto_score * $pg_count) + ($essay_avg * $essay_count)) / $total_questions;
+        }
+        $final_score = round($final_score, 2);
+
+        $graded_by = session()->get('id_user');
+
+        $this->model_materi->update_quiz_attempt($attempt_id, [
+            'final_score' => $final_score,
+            'status'      => 'graded',
+            'graded_by'   => $graded_by,
+            'date_graded' => date('Y-m-d H:i:s'),
+        ]);
+
+        return $this->response->setJSON([
+            'status'      => 'success',
+            'message'     => 'Penilaian berhasil disimpan. Final score: ' . $final_score,
+            'final_score' => $final_score,
+        ]);
+    }
+
     // ========== QUIZ MATERI ==========
 
     public function materi_quiz_add()

@@ -121,6 +121,51 @@ class MateriModel extends Model
         return $map;
     }
 
+    public function get_all_quiz_attempts_with_relations($id_materi = null)
+    {
+        $tbl_qa = $this->table_quiz_attempts_name . ' as qa';
+        $tbl_u  = 'table_users as u';
+        $tbl_m  = $this->table . ' as m';
+
+        $b = $this->db->table($tbl_qa);
+        $b->select('qa.*, u.username, u.nama_lengkap, u.email, m.judul as judul_materi, m.icon');
+        $b->join($tbl_u, 'u.id = qa.id_user', 'left');
+        $b->join($tbl_m, 'm.id = qa.id_materi', 'left');
+        if (!empty($id_materi)) {
+            $b->where('qa.id_materi', $id_materi);
+        }
+        $b->orderBy('qa.date_created', 'DESC');
+
+        return $b->get()->getResult();
+    }
+
+    public function get_quiz_attempt_by_materi_and_user($id_materi, $id_user)
+    {
+        $b = $this->db->table($this->table_quiz_attempts_name);
+        $b->where('id_materi', $id_materi)->where('id_user', $id_user);
+        $row = $b->get()->getRow();
+        return $row ?: false;
+    }
+
+    public function update_quiz_answer($id, $data)
+    {
+        return $this->db->table($this->table_quiz_answers_name)->update($data, ['id' => $id]);
+    }
+
+    public function get_materi_with_quiz_attempts()
+    {
+        $tbl_qa = $this->table_quiz_attempts_name . ' as qa';
+        $tbl_m  = $this->table . ' as m';
+
+        $b = $this->db->table($tbl_qa);
+        $b->select('qa.id_materi, m.judul as judul_materi, m.icon, COUNT(qa.id) as total_submissions');
+        $b->join($tbl_m, 'm.id = qa.id_materi', 'left');
+        $b->groupBy('qa.id_materi, m.judul, m.icon');
+        $b->orderBy('m.judul', 'ASC');
+
+        return $b->get()->getResult();
+    }
+
     public function get_quiz_attempt_by_user($id_user, $id_materi)
     {
         $b = $this->db->table($this->table_quiz_attempts_name);

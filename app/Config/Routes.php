@@ -35,7 +35,10 @@ $routes->get('/manage/materi/quiz', 'Home::management_quiz_materi');
 
 $routes->post('/manage/pembayaran/update', 'Works::pembayaran_update');
 
-// working now 17-april-2026
+$routes->get('/manage/quiz-submission', 'Home::management_quiz_submission');
+$routes->get('/manage/quiz-submission/quiz', 'Home::management_quiz_submission_detail');
+$routes->post('/manage/quiz-submission/grade', 'Works::quiz_submission_grade');
+
 $routes->post('/manage/materi/custom/add', 'Works::materi_custom_add');
 $routes->post('/manage/materi/custom/delete', 'Works::materi_custom_delete');
 $routes->post('/manage/materi/custom/update', 'Works::materi_custom_update');
