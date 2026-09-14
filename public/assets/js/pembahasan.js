@@ -1,11 +1,11 @@
-const _URL_ADD_BAB_PEMBAHASAN       = "/manage/materi/pembahasan/bab/add";
-const _URL_UPDATE_BAB_PEMBAHASAN    = "/manage/materi/pembahasan/bab/update";
-const _URL_DELETE_BAB_PEMBAHASAN    = "/manage/materi/pembahasan/bab/delete";
-const _URL_ADD_PEMBAHASAN           = "/manage/materi/pembahasan/add";
-const _URL_DELETE_PEMBAHASAN        = "/manage/materi/pembahasan/delete";
-const _URL_EDIT_PEMBAHASAN        = "/manage/materi/pembahasan/edit";
-const _URL_UPDATE_PEMBAHASAN        = "/manage/materi/pembahasan/update";
-const _URL_NEXT_NO_URUT_PEMBAHASAN  = "/manage/materi/pembahasan/no-urut/next";
+const _URL_ADD_BAB_PEMBAHASAN       = _URL_MAIN_WEBSITE+ "manage/materi/pembahasan/bab/add";
+const _URL_UPDATE_BAB_PEMBAHASAN    = _URL_MAIN_WEBSITE+ "manage/materi/pembahasan/bab/update";
+const _URL_DELETE_BAB_PEMBAHASAN    = _URL_MAIN_WEBSITE+ "manage/materi/pembahasan/bab/delete";
+const _URL_ADD_PEMBAHASAN           = _URL_MAIN_WEBSITE+ "manage/materi/pembahasan/add";
+const _URL_DELETE_PEMBAHASAN        = _URL_MAIN_WEBSITE+ "manage/materi/pembahasan/delete";
+const _URL_EDIT_PEMBAHASAN          = _URL_MAIN_WEBSITE+ "manage/materi/pembahasan/edit";
+const _URL_UPDATE_PEMBAHASAN        = _URL_MAIN_WEBSITE+ "manage/materi/pembahasan/update";
+const _URL_NEXT_NO_URUT_PEMBAHASAN  = _URL_MAIN_WEBSITE+ "manage/materi/pembahasan/no-urut/next";
 
 function inputOnBab(){
 
@@ -22,44 +22,43 @@ let _jumlah_bab = 0;
 let _card_used = null;
 
 function createCard() {
-   
-let id_materi = $('#id_materi').val();
-
-incrementTotalData();
+    let id_materi = $('#id_materi').val();
+    incrementTotalData();
 
     return `
      <div class="col-md-6 mb-4 card-item" data-id-materi="${id_materi}" data-id="">
-            <div class="card h-100">
-                <div class="card-body" style="margin-left: 15px;">
-                    <input type="checkbox" class="form-check-input selected-card mb-2">
+        <div class="card h-100">
+            <div class="card-body">
 
-                    <input type="text" class="form-control mb-2 judul" 
-                          placeholder="Judul Bab" value="">
+                <input type="checkbox" class="form-check-input selected-card mb-2">
 
-                    <textarea class="form-control mb-2 deskripsi" 
-                              placeholder="Deskripsi"></textarea>
+                <input type="text" class="form-control mb-2 judul" 
+                       placeholder="Judul Bab" value="">
 
-                    <p class="text-muted">
-                    
-                    <a href="#" class="add-pembahasan" data-bs-toggle="modal" data-bs-target="#modalPembahasan" >Add Pembahasan</a>
-                    
-                    <div class="list-group">
-                         
-                        
-                    </div>
-                    </p>
+                <textarea class="form-control mb-2 deskripsi" 
+                          placeholder="Deskripsi"></textarea>
 
+                <div class="d-flex justify-content-between mb-3">
                     <button class="btn btn-sm btn-danger delete-card" data-id="${id_materi}">
                         Delete
                     </button>
-
-                    <button class="btn btn-sm btn-success float-end save-card" data-id="${id_materi}">
+                    <button class="btn btn-sm btn-success save-card" data-id="${id_materi}">
                         Save
                     </button>
                 </div>
-            </div>
-        </div>`;
 
+                <hr>
+
+                <div class="pembahasan-section">
+                    <a href="#" class="add-pembahasan" data-bs-toggle="modal" data-bs-target="#modalPembahasan">
+                        + Add Pembahasan
+                    </a>
+                    <ul class="list-group mt-2"></ul>
+                </div>
+
+            </div>
+        </div>
+     </div>`;
 }
 
 function incrementTotalData(){
@@ -88,9 +87,8 @@ $(document).ready(function() {
     $(document).on("click", ".save-card", function(){
         let card = $(this).closest(".card-item");
         let id_userna = $('#id_user').val();
-        let id_babna = card.data("id");
+        let id_babna = card.data("id");          // ID bab (kosong jika baru)
         let id_materina = card.data("id-materi");
-
         let id_materi_custom = $('#id_materi_custom').val();
 
         let judul_na = card.find(".judul").val();
@@ -98,239 +96,231 @@ $(document).ready(function() {
         let btn_save = card.find('.save-card');
 
         let dataNa = null;
+        let urlTarget = '';
 
-        if(id_babna){
-            // update
-             dataNa = {
-                id: id_babna,
-                id_materi : id_materina,
-                id_user: id_userna,
-                judul: judul_na,
-                deskripsi: deskripsi_na
-            };
-
-            urlTarget = _URL_UPDATE_BAB_PEMBAHASAN;
-        }else{
-            // new insert
+        if (id_babna) {
+            // UPDATE bab yang sudah ada
             dataNa = {
-                id_materi : id_materina,
+                id: id_babna,
+                id_materi: id_materina,
                 id_user: id_userna,
                 judul: judul_na,
                 deskripsi: deskripsi_na
             };
-
-            if(id_materi_custom){
+            urlTarget = _URL_UPDATE_BAB_PEMBAHASAN;
+        } else {
+            // INSERT bab baru
+            dataNa = {
+                id_materi: id_materina,
+                id_user: id_userna,
+                judul: judul_na,
+                deskripsi: deskripsi_na
+            };
+            if (id_materi_custom) {
                 dataNa.id_materi_custom = id_materi_custom;
             }
-
-            //alert(id_materi_custom);
-
             urlTarget = _URL_ADD_BAB_PEMBAHASAN;
         }
 
-        
-    
-        // AJAX kirim ke backend
-        printOut("Saving card:", dataNa);
-        // ajax post ke route _URL_ADD_BAB_PEMBAHASAN dengan data {id, judul, deskripsi}
         $.ajax({
             url: urlTarget,
             method: "POST",
             data: dataNa,
             dataType: "json",
             success: function(response) {
+                console.log("Card saved successfully:", response);
+                btn_save.hide();
 
-            console.log("Card saved successfully:", response);
-            // Optionally, you can update the UI or show a success message here
-
-            btn_save.hide();
-
+                // ✅ UPDATE data-id card dengan ID baru dari server
+                if (!id_babna && response.id) {
+                    card.attr("data-id", response.id);
+                    card.find(".delete-card").data("id", response.id);
+                    card.find(".save-card").data("id", response.id);
+                }
             },
             error: function(xhr, status, error) {
-            console.error("Error saving card:", error);
-            // Optionally, you can show an error message here
-
-            btn_save.show();
-
+                console.error("Error saving card:", error);
+                btn_save.show();
             }
         });
-
     });
     
     // DELETE
     $(document).on("click", ".delete-card", function(){
-        if(!confirm("Yakin hapus?")) return;
-        
-        let el =  $(this).closest(".card-item");
+    let card = $(this).closest(".card-item");
+    let idna = card.data("id");   // pakai data card, bukan tombol
 
-        let idna = $(this).data("id");
-        
+    // Kalau card belum disimpan, langsung hapus dari DOM tanpa reload
+    if (!idna) {
+        card.remove();
+        decrementTotalData();
+        return;
+    }
 
-        // pake swal menunggu 1500ms lalu lanjut
-        Swal.fire({
-            title: 'Processing...',
-            text: 'Tunggu sebentar!',
-            timer: 1500,
-            onBeforeOpen: () => {
-            Swal.showLoading()
-            },
-            willClose: () => {
-            Swal.hideLoading()
-            }
-        }).then(() => {
-            // AJAX delete ke backend jika id ada
-            if(idna){
-                // AJAX delete ke backend jika id ada
-                $.ajax({
-                    url: _URL_DELETE_BAB_PEMBAHASAN,
-                    method: "POST",
-                    data: {id: idna},
-                    dataType: "json",
-                    success: function(response) {
-                        console.log("Card deleted successfully:", response);
-                        
-                       el.remove();
-                       decrementTotalData();     
-    
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("Error deleting card:", error);
-                        // Optionally, you can show an error message here
-                    }
-                });
-            }
-
-        });
-
-
-        
-        
+    Swal.fire({
+        title: 'Menghapus...',
+        text: 'Mohon tunggu sebentar',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        didOpen: () => { Swal.showLoading(); }
     });
+
+    $.ajax({
+        url: _URL_DELETE_BAB_PEMBAHASAN,
+        method: "POST",
+        data: {id: idna},
+        dataType: "json",
+        success: function () {
+            location.reload();
+        },
+        error: function (xhr, status, error) {
+            console.error("Error deleting card:", error);
+            Swal.close();
+            Swal.fire('Error', 'Gagal menghapus bab.', 'error');
+        }
+    });
+});
   
    
 
     // delete pembahasan yg dipilih
-    $(document).on('click', '.remove-pembahasan', function(){ 
-            let idna = $(this).data('id');
+   $(document).on('click', '.remove-pembahasan', function(){
+    let idna = $(this).data('id');
 
-            let el = $(this).closest('li');
-
-            // munculin swal menunggu 1500ms
-            Swal.fire({
-                title: 'Processing...',
-                text: 'Please wait a moment.',
-                timer: 1500,
-                onBeforeOpen: () => {
-                    Swal.showLoading()
-                },
-                willClose: () => {
-                    Swal.hideLoading()
-                }
-            }).then(() => {
-                
-                // AJAX delete ke backend
-                $.ajax({
-                    url: _URL_DELETE_PEMBAHASAN,
-                    method: "POST",
-                    data: {id: idna},
-                    dataType: "json",
-                    success: function(response) {
-
-                        console.log("Pembahasan deleted successfully:", response);
-                        el.remove();     
-
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("Error deleting pembahasan:", error);
-                        // Optionally, you can show an error message here
-                    }
-                });
-                
-
-            });
-
-
-            
-
+    Swal.fire({
+        title: 'Menghapus...',
+        text: 'Mohon tunggu sebentar',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        didOpen: () => { Swal.showLoading(); }
     });
 
-    // delete item dari card sesuai checkbox
-    $(document).on('click', '#delete-selected', function(){
+    $.ajax({
+        url: _URL_DELETE_PEMBAHASAN,
+        method: "POST",
+        data: {id: idna},
+        dataType: "json",
+        success: function () {
+            location.reload();
+        },
+        error: function (xhr, status, error) {
+            console.error("Error deleting pembahasan:", error);
+            Swal.close();
+            Swal.fire('Error', 'Gagal menghapus pembahasan.', 'error');
+        }
+    });
+});
 
-        $('#card-mode .selected-card:checked').each(function(){
+    // delete item dari card sesuai checkbox
+   $(document).on('click', '#delete-selected', function(){
+    let $checked = $('#card-mode .selected-card:checked');
+
+    if ($checked.length === 0) {
+        Swal.fire({
+            icon: 'info',
+            title: 'Tidak ada item',
+            text: 'Pilih dulu item yang ingin dihapus.',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    Swal.fire({
+        icon: 'warning',
+        title: 'Konfirmasi Hapus',
+        text: `Yakin ingin menghapus ${$checked.length} item yang dipilih?`,
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Hapus',
+        cancelButtonText: 'Batal',
+        confirmButtonColor: '#d33'
+    }).then((result) => {
+        if (!result.isConfirmed) return;
+
+        Swal.fire({
+            title: 'Menghapus...',
+            text: 'Mohon tunggu sebentar',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => { Swal.showLoading(); }
+        });
+
+        let promises = [];
+
+        $checked.each(function(){
             let card = $(this).closest(".card-item");
             let idna = card.data("id");
 
-            // AJAX delete ke backend jika id ada
-            if(idna){
-                $.ajax({
+            if (idna) {
+                promises.push($.ajax({
                     url: _URL_DELETE_BAB_PEMBAHASAN,
                     method: "POST",
                     data: {id: idna},
-                    dataType: "json",
-                    success: function(response) {
-                        console.log("Card deleted successfully:", response);
-                        
-                       card.remove();
-                       decrementTotalData();     
-
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("Error deleting card:", error);
-                        // Optionally, you can show an error message here
-                    }
-                });
-            }else{
-                // jika belum disimpan di db
+                    dataType: "json"
+                }));
+            } else {
+                // belum disimpan, hapus di DOM saja
                 card.remove();
-                decrementTotalData();     
+                decrementTotalData();
             }
-
         });
 
+        if (promises.length > 0) {
+            $.when.apply($, promises).always(function(){
+                location.reload();
+            });
+        } else {
+            Swal.close();
+        }
     });
+});
 
     // saat mulai di klik
-    $(document).on('click', '.add-pembahasan', function(){
+    $(document).on('click', '.add-pembahasan', function(e){
+        e.preventDefault();
 
         let card = $(this).closest(".card-item");
-        // temporary stored
-        _card_used = card;
+        let id_babna = card.data("id");
 
-        // reset form   
+        // ✅ Validasi: bab harus sudah disimpan
+        if (!id_babna || id_babna === "") {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Bab belum disimpan',
+                text: 'Simpan bab terlebih dahulu sebelum menambah pembahasan.',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+
+        _card_used = card;
         $('#formPembahasan')[0].reset();
 
-        let id_babna = card.data("id");
         let id_materina = card.data('id-materi');
         let id_materi_customna = $('#id_materi_custom').val();
 
         $('#materi_id').val(id_materina);
         $('#pembahasan_id_bab').val(id_babna);
         $('#pembahasan_id_user').val($('#id_user').val());
-        
-        let dataNa = {id_bab: id_babna};
 
-        if(id_materi_customna){
+        let dataNa = { id_bab: id_babna };
+        if (id_materi_customna) {
             dataNa.id_materi_custom = id_materi_customna;
         }
 
-        // panggil ajax untuk dptin nomor urut brikutnya
         $.ajax({
             url: _URL_NEXT_NO_URUT_PEMBAHASAN,
             method: 'POST',
             data: dataNa,
             dataType: 'json',
             success: function(response) {
-                console.log("Next urut fetched successfully:", response);
                 $('#pembahasan_ordering_index').val(response.data);
             },
-            error: function(xhr, status, error) {
-                console.error("Error fetching next urut:", error);
-                $('#pembahasan_ordering_index').val('0');
+            error: function() {
+                $('#pembahasan_ordering_index').val('1');
             }
         });
-        
 
+        $('#modalPembahasan').modal('show');
     });
   
     // edit pembahasan
@@ -385,12 +375,9 @@ $(document).ready(function() {
 
         let judul = $(this).find('#judul').val();
         let urlTarget = _URL_ADD_PEMBAHASAN;
-
-        let idmaterina = $(this).find('#materi_id').val();
         let idna = $(this).find('#pembahasan_id').val();
-        let idmatericustomna = $(this).find('#custom_id');
 
-        if(idna){
+        if (idna) {
             urlTarget = _URL_UPDATE_PEMBAHASAN;
         }
 
@@ -400,32 +387,12 @@ $(document).ready(function() {
             data: formData,
             dataType: 'json',
             success: function(response) {
-                // Handle success or error
-
                 console.log(response);
-
-                // terima id nya
-
-                // Optionally close the modal
                 $('#modalPembahasan').modal('hide');
 
-                let el = `<li class="list-group-item">
-                           ${judul}
-                            <button data-id="${response.data}" class="btn btn-warning btn-sm float-end edit-pembahasan"  >
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button data-id="${response.data}" class="btn btn-danger btn-sm float-end remove-pembahasan"  >
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
-                          </li>`;
-                
-                if(idna){
-                    // update existing item
-                    _card_used.find(`.list-group-item button[data-id='${idna}']`).closest('li').replaceWith(el);
-                    return;
-                }
-
-                _card_used.find('.list-group').append(el);
+                // ✅ Reload halaman agar data ter-render ulang dengan benar
+                // Ini menghindari duplikasi/manipulasi DOM yang rapuh
+                location.reload();
             },
             error: function(xhr, status, error) {
                 console.error('Error:', error);

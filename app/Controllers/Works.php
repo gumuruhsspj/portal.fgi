@@ -934,24 +934,27 @@ Jangan tambahkan teks di luar format tersebut.";
 
         // 3. Catat di History Saldo sebagai "Pengeluaran" (Minus)
         $data_history = [
-            'id_user'     => $id_user,
-            'keterangan'  => 'Pembelian Akses Materi: ' . $materi['judul'] . ' paket ' . $opsi_paket,
-            'nominal'      => $harga,
-            'jenis' => 'daftar kursus',
-            'status'      => 'approved'
+            'id_user'       => $id_user,
+            'keterangan'    => 'Pembelian Akses Materi: ' . $materi['judul'] . ' paket ' . $opsi_paket,
+            'nominal'       => $harga,
+            'jenis'         => 'daftar kursus',
+            'status'        => 'approved'
         ];
 
         $insert_history = $this->model_history_saldo->insert($data_history);
 
         if ($insert_history) {
             // 4. Update Balance di tabel User (Sync Saldo)
-            $new_balance = $this->model_history_saldo->get_saldo_by($id_user);
+            $dataFilterHistory = array(
+                'id_user' => $id_user
+            );
+
+            $new_balance = $this->model_history_saldo->get_saldo_by($dataFilterHistory);
             $this->model_user->update($id_user, ['balance' => $new_balance]);
 
-            // 5. Tambahkan akses materi ke user (tabel user_materi / enrollment)
-            // Ini opsional tergantung struktur DB kamu
+
             $data_akses = [
-                'username'   => $username,
+                'id_user'   => $id_user,
                 'id_materi'  => $materi_id,
                 'paket'      => $opsi_paket,
                 'status'     => 'in progress'
@@ -1612,19 +1615,22 @@ Jangan tambahkan teks di luar format tersebut.";
     {
         $this->is_logged_in(); // Pastikan sudah login
 
-        $data = $this->get_user_data();
-        $us = $data['username'];
+        $id_user = session()->get('id_user');
+
+        //dd($id_materi);
+        //dd($username);
 
         // Validasi apakah user terdaftar untuk materi ini
-        $data_student_materi = $this->model_materi->get_subscribed_materi($id_materi, $us);
+        $data_student_materi = $this->model_materi->get_subscribed_materi($id_materi, $id_user);
 
         // Cek status pembayaran juga
         if ($data_student_materi && $data_student_materi->status != 'error' && $data_student_materi->status != 'delete request') {
 
             $fileName = $data_student_materi->attachment;
-            $filePath = WRITEPATH . 'uploads' . DIRECTORY_SEPARATOR . 'materi' . DIRECTORY_SEPARATOR . $fileName;
+            $filePath = 'assets/attachment/uploads' . DIRECTORY_SEPARATOR . 'materi' . DIRECTORY_SEPARATOR . $fileName;
 
             //echo $filePath;
+            //dd($filePath);
 
             if (file_exists($filePath)) {
                 // CodeIgniter 4 Response Download
@@ -1639,33 +1645,36 @@ Jangan tambahkan teks di luar format tersebut.";
 
     public function pembahasan_bab_add()
     {
+        $result = [
+            'status'  => 'invalid',
+            'message' => 'error',
+            'id'      => null,
+        ];
 
-        $result = array(
-            'status' => 'invalid',
-            'message' => 'error'
-        );
-
-        $id_materi = $this->request->getPost('id_materi');
+        $id_materi        = $this->request->getPost('id_materi');
         $id_materi_custom = $this->request->getPost('id_materi_custom');
-        $id_user = $this->request->getPost('id_user');
-        $judul = $this->request->getPost('judul');
-        $deskripsi = $this->request->getPost('deskripsi');
+        $id_user          = $this->request->getPost('id_user');
+        $judul            = $this->request->getPost('judul');
+        $deskripsi        = $this->request->getPost('deskripsi');
 
-        $data = array(
-            'id_materi'   => $id_materi,
-            'id_user'     => $id_user,
-            'judul'       => $judul,
-            'deskripsi'  => $deskripsi
-        );
+        $data = [
+            'id_materi' => $id_materi,
+            'id_user'   => $id_user,
+            'judul'     => $judul,
+            'deskripsi' => $deskripsi,
+        ];
 
         if (!empty($id_materi_custom)) {
             $data['id_materi_custom'] = $id_materi_custom;
         }
 
-        $this->model_materi->insert_new_pembahasan_bab($data);
+        $new_id = $this->model_materi->insert_new_pembahasan_bab($data);
 
-        $result['status'] = 'valid';
-        $result['message'] = 'bab berhasil ditambahkan!';
+        if ($new_id) {
+            $result['status']  = 'valid';
+            $result['message'] = 'bab berhasil ditambahkan!';
+            $result['id']      = $new_id;
+        }
 
         echo json_encode($result);
     }
@@ -1713,8 +1722,9 @@ Jangan tambahkan teks di luar format tersebut.";
             // 2. Cek apakah ada pembahasan sebelum dan sesudahnya
             // Kita kirim id_bab dan ordering_index dari data yang baru kita ambil
             $navigasi = $this->model_materi->get_navigasi_pembahasan(
-                $current_data->id_bab,
-                $current_data->ordering_index
+                $current_data->id_materi,   // materi_id
+                $current_data->id,          // pembahasan_id sekarang
+                null                        // custom_id (biarkan null untuk non-custom)
             );
 
             return $this->response->setJSON([
@@ -1735,22 +1745,141 @@ Jangan tambahkan teks di luar format tersebut.";
 
     public function pembahasan_completed()
     {
-
-        $result = array(
-            'status' => 'error',
-            'message' => 'materi error'
-        );
+        $result = ['status' => 'error', 'message' => 'materi error'];
 
         $id = $this->request->getPost('id_materi');
 
         $result_update = $this->model_materi->update_status($id, 'completed');
 
         if (!empty($result_update)) {
-            $result['status'] = 'success';
+            $result['status']  = 'success';
             $result['message'] = 'status materi student berhasil diupdate!';
+
+            // cek ada quiz ga?
+            $quiz = $this->model_materi->get_all_quiz_by_materi_id($id);
+            if ($quiz) {
+                $result['has_quiz'] = true;
+                $result['redirect'] = base_url('materi/quiz?id=' . $id);
+            } else {
+                $result['has_quiz'] = false;
+            }
         }
 
         echo json_encode($result);
+    }
+
+    public function quiz_submit()
+    {
+        $this->is_logged_in();
+        if (!$this->request->isAJAX()) {
+            return $this->response->setJSON(['status' => 'error', 'message' => 'Invalid request']);
+        }
+
+        $id_user   = session()->get('id_user');
+        $id_materi = $this->request->getPost('id_materi');
+        $answers   = $this->request->getPost('answers'); // array : [id_quiz => jawaban]
+
+        if (!$id_materi || !is_array($answers)) {
+            return $this->response->setJSON(['status' => 'error', 'message' => 'Data jawaban tidak lengkap.']);
+        }
+
+        // cek akses
+        $subs = $this->model_materi->get_subscribed_materi($id_materi, $id_user);
+        if (!$subs) {
+            return $this->response->setJSON(['status' => 'error', 'message' => 'Akses ditolak.']);
+        }
+
+        // cek sudah pernah submit?
+        $existing = $this->model_materi->get_quiz_attempt_by_user($id_user, $id_materi);
+        if ($existing) {
+            return $this->response->setJSON([
+                'status'   => 'error',
+                'message'  => 'Anda sudah mengerjakan quiz ini.',
+                'redirect' => base_url('materi/quiz/result?attempt=' . $existing->id)
+            ]);
+        }
+
+        $all_quiz = $this->model_materi->get_all_quiz_by_materi_id($id_materi);
+        if (!$all_quiz) {
+            return $this->response->setJSON(['status' => 'error', 'message' => 'Quiz tidak ditemukan.']);
+        }
+
+        // header attempt
+        $total_q    = count($all_quiz);
+        $pg_total   = 0;
+        $essay_total = 0;
+        foreach ($all_quiz as $q) {
+            if ($q->jenis === 'essay') $essay_total++;
+            else                        $pg_total++;
+        }
+
+        $attempt_id = $this->model_materi->create_quiz_attempt([
+            'id_user'         => $id_user,
+            'id_materi'       => $id_materi,
+            'total_questions' => $total_q,
+            'pg_questions'    => $pg_total,
+            'essay_questions' => $essay_total,
+            'status'          => 'pending',
+        ]);
+
+        if (!$attempt_id) {
+            return $this->response->setJSON(['status' => 'error', 'message' => 'Gagal membuat attempt.']);
+        }
+
+        $pg_correct = 0;
+        foreach ($all_quiz as $q) {
+            $user_ans  = isset($answers[$q->id]) ? trim((string)$answers[$q->id]) : '';
+            $is_correct = null;
+            $score      = null;
+
+            if ($q->jenis === 'essay') {
+                // tunggu admin
+            } else {
+                $is_correct = (strtoupper($user_ans) === strtoupper(trim((string)$q->final_answer))) ? 1 : 0;
+                $score      = $is_correct ? 100 : 0;
+                if ($is_correct) $pg_correct++;
+            }
+
+            $this->model_materi->insert_quiz_answer([
+                'id_attempt' => $attempt_id,
+                'id_quiz'    => $q->id,
+                'jenis'      => $q->jenis,
+                'jawaban'    => $user_ans,
+                'is_correct' => $is_correct,
+                'score'      => $score,
+            ]);
+        }
+
+        // auto_score hanya dari PG (persen terhadap total PG, bukan total soal)
+        $auto_score = $pg_total > 0 ? round(($pg_correct / $pg_total) * 100, 2) : 0;
+
+        if ($essay_total === 0) {
+            // semua PG → langsung graded
+            $this->model_materi->update_quiz_attempt($attempt_id, [
+                'auto_score'   => $auto_score,
+                'final_score'  => $auto_score,
+                'status'       => 'graded',
+                'date_graded'  => date('Y-m-d H:i:s'),
+            ]);
+        } else {
+            $this->model_materi->update_quiz_attempt($attempt_id, [
+                'auto_score' => $auto_score,
+            ]);
+        }
+
+        return $this->response->setJSON([
+            'status'    => 'success',
+            'message'   => $essay_total > 0 ? 'Quiz terkirim. Menunggu penilaian admin.' : 'Selamat! Quiz selesai.',
+            'has_essay' => $essay_total > 0,
+            'redirect'  => base_url('materi/quiz/result?attempt=' . $attempt_id),
+        ]);
+    }
+
+    public function download_certificate($id_materi)
+    {
+        $this->is_logged_in();
+        // placeholder — implementasi generator sertifikat menyusul
+        return "Sertifikat belum tersedia. Hubungi admin.";
     }
 
     public function pembahasan_update()
@@ -1807,47 +1936,43 @@ Jangan tambahkan teks di luar format tersebut.";
 
     public function pembahasan_add()
     {
+        $result = ['status' => 'invalid', 'message' => 'error'];
 
-        $result = array(
-            'status' => 'invalid',
-            'message' => 'error'
-        );
-
-
-        $id_bab = $this->request->getPost('id_bab');
-        $id_materi = $this->request->getPost('id_materi');
+        $id_bab           = $this->request->getPost('id_bab');
+        $id_materi        = $this->request->getPost('id_materi');
         $id_materi_custom = $this->request->getPost('id_materi_custom');
-        $id_user = $this->request->getPost('id_user');
-        $ordering_index = $this->request->getPost('ordering_index');
-        $judul = $this->request->getPost('judul');
-        $deskripsi = $this->request->getPost('deskripsi');
+        $id_user          = $this->request->getPost('id_user');
+        $ordering_index   = $this->request->getPost('ordering_index');
+        $judul            = $this->request->getPost('judul');
+        $deskripsi        = $this->request->getPost('deskripsi');
 
-        $data = array(
-            'id_materi' => $id_materi,
-            'id_bab'   => $id_bab,
-            'id_user'     => $id_user,
-            'ordering_index'   => $ordering_index,
-            'judul'       => $judul,
-            'deskripsi'  => $deskripsi
-        );
+        // Validasi: id_bab tidak boleh kosong/0
+        if (empty($id_bab) || $id_bab == 0) {
+            $result['message'] = 'Bab belum disimpan. Simpan bab terlebih dahulu sebelum menambah pembahasan.';
+            echo json_encode($result);
+            return;
+        }
+
+        $data = [
+            'id_materi'      => $id_materi,
+            'id_bab'         => $id_bab,
+            'id_user'        => $id_user,
+            'ordering_index' => $ordering_index,
+            'judul'          => $judul,
+            'deskripsi'      => $deskripsi,
+        ];
 
         if (!empty($id_materi_custom)) {
-            // berarti pembahasan custom
             $data['id_materi_custom'] = $id_materi_custom;
-
-            // ga pake 2 column ini klo custom
-            unset($data['id_materi']);
-            unset($data['id_user']);
-
+            unset($data['id_materi'], $data['id_user']);
             $no_id = $this->model_materi->insert_new_custom_pembahasan($data);
         } else {
-            // berarti pembahasan umum
             $no_id = $this->model_materi->insert_new_pembahasan($data);
         }
 
-        $result['status'] = 'valid';
+        $result['status']  = 'valid';
         $result['message'] = 'pembahasan berhasil ditambahkan!';
-        $result['data'] = $no_id;
+        $result['data']    = $no_id;
 
         echo json_encode($result);
     }
@@ -2048,15 +2173,17 @@ Jangan tambahkan teks di luar format tersebut.";
         $d = $this->request->getPost('deskripsi');
         $a = $this->request->getPost('attachment');
         $i = $this->request->getPost('icon');
+        $ua = $this->request->getPost('url_alive');
         $u = $this->request->getPost('username');
 
         $data = array(
-            'judul' => $j,
-            'kategori' => $k,
+            'judul'     => $j,
+            'kategori'  => $k,
             'deskripsi' => $d,
-            'icon' => $i,
-            'username' => $u,
-            'url' => url_title($j, '-', true)
+            'icon'      => $i,
+            'username'  => $u,
+            'url'       => url_title($j, '-', true),
+            'url_alive' => $ua
         );
 
         if (!empty($a)) {
@@ -2082,6 +2209,7 @@ Jangan tambahkan teks di luar format tersebut.";
         $d = $this->request->getPost('deskripsi');
         $a = $this->request->getPost('attachment');
         $i = $this->request->getPost('icon');
+        $ua = $this->request->getPost('url_alive');
         $u = $this->request->getPost('username');
 
         $id             = $this->request->getPost('id');
@@ -2089,6 +2217,7 @@ Jangan tambahkan teks di luar format tersebut.";
         $data = array(
             'judul' => $j,
             'url' => url_title($j, '-', true),
+            'url_alive' => $ua,
             'kategori' => $k,
             'deskripsi' => $d,
             'attachment' => $a,
@@ -3201,5 +3330,184 @@ Jangan tambahkan teks di luar format tersebut.";
         }
 
         echo json_encode($data_final);
+    }
+
+    // ========== QUIZ MATERI ==========
+
+    public function materi_quiz_add()
+    {
+        $result = ['status' => 'invalid', 'message' => 'error'];
+
+        $id_materi    = $this->request->getPost('id_materi');
+
+        $pertanyaan   = $this->request->getPost('pertanyaan');
+        $jenis        = $this->request->getPost('jenis');
+        $opsi_a       = $this->request->getPost('opsi_a');
+        $opsi_b       = $this->request->getPost('opsi_b');
+        $opsi_c       = $this->request->getPost('opsi_c');
+        $opsi_d       = $this->request->getPost('opsi_d');
+        $keterangan   = $this->request->getPost('keterangan');
+        $final_answer = $this->request->getPost('final_answer');
+
+        if (empty($id_materi) || empty($pertanyaan)) {
+            $result['message'] = 'Data tidak lengkap';
+            echo json_encode($result);
+            return;
+        }
+
+        $data = [
+            'id_materi'    => $id_materi,
+            'pertanyaan'   => $pertanyaan,
+            'jenis'        => $jenis,
+            'keterangan'   => $keterangan,
+            'final_answer' => $final_answer,
+        ];
+
+        $max_order = $this->model_materi->get_max_ordering_quiz($id_materi);
+        $data['ordering_index'] = $max_order + 1;
+
+        // Opsi hanya disimpan jika bukan essay
+        if ($jenis === 'pg2' || $jenis === 'pg4') {
+            $data['opsi_a'] = $opsi_a;
+            $data['opsi_b'] = $opsi_b;
+            if ($jenis === 'pg4') {
+                $data['opsi_c'] = $opsi_c;
+                $data['opsi_d'] = $opsi_d;
+            }
+        }
+
+        $new_id = $this->model_materi->insert_new_quiz($data);
+
+        if ($new_id) {
+            $result['status']  = 'valid';
+            $result['message'] = 'quiz berhasil ditambahkan!';
+            $result['id']      = $new_id;
+        }
+
+        echo json_encode($result);
+    }
+
+    public function materi_quiz_reorder()
+    {
+        $items = $this->request->getPost('items');
+
+        if (!is_array($items) || empty($items)) {
+            echo json_encode(['status' => 'invalid', 'message' => 'Tidak ada item']);
+            return;
+        }
+
+        $ok = true;
+        foreach ($items as $item) {
+            $id     = isset($item['id']) ? (int) $item['id'] : 0;
+            $order  = isset($item['ordering_index']) ? (int) $item['ordering_index'] : 0;
+            if ($id > 0) {
+                if (!$this->model_materi->update_ordering_quiz($id, $order)) {
+                    $ok = false;
+                }
+            }
+        }
+
+        echo json_encode([
+            'status'  => $ok ? 'valid' : 'invalid',
+            'message' => $ok ? 'urutan disimpan!' : 'sebagian gagal'
+        ]);
+    }
+
+    public function materi_quiz_update()
+    {
+        $result = ['status' => 'invalid', 'message' => 'error'];
+
+        $id           = $this->request->getPost('id');
+        $pertanyaan   = $this->request->getPost('pertanyaan');
+        $jenis        = $this->request->getPost('jenis');
+        $opsi_a       = $this->request->getPost('opsi_a');
+        $opsi_b       = $this->request->getPost('opsi_b');
+        $opsi_c       = $this->request->getPost('opsi_c');
+        $opsi_d       = $this->request->getPost('opsi_d');
+        $keterangan   = $this->request->getPost('keterangan');
+        $final_answer = $this->request->getPost('final_answer');
+
+        if (empty($id)) {
+            $result['message'] = 'ID tidak ditemukan';
+            echo json_encode($result);
+            return;
+        }
+
+        $data = [
+            'pertanyaan'   => $pertanyaan,
+            'jenis'        => $jenis,
+            'keterangan'   => $keterangan,
+            'final_answer' => $final_answer,
+            // reset default
+            'opsi_a' => null,
+            'opsi_b' => null,
+            'opsi_c' => null,
+            'opsi_d' => null,
+        ];
+
+        if ($jenis === 'pg2' || $jenis === 'pg4') {
+            $data['opsi_a'] = $opsi_a;
+            $data['opsi_b'] = $opsi_b;
+            if ($jenis === 'pg4') {
+                $data['opsi_c'] = $opsi_c;
+                $data['opsi_d'] = $opsi_d;
+            }
+        }
+
+        $updated = $this->model_materi->update_existing_quiz($data, $id);
+
+        if ($updated) {
+            $result['status']  = 'valid';
+            $result['message'] = 'quiz berhasil diupdate!';
+        }
+
+        echo json_encode($result);
+    }
+
+    public function materi_quiz_delete()
+    {
+        $id = $this->request->getPost('id');
+
+        // Support bulk delete (array id)
+        if (is_array($id)) {
+            $all_ok = true;
+            foreach ($id as $satu) {
+                if (!$this->model_materi->delete_existing_quiz($satu)) {
+                    $all_ok = false;
+                }
+            }
+            echo json_encode([
+                'status'  => $all_ok ? 'valid' : 'invalid',
+                'message' => $all_ok ? 'semua quiz dihapus!' : 'sebagian gagal'
+            ]);
+            return;
+        }
+
+        $returned_value = $this->model_materi->delete_existing_quiz($id);
+
+        $result = ['status' => 'invalid', 'message' => 'error'];
+
+        if ($returned_value) {
+            $result['status']  = 'valid';
+            $result['message'] = 'quiz berhasil dihapus!';
+        }
+
+        echo json_encode($result);
+    }
+
+    public function materi_quiz_edit()
+    {
+        $id = $this->request->getPost('id');
+
+        $returned_value = $this->model_materi->get_quiz_by(['id' => $id]);
+
+        $result = ['status' => 'invalid'];
+
+        if ($returned_value) {
+            $result['status'] = 'valid';
+            $result['data']   = $returned_value;
+        }
+
+        echo json_encode($result);
     }
 }

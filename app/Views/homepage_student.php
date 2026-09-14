@@ -84,7 +84,7 @@
                 <div class="icon">
                   <i class="ion ion-bag"></i>
                 </div>
-                <a href="/all-materi" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                <a href="<?= base_url(); ?>all-materi" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
               </div>
             </div>
             <!-- ./col -->
@@ -92,9 +92,15 @@
               <!-- small box -->
               <div class="small-box bg-success">
                 <div class="inner">
-                  <h3><?= $total_progress_materi; ?><sup style="font-size: 20px">%</sup></h3>
-
-                  <p>Progress Materi Anda</p>
+                  <h3><?= $total_progress_materi ?? 0; ?><sup style="font-size: 20px">%</sup></h3>
+                  <p>
+                    Progress Materi Anda
+                    <?php if (isset($total_materi_completed) && isset($total_materi_enrolled)): ?>
+                      <br><small style="font-size:.75rem;opacity:.85;">
+                        <?= $total_materi_completed; ?> / <?= $total_materi_enrolled; ?> materi selesai
+                      </small>
+                    <?php endif; ?>
+                  </p>
                 </div>
                 <div class="icon">
                   <i class="ion ion-stats-bars"></i>
@@ -227,6 +233,133 @@
             <!-- /.col-md-6 -->
           </div>
           <!-- /.row -->
+
+          <!-- ===================================================== -->
+          <!-- CARD STATUS QUIZ & SERTIFIKAT                         -->
+          <!-- ===================================================== -->
+          <div class="row mt-3">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">
+                    <i class="fas fa-clipboard-check text-primary mr-1"></i>
+                    Status Quiz &amp; Sertifikat
+                  </h3>
+                  <div class="card-tools">
+                    <span class="badge badge-success">
+                      <i class="fas fa-award"></i> <?= $total_sertifikat ?? 0; ?> Sertifikat
+                    </span>
+                  </div>
+                </div>
+                <div class="card-body p-0">
+
+                  <?php if (!empty($quiz_attempts)): ?>
+                    <div class="table-responsive">
+                      <table class="table table-sm table-hover mb-0">
+                        <thead class="bg-light">
+                          <tr>
+                            <th style="width:60px;" class="text-center">#</th>
+                            <th>Materi</th>
+                            <th style="width:140px;" class="text-center">Status</th>
+                            <th style="width:100px;" class="text-center">Skor</th>
+                            <th style="width:180px;" class="text-center">Aksi</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <?php $no = 1;
+                          foreach ($quiz_attempts as $q): ?>
+                            <?php
+                            $is_graded   = ($q->status === 'graded');
+                            $can_release = ($q->rilis_sertifikat ?? 'no') === 'yes';
+                            $score       = $is_graded
+                              ? number_format((float)$q->final_score, 0)
+                              : '—';
+                            ?>
+                            <tr>
+                              <td class="text-center align-middle"><?= $no++; ?></td>
+                              <td class="align-middle">
+                                <div class="d-flex align-items-center">
+                                  <?php if (!empty($q->icon)): ?>
+                                    <img src="<?= base_url('assets/img/uploads/materi/' . $q->icon); ?>"
+                                      style="width:36px;height:36px;object-fit:cover;border-radius:6px;margin-right:10px;">
+                                  <?php else: ?>
+                                    <div class="bg-secondary d-flex align-items-center justify-content-center"
+                                      style="width:36px;height:36px;border-radius:6px;margin-right:10px;">
+                                      <i class="fas fa-book text-white"></i>
+                                    </div>
+                                  <?php endif; ?>
+                                  <div>
+                                    <strong><?= esc($q->judul_materi ?? '-'); ?></strong><br>
+                                    <small class="text-muted">
+                                      <i class="far fa-clock"></i>
+                                      <?= date('d M Y H:i', strtotime($q->date_created)); ?>
+                                    </small>
+                                  </div>
+                                </div>
+                              </td>
+                              <td class="text-center align-middle">
+                                <?php if ($is_graded): ?>
+                                  <span class="badge badge-success">
+                                    <i class="fas fa-check-circle"></i> Dinilai
+                                  </span>
+                                <?php else: ?>
+                                  <span class="badge badge-warning">
+                                    <i class="fas fa-hourglass-half"></i> Menunggu Penilaian
+                                  </span>
+                                <?php endif; ?>
+                              </td>
+                              <td class="text-center align-middle">
+                                <?php if ($is_graded): ?>
+                                  <span class="badge badge-info" style="font-size:1rem;padding:6px 12px;">
+                                    <?= $score; ?>
+                                  </span>
+                                <?php else: ?>
+                                  <span class="text-muted">—</span>
+                                <?php endif; ?>
+                              </td>
+                              <td class="text-center align-middle">
+                                <?php if ($is_graded && $can_release): ?>
+                                  <a href="<?= base_url('materi/certificate/' . $q->id_materi); ?>"
+                                    class="btn btn-sm btn-primary">
+                                    <i class="fas fa-download"></i> Unduh Sertifikat
+                                  </a>
+                                <?php elseif ($is_graded && !$can_release): ?>
+                                  <span class="text-muted small">
+                                    <i class="fas fa-info-circle"></i> Sertifikat belum dirilis
+                                  </span>
+                                <?php else: ?>
+                                  <span class="text-muted small">
+                                    <i class="fas fa-lock"></i> Menunggu nilai
+                                  </span>
+                                <?php endif; ?>
+                              </td>
+                            </tr>
+                          <?php endforeach; ?>
+                        </tbody>
+                      </table>
+                    </div>
+                  <?php else: ?>
+                    <div class="text-center p-4 text-muted">
+                      <i class="fas fa-clipboard fa-2x mb-2"></i>
+                      <p class="mb-0">Belum ada quiz yang Anda kerjakan.</p>
+                      <small>Kerjakan materi sampai selesai untuk membuka quiz.</small>
+                    </div>
+                  <?php endif; ?>
+
+                </div>
+                <?php if (!empty($quiz_attempts)): ?>
+                  <div class="card-footer text-right">
+                    <a href="<?= base_url('materi-terpilih'); ?>" class="btn btn-sm btn-outline-primary">
+                      <i class="fas fa-list"></i> Lihat Semua Materi
+                    </a>
+                  </div>
+                <?php endif; ?>
+              </div>
+            </div>
+          </div>
+          <!-- /.row -->
+
+
         </div>
         <!-- /.container-fluid -->
       </div>
@@ -254,26 +387,26 @@
   <!-- REQUIRED SCRIPTS -->
 
   <!-- jQuery -->
-  <script src="<?= base_url() ?>assets/js/jquery371.min.js"></script>
-  <script src="<?= base_url() ?>assets/js/jquery-ui.min.js"></script>
+  <script src="<?= base_url() ?>assets/js/jquery371.min.js<?= $random; ?>"></script>
+  <script src="<?= base_url() ?>assets/js/jquery-ui.min.js<?= $random; ?>"></script>
   <!-- Bootstrap -->
-  <script src="<?= base_url() ?>assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="<?= base_url() ?>assets/vendor/bootstrap/js/bootstrap.bundle.min.js<?= $random; ?>"></script>
   <!-- AdminLTE -->
-  <script src="<?= base_url() ?>assets/js/adminlte.js"></script>
-  <script src="<?= base_url() ?>assets/js/sweetalert2@11.js"></script>
+  <script src="<?= base_url() ?>assets/js/adminlte.js<?= $random; ?>"></script>
+  <script src="<?= base_url() ?>assets/js/sweetalert2@11.js<?= $random; ?>"></script>
 
   <!-- OPTIONAL SCRIPTS -->
-  <script src="<?= base_url() ?>assets/js/cleave.min.js"></script>
-  <script src="<?= base_url() ?>assets/vendor/chart.js/Chart.min.js"></script>
-  <script src="<?= base_url() ?>assets/js/settings.js"></script>
-  <script src="<?= base_url() ?>assets/js/customer-services.js"></script>
-  <script src="<?= base_url() ?>assets/js/manage-daily-notes.js"></script>
-  <script src="<?= base_url() ?>assets/js/timer.js"></script>
-  <script src="<?= base_url() ?>assets/vendor/jquery-calendar/calendar.min.js"></script>
-  <script src="<?= base_url() ?>assets/js/pages/dashboard3.js"></script>
-  <script src="<?= base_url() ?>assets/js/saldo.js"></script>
+  <script src="<?= base_url() ?>assets/js/cleave.min.js<?= $random; ?>"></script>
+  <script src="<?= base_url() ?>assets/vendor/chart.js/Chart.min.js<?= $random; ?>"></script>
+  <script src="<?= base_url() ?>assets/js/settings.js<?= $random; ?>"></script>
+  <script src="<?= base_url() ?>assets/js/customer-services.js<?= $random; ?>"></script>
+  <script src="<?= base_url() ?>assets/js/manage-daily-notes.js<?= $random; ?>"></script>
+  <script src="<?= base_url() ?>assets/js/timer.js<?= $random; ?>"></script>
+  <script src="<?= base_url() ?>assets/vendor/jquery-calendar/calendar.min.js<?= $random; ?>"></script>
+  <script src="<?= base_url() ?>assets/js/pages/dashboard3.js<?= $random; ?>"></script>
+  <script src="<?= base_url() ?>assets/js/saldo.js<?= $random; ?>"></script>
 
-  <script defer src="<?= base_url() ?>assets/vendor/fontawesome-free/js/all.js"></script>
+  <script defer src="<?= base_url() ?>assets/vendor/fontawesome-free/js/all.js<?= $random; ?>"></script>
 
 
 </body>

@@ -5,21 +5,76 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><?= isset($title) ? $title : 'Error'; ?> (<?= $usertype; ?>) Portal - Kursus Komputer</title>
-  <link href="assets/img/favicon.ico" rel="icon">
-  <link href="assets/img/favicon.ico" rel="apple-touch-icon">
+  <link href="<?= base_url(); ?>assets/img/favicon.ico" rel="icon">
+  <link href="<?= base_url(); ?>assets/img/favicon.ico" rel="apple-touch-icon">
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <!-- Font Awesome Icons -->
-  <link rel="stylesheet" href="/assets/vendor/fontawesome-free/css/all.css">
-  <link rel="stylesheet" href="/assets/vendor/fontawesome-free/css/fontawesome.min.css">
+  <link rel="stylesheet" href="<?= base_url(); ?>assets/vendor/fontawesome-free/css/all.css">
+  <link rel="stylesheet" href="<?= base_url(); ?>assets/vendor/fontawesome-free/css/fontawesome.min.css">
   <!-- IonIcons -->
   <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
   <!-- Theme style -->
-  <link rel="stylesheet" href="/assets/vendor/bootstrap/css/bootstrap.min.css">
-  <link rel="stylesheet" href="/assets/css/adminlte.min.css">
-  <link rel="stylesheet" href="/assets/css/styles-custom-homepage.css">
-  <link rel="stylesheet" href="/assets/css/styles-custom-portal.css">
+  <link rel="stylesheet" href="<?= base_url(); ?>assets/vendor/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="<?= base_url(); ?>assets/css/adminlte.min.css">
+  <link rel="stylesheet" href="<?= base_url(); ?>assets/css/styles-custom-homepage.css">
+  <link rel="stylesheet" href="<?= base_url(); ?>assets/css/styles-custom-portal.css">
+
+  <style>
+    .chapter-body .custom-checkbox {
+      padding: 4px 6px 4px 26px;
+      border-radius: 4px;
+      transition: background-color 0.15s ease;
+    }
+
+    .chapter-body .custom-checkbox:hover {
+      background-color: #f3f6fa;
+    }
+
+    .chapter-body .custom-checkbox.active-item {
+      background-color: #e7f3ff;
+      border-left: 3px solid #007bff;
+    }
+
+    .chapter-body .custom-checkbox.active-item label {
+      font-weight: 600;
+      color: #007bff;
+    }
+
+    .nav-header-grid {
+      display: grid;
+      grid-template-columns: 110px 1fr 110px;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-header-left {
+      justify-self: start;
+    }
+
+    .nav-header-right {
+      justify-self: end;
+    }
+
+    .materi-icon-wrapper {
+      padding: 6px 0;
+    }
+
+    .materi-icon-display {
+      max-width: 110px;
+      max-height: 110px;
+      width: auto;
+      height: auto;
+      border-radius: 8px;
+      pointer-events: none;
+      /* tidak bisa diklik */
+      user-select: none;
+      /* tidak bisa di-select/drag */
+      -webkit-user-drag: none;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+  </style>
 
 </head>
 <!--
@@ -90,7 +145,7 @@
 
                 <p><?= isset($error) ? $error : ''; ?></p>
 
-                <?php if (!isset($error)): ?>
+                <?php if (!isset($error) && !empty($data_detail_materi)): ?>
                   <br>
 
                   <div class="card card-info col-md-3">
@@ -102,24 +157,54 @@
 
                     <?php if (isset($data_detail_materi)) : ?>
                       <div class="card-body">
+
+                        <?php if (!empty($materi_icon)): ?>
+                          <div class="text-center mb-4 mt-2 materi-icon-wrapper">
+                            <img
+                              src="<?= base_url('assets/img/uploads/materi/' . $materi_icon); ?>"
+                              alt="Icon Materi"
+                              class="materi-icon-display">
+                          </div>
+                        <?php endif; ?>
+
                         <div class="card card-info card-outline">
 
                           <div class="card-body">
-                            <?php if ($data_detail_materi != false) :
-                              $total_data = count($data_detail_materi);
+                            <?php if (!empty($data_chapter)) : ?>
+                              <?php foreach ($data_chapter as $chapter): ?>
+                                <div class="chapter-block mb-3">
+                                  <div class="chapter-header" style="cursor:pointer;">
+                                    <strong>
+                                      <i class="fas fa-folder text-warning mr-1 chapter-icon"></i>
+                                      <?= $chapter->judul; ?>
+                                    </strong>
+                                  </div>
 
-                              foreach ($data_detail_materi as $key => $dmateri):
-                                // Jika index adalah 0, maka dia di awal (tidak ada back)
-                                $has_back = ($key > 0) ? "true" : "false";
-
-                                // Jika index adalah total_data - 1, maka dia di ujung (tidak ada next)
-                                $has_next = ($key < $total_data - 1) ? "true" : "false"; ?>
-                                <div class="custom-control custom-checkbox">
-                                  <input data-id="<?= $dmateri->id_pembahasan; ?>" class="custom-control-input" type="checkbox" disabled="">
-                                  <label data-has-next="<?= $has_next ?>" data-has-back="<?= $has_back ?>"
-                                    data-target-id="<?= $dmateri->id_pembahasan; ?>" class="custom-control-label"><?= $dmateri->judul; ?></label>
+                                  <div class="chapter-body mt-1 ml-3">
+                                    <?php if (!empty($chapter->pembahasan)): ?>
+                                      <?php
+                                      $total_pb = count($chapter->pembahasan);
+                                      foreach ($chapter->pembahasan as $k => $p):
+                                        $has_back = ($k > 0) ? "true" : "false";
+                                        $has_next = ($k < $total_pb - 1) ? "true" : "false";
+                                      ?>
+                                        <div class="custom-control custom-checkbox">
+                                          <input data-id="<?= $p->id; ?>" class="custom-control-input" type="checkbox" disabled>
+                                          <label
+                                            data-has-next="<?= $has_next ?>"
+                                            data-has-back="<?= $has_back ?>"
+                                            data-target-id="<?= $p->id; ?>"
+                                            class="custom-control-label"><?= $p->judul; ?></label>
+                                        </div>
+                                      <?php endforeach; ?>
+                                    <?php else: ?>
+                                      <small class="text-muted font-italic">Belum ada sub pembahasan.</small>
+                                    <?php endif; ?>
+                                  </div>
                                 </div>
                               <?php endforeach; ?>
+                            <?php else: ?>
+                              <small class="text-muted font-italic">Belum ada topik pembahasan.</small>
                             <?php endif; ?>
                           </div>
                         </div>
@@ -138,36 +223,32 @@
                   <div class="col-md-9">
                     <div class="card card-primary card-outline">
                       <div class="card-header">
-                        <h3 class="card-title" id="judul-detail-materi">Permulaan</h3>
-
-                        <div class="card-tools">
-
+                        <div class="nav-header-grid">
+                          <div class="nav-header-left">
+                            <button type="button" class="btn btn-default btn-sm btn-back btn-nav" title="Back">
+                              <i class="fas fa-reply"></i> Back
+                            </button>
+                          </div>
+                          <h3 class="m-0 text-center" id="judul-detail-materi">Permulaan</h3>
+                          <div class="nav-header-right">
+                            <button data-target-id="<?= isset($data_detail_materi[0]) ? $data_detail_materi[0]->id_pembahasan : ''; ?>" type="button" class="btn btn-default btn-sm btn-next btn-nav" title="Next">
+                              Next <i class="fas fa-share"></i>
+                            </button>
+                          </div>
                         </div>
                       </div>
+
                       <!-- /.card-header -->
                       <div class="card-body p-0">
 
-                        <!-- /.mailbox-read-info -->
-                        <div class="mailbox-controls with-border text-center">
-                          <div class="btn-group">
-
-                            <button type="button" class="btn btn-default btn-sm btn-back btn-nav" data-container="body" title="Back">
-                              <i class="fas fa-reply"></i>
-                            </button>
-                            <button data-target-id="<?= $data_detail_materi[0]->id_pembahasan; ?>" type="button" class="btn btn-default btn-sm btn-next btn-nav" data-container="body" title="Next">
-                              <i class="fas fa-share"></i>
-                            </button>
-                          </div>
-                          <!-- /.btn-group -->
+                        <div class="mailbox-controls with-border text-right">
                           <button type="button" class="btn-print btn btn-default btn-sm" title="Print">
-                            <i class="fas fa-print"></i>
+                            <i class="fas fa-print"></i> Print
                           </button>
                         </div>
                         <!-- /.mailbox-controls -->
                         <div class="mailbox-read-message">
-
                           <p>Deskripsi</p>
-
                         </div>
                         <!-- /.mailbox-read-message -->
                       </div>
@@ -197,7 +278,7 @@
                       <div class="card-footer">
                         <div class="float-right">
                           <button type="button" class="btn btn-default btn-back btn-nav"><i class="fas fa-reply"></i> Back</button>
-                          <button data-target-id="<?= $data_detail_materi[0]->id_pembahasan; ?>" type="button" class="btn btn-default btn-next btn-nav"><i class="fas fa-share"></i> Next</button>
+                          <button data-target-id="<?= isset($data_detail_materi[0]) ? $data_detail_materi[0]->id_pembahasan : ''; ?>" type="button" class="btn btn-default btn-next btn-nav"><i class="fas fa-share"></i> Next</button>
                           <button data-id="<?= $id_materi; ?>" type="button" class="btn btn-success btn-complete"><i class="fas fa-check"></i> SAYA SELESAI</button>
                         </div>
 
@@ -227,42 +308,37 @@
       </aside>
       <!-- /.control-sidebar -->
 
-      <!-- Main Footer -->
-      <?php include('footer.php'); ?>
-      <?php include('modal_usulan_materi.php'); ?>
-      <?php include('modal_customer_services.php'); ?>
-
     </div>
 
-    <!-- ./wrapper -->
+    <!-- Main Footer -->
+    <?php include('footer.php'); ?>
+    <?php include('modal_usulan_materi.php'); ?>
+    <?php include('modal_customer_services.php'); ?>
 
     <!-- REQUIRED SCRIPTS -->
-    <?php if (isset($error)): ?>
-      <script>
-        setTimeout(function() {
-          window.location.href = "/all-materi";
-        }, 2000);
-      </script>
-    <?php endif; ?>
+
 
     <!-- jQuery -->
-    <script src="/assets/js/jquery371.min.js"></script>
-    <script src="/assets/js/jquery-ui.min.js"></script>
-    <script src="/assets/js/sweetalert2@11.js"></script>
+    <script src="<?= base_url(); ?>assets/js/jquery371.min.js<?= $random; ?>"></script>
+    <script src="<?= base_url(); ?>assets/js/jquery-ui.min.js<?= $random; ?>"></script>
+    <script src="<?= base_url(); ?>assets/js/sweetalert2@11.js<?= $random; ?>"></script>
 
     <!-- Bootstrap -->
-    <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="<?= base_url(); ?>assets/vendor/bootstrap/js/bootstrap.bundle.min.js<?= $random; ?>"></script>
     <!-- AdminLTE -->
-    <script src="/assets/js/adminlte.js"></script>
+    <script src="<?= base_url(); ?>assets/js/adminlte.js<?= $random; ?>"></script>
 
     <!-- OPTIONAL SCRIPTS -->
-    <script src="/assets/vendor/chart.js/Chart.min.js"></script>
-    <script src="/assets/js/settings.js"></script>
-    <script src="/assets/js/customer-services.js"></script>
-    <script src="/assets/js/start-materi.js"></script>
-    <script src="/assets/js/timer.js"></script>
+    <script type="text/javascript">
+      const _URL_MAIN_WEBSITE = "<?= base_url(); ?>";
+    </script>
+    <script src="<?= base_url(); ?>assets/vendor/chart.js/Chart.min.js<?= $random; ?>"></script>
+    <script src="<?= base_url(); ?>assets/js/settings.js<?= $random; ?>"></script>
+    <script src="<?= base_url(); ?>assets/js/customer-services.js<?= $random; ?>"></script>
+    <script src="<?= base_url(); ?>assets/js/start-materi.js<?= $random; ?>"></script>
+    <script src="<?= base_url(); ?>assets/js/timer.js<?= $random; ?>"></script>
+    <script src="<?= base_url(); ?>assets/js/pages/dashboard3.js<?= $random; ?>"></script>
 
-    <script src="/assets/js/pages/dashboard3.js"></script>
 </body>
 
 </html>

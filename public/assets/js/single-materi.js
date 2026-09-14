@@ -20,14 +20,14 @@ $(document).ready(function() {
 function lanjutkan_pilihan(){
 
     $('.btn-pilih-materi').on('click', function(e) { 
-
+ 
         e.preventDefault();
 
         let statusna = $(this).data('status');
         let id_materi = $('#materi_id').val();
 
         if(statusna == 'subscribed'){
-            window.location.href = "/materi/start?id=" + id_materi;
+            window.location.href = _URL_MAIN_WEBSITE +"materi/start?id=" + id_materi;
             return;
         }
 

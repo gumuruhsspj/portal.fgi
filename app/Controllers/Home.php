@@ -137,43 +137,47 @@ class Home extends BaseController
 
     public function management_pembahasan_materi()
     {
-
         $this->is_logged_in();
-
         $data = $this->get_user_data();
 
-        $id = $this->request->getGet('materi_id');
+        $id  = $this->request->getGet('materi_id');
         $cid = $this->request->getGet('custom_id');
 
-        $filter1 = ['id' => $id];
-        $data_materi = $this->model_materi->get_by($filter1);
+        $data_materi        = $this->model_materi->get_by(['id' => $id]);
+        $data_materi_custom = $this->model_materi->get_custom_by(['id' => $cid]);
 
-        $filter2 = ['id' => $cid];
-        $data_materi_custom = $this->model_materi->get_custom_by($filter2);
-
-        // data returned is in object instead of array
         $data_all_bab = $this->model_materi->get_all_bab_by_materi_id($id, $cid);
 
-        // loop lagi
-        $data_all_pembahasan = array();
+        $data_all_pembahasan = [];
 
-        foreach ($data_all_bab as $data_bab) {
-            $data_all_pembahasan[$data_bab->id] = $this->model_materi->get_all_pembahasan_by_bab_id($data_bab->id);
+        if ($data_all_bab != false && count($data_all_bab) > 0) {
+            // Ambil pembahasan orphaned (id_bab = 0) untuk materi ini
+            $orphaned = $this->model_materi->get_orphaned_pembahasan($id, $cid);
+
+            $first = true;
+            foreach ($data_all_bab as $bab) {
+                $list = $this->model_materi->get_all_pembahasan_by_bab_id($bab->id);
+
+                // Jika tidak ada pembahasan & ini bab pertama, pakai orphaned
+                if (($list == false || empty($list)) && $first && !empty($orphaned)) {
+                    $list = $orphaned;
+                }
+
+                $data_all_pembahasan[$bab->id] = $list;
+                $first = false;
+            }
         }
 
-        $data['judul_materi'] = $data_materi->judul;
-
+        $data['judul_materi']        = $data_materi->judul ?? '';
         $data['judul_materi_custom'] = $data_materi_custom->nama_template ?? '';
-
-        $data['id_materi'] = $data_materi->id;
-        $data['id_materi_custom'] = $cid;
-
-        $data['management_data'] = $data_all_bab;
+        $data['id_materi']           = $data_materi->id ?? 0;
+        $data['id_materi_custom']    = $cid;
+        $data['management_data']     = $data_all_bab;
         $data['management_pembahasan'] = $data_all_pembahasan;
-        $data['jumlah_data'] = sizeof($data_all_bab);
+        $data['jumlah_data']         = ($data_all_bab != false) ? sizeof($data_all_bab) : 0;
         $data['link_management_open'] = 'menu-open';
         $data['link_management_materi_active'] = 'active';
-        $data['random'] = '?' . rand(0, 11);
+        $data['random'] = '?v=' . rand(0, 11);
 
         return view('management_pembahasan', $data);
     }
@@ -254,7 +258,7 @@ class Home extends BaseController
 
         $data['usertype'] = $as;
         $data['data_user'] = $data_user;
-        $data['random'] = '?' . rand(1, 1000);
+        $data['random'] = '?v=' . rand(1, 1000);
 
 
         //echo var_dump($username);
@@ -291,7 +295,7 @@ class Home extends BaseController
         $data['usertype'] = $as;
         $data['id_materi'] = $id_materi;
         $data['data_user'] = $data_user;
-        $data['random'] = '?' . rand(1, 1000);
+        $data['random'] = '?v=' . rand(1, 1000);
 
         //echo var_dump($username);
         return view('management_materi_custom', $data);
@@ -353,6 +357,65 @@ class Home extends BaseController
         return view('management_perangkat_tautan', $data);
     }
 
+    public function display_start_quiz()
+    {
+        $this->is_logged_in();
+        $id_materi = $this->request->getGet('id');
+        $data      = $this->get_user_data();
+        $id_user   = $data['id_user'];
+
+        $data_student_materi = $this->model_materi->get_subscribed_materi($id_materi, $id_user);
+        if (!$data_student_materi) {
+            return redirect()->to('/all-materi')->with('error', 'Anda belum mendaftar untuk materi ini!');
+        }
+
+        $data_quiz = $this->model_materi->get_all_quiz_by_materi_id($id_materi);
+        if (!$data_quiz) {
+            return redirect()->to('/materi/start?id=' . $id_materi);
+        }
+
+        // sudah pernah submit → langsung ke result
+        $existing = $this->model_materi->get_quiz_attempt_by_user($id_user, $id_materi);
+        if ($existing) {
+            return redirect()->to('/materi/quiz/result?attempt=' . $existing->id);
+        }
+
+        $data['title']         = 'Quiz : ' . $data_student_materi->judul;
+        $data['id_materi']     = $id_materi;
+        $data['judul_materi']  = $data_student_materi->judul;
+        $data['data_quiz']     = $data_quiz;
+        $data['jumlah_quiz']   = count($data_quiz);
+        $data['materi_icon']   = $data_student_materi->icon ?? '';
+        $data['random']        = '?v=' . rand(0, 245);
+
+        return view('start_quiz', $data);
+    }
+
+    public function display_quiz_result()
+    {
+        $this->is_logged_in();
+        $data      = $this->get_user_data();
+        $id_user   = $data['id_user'];
+        $attempt_id = $this->request->getGet('attempt');
+
+        $attempt = $this->model_materi->get_quiz_attempt_by_id($attempt_id);
+        if (!$attempt || (int)$attempt->id_user !== (int)$id_user) {
+            return redirect()->to('/all-materi')->with('error', 'Hasil quiz tidak ditemukan.');
+        }
+
+        $data_materi  = $this->model_materi->get_by(['id' => $attempt->id_materi]);
+        $data_answers = $this->model_materi->get_quiz_answers($attempt->id);
+
+        $data['title']            = 'Hasil Quiz : ' . ($data_materi->judul ?? '');
+        $data['attempt']          = $attempt;
+        $data['data_materi']      = $data_materi;
+        $data['data_answers']     = $data_answers;
+        $data['rilis_sertifikat'] = $data_materi->rilis_sertifikat ?? 'no';
+        $data['random']           = '?v=' . rand(0, 245);
+
+        return view('quiz_result', $data);
+    }
+
     public function display_all_perangkat_tautan()
     {
 
@@ -404,24 +467,18 @@ class Home extends BaseController
 
     public function display_start_materi()
     {
-
         $this->is_logged_in();
-
         $id_materi = $this->request->getGet('id');
 
-        $data = $this->get_user_data();
-        $us = $data['username'];
+        $data    = $this->get_user_data();
         $id_user = $data['id_user'];
 
-        // check dulu ini student udah daftar blm di table_student_materi
-
-        // pastikan user ini terdaftar dalam id materi tersebut
         $data_student_materi = $this->model_materi->get_subscribed_materi($id_materi, $id_user);
         $url = '';
 
         if ($data_student_materi != false) {
-
-            $data['title'] = $data_student_materi->judul;
+            $data['title']        = $data_student_materi->judul;
+            $data['materi_icon']  = $data_student_materi->icon ?? '';
             $paket = $data_student_materi->paket;
 
             if ($paket == 'paket_kasus_custom') {
@@ -430,28 +487,29 @@ class Home extends BaseController
                 $url = $data_student_materi->url_alive;
             }
 
-            $filter  = array(
-                'id_user' => $id_user
-            );
+            $filter = [
+                'id_user'   => $id_user,
+                'id_materi' => $id_materi,   // ← penting biar ga nyampur
+            ];
 
-            if ($paket != 'paket_kasus_custom') {
+            $is_custom = ($paket == 'paket_kasus_custom');
+
+            if (!$is_custom) {
                 $data_detail_materi = $this->model_materi->get_all_detail_by($filter);
+                $data_chapter       = $this->model_materi->get_bab_list_with_pembahasan($id_materi, null);
             } else {
                 $data_detail_materi = $this->model_materi->get_all_custom_detail_by($filter);
+                $custom_id          = $data_student_materi->id_custom_materi ?? null;
+                $data_chapter       = $this->model_materi->get_bab_list_with_pembahasan($id_materi, $custom_id);
             }
-            $size = 0;
 
             if ($data_detail_materi != false) {
-
-                //$filePath = FCPATH . 'uploads/materi/' . $data_detail_materi[0]->attachment;
-                $fileName = $data_student_materi->attachment;
-                $filePath = WRITEPATH . 'uploads' . DIRECTORY_SEPARATOR . 'materi' . DIRECTORY_SEPARATOR . $fileName;
+                $fileName    = $data_student_materi->attachment;
+                $filePath    = 'assets/attachment/uploads/materi/' . $fileName;
                 $sizeDisplay = "0 KB";
 
                 if (file_exists($filePath)) {
                     $bytes = filesize($filePath);
-
-                    // Konversi ke format yang enak dibaca (KB/MB)
                     if ($bytes >= 1048576) {
                         $sizeDisplay = number_format($bytes / 1048576, 2) . ' MB';
                     } elseif ($bytes >= 1024) {
@@ -467,10 +525,11 @@ class Home extends BaseController
                     $data['error'] = "Terjadi Kesalahan!";
                 }
 
-                $data['id_materi'] = $data_student_materi->id;
-                $data['data_file_size'] = $sizeDisplay;
-                $data['url_alive'] = $url;
+                $data['id_materi']          = $data_student_materi->id;
+                $data['data_file_size']     = $sizeDisplay;
+                $data['url_alive']          = $url;
                 $data['data_detail_materi'] = $data_detail_materi;
+                $data['data_chapter']       = $data_chapter;   // ← kirim ke view
             } else {
                 $data['error'] = "Materi ini belum lengkap! Hubungi admin untuk lebih lanjut.";
             }
@@ -478,6 +537,8 @@ class Home extends BaseController
             $data['title'] = "-";
             $data['error'] = "Anda belum mendaftar untuk materi ini!";
         }
+
+        $data['random'] = "?v=" . time();
 
         return view('start_materi', $data);
     }
@@ -611,18 +672,19 @@ class Home extends BaseController
 
     public function display_selected_materi()
     {
-
         $this->is_logged_in();
 
         $data = $this->get_user_data();
-
-        $id = $data['id_user'];
+        $id   = $data['id_user'];
 
         $data_materi_user = $this->model_materi->get_all_by_student($id);
 
         if ($data_materi_user != false) {
             $data['data_materi_user'] = $data_materi_user;
         }
+
+        // === MAP quiz attempts: [id_materi => attempt obj] ===
+        $data['quiz_map'] = $this->model_materi->get_quiz_attempts_map_by_user($id);
 
         $data['title'] = "Materi Terpilih";
         $data['menu_materi_open'] = "menu-open";
@@ -770,8 +832,39 @@ class Home extends BaseController
         $this->is_logged_in();
         $data = $this->get_user_data();
         $data['menu_dashboard_active'] = 'active';
+        $data['random'] = "?v=" . time();
 
         if ($data['usertype'] == 'peserta') {
+
+            $id_user = $data['id_user'];
+
+            // ====== PROGRESS MATERI ======
+            $progress = $this->model_materi->get_student_materi_progress($id_user);
+            $data['total_progress_materi'] = $progress['percentage'];
+            $data['total_materi_enrolled'] = $progress['total_enrolled'];
+            $data['total_materi_completed'] = $progress['total_completed'];
+
+            // ====== TOTAL MATERI TERSEDIA ======
+            $all_materi = $this->model_materi->get_all();
+            $data['total_materi'] = is_array($all_materi) ? count($all_materi) : 0;
+
+            // ====== QUIZ ATTEMPTS (card baru) ======
+            $quiz_attempts = $this->model_materi->get_quiz_attempts_by_user($id_user);
+            $data['quiz_attempts'] = $quiz_attempts;
+
+            // hitung sertifikat yang SUDAH bisa didownload
+            $total_cert = 0;
+            foreach ($quiz_attempts as $q) {
+                if ($q->status === 'graded' && ($q->rilis_sertifikat ?? 'no') === 'yes') {
+                    $total_cert++;
+                }
+            }
+            $data['total_sertifikat'] = $total_cert;
+
+            // total user & pendapatan afiliasi (biar gak null)
+            $data['total_users'] = 0;
+            $data['total_pendapatan_afiliasi'] = 0;
+
             return view('homepage_student', $data);
         } else if ($data['usertype'] == 'promotor') {
             $id_user = $data['id_user'];

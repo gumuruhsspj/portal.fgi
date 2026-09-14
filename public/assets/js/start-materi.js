@@ -1,6 +1,6 @@
-const _URL_DISPLAY_PEMBAHASAN 			= "/materi/pembahasan";
-const _URL_DOWNLOAD_MATERI 			= "/materi/download";
-const _URL_COMPLETED_MATERI         = "/materi/pembahasan/completed";
+const _URL_DISPLAY_PEMBAHASAN 		= _URL_MAIN_WEBSITE + "materi/pembahasan";
+const _URL_DOWNLOAD_MATERI 			= _URL_MAIN_WEBSITE + "materi/download";
+const _URL_COMPLETED_MATERI         = _URL_MAIN_WEBSITE + "materi/pembahasan/completed";
 
 $(document).ready(function() {
 
@@ -12,6 +12,22 @@ $(document).ready(function() {
     print_page();
     complete_study();
     connect_alive();
+
+     
+   // Toggle chapter (induk) -- klik judul bab untuk show/hide sub
+$(document).on('click', '.chapter-header', function () {
+    let $body = $(this).siblings('.chapter-body');
+    let $icon = $(this).find('.chapter-icon');
+
+    $body.slideToggle(180, function () {
+        // Setelah animasi selesai, cek state-nya
+        if ($body.is(':visible')) {
+            $icon.removeClass('fa-folder').addClass('fa-folder-open');
+        } else {
+            $icon.removeClass('fa-folder-open').addClass('fa-folder');
+        }
+    });
+});
     
 });
 
@@ -34,52 +50,60 @@ function connect_alive(){
 
 }
 
-function complete_study(){
+function complete_study() {
+    // ✅ .off() dulu untuk hapus handler lama, baru pasang yang baru
+    $(document).off('click', '.btn-complete').on('click', '.btn-complete', function () {
 
-  
-$('.btn-complete').on('click', function() {
-    var id_materi = $(this).data('id');
-    var $btn = $(this); // simpan referensi tombol (opsional, untuk disable)
+        var id_materi = $(this).data('id');
+        var $btn = $(this);
 
-    // Opsional: disable tombol sementara agar tidak double klik
-    $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Memproses...');
+        $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Memproses...');
 
-    $.ajax({
-        url: _URL_COMPLETED_MATERI,
-        type: 'POST',
-        data: { id_materi: id_materi },
-        success: function(response) {
-            console.log('Berhasil:', response);
+        $.ajax({
+            url: _URL_COMPLETED_MATERI,
+            type: 'POST',
+            data: { id_materi: id_materi },
+            dataType: 'json',
+            success: function (response) {
 
-            // Tampilkan SweetAlert sukses
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil!',
-                text: 'Materi telah selesai.',
-                timer: 2000,          // auto close setelah 2 detik
-                showConfirmButton: false
-            }).then(() => {
-                // Redirect setelah alert tertutup (atau auto close)
-                window.location.href = '/all-materi';
-            });
+                // ===== PRIORITAS 1: ada quiz → tendang ke quiz =====
+                if (response.status === 'success' && response.has_quiz === true && response.redirect) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Materi Selesai!',
+                        text: 'Lanjut ke Quiz untuk menyelesaikan materi ini.',
+                        confirmButtonText: 'Mulai Quiz',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    }).then(function () {
+                        window.location.href = response.redirect;
+                    });
+                    return;
+                }
 
-        },
-        error: function(xhr, status, error) {
-            console.error('Gagal:', error);
-            // Kembalikan tombol ke keadaan semula jika error
-            $btn.prop('disabled', false).html('<i class="fas fa-check"></i> SAYA SELESAI');
-
-            Swal.fire({
-                icon: 'error',
-                title: 'Gagal!',
-                text: 'Terjadi kesalahan, silakan coba lagi.',
-                confirmButtonText: 'OK'
-            });
-        }
+                // ===== FALLBACK: tidak ada quiz =====
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: 'Materi telah selesai.',
+                    timer: 2000,
+                    showConfirmButton: false
+                }).then(function () {
+                    window.location.href = _URL_MAIN_WEBSITE + 'all-materi';
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error('Gagal:', error);
+                $btn.prop('disabled', false).html('<i class="fas fa-check"></i> SAYA SELESAI');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: 'Terjadi kesalahan, silakan coba lagi.',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
     });
-});
-
-
 }
 
 function display_materi(){
@@ -87,59 +111,76 @@ function display_materi(){
     $('.btn-nav, .custom-checkbox label').on('click', function(){
 
         let idPembahasan = $(this).data('target-id');
-        
-        //alert('kirim ' + idPembahasan);
 
-          $.post(_URL_DISPLAY_PEMBAHASAN, {
+        $.post(_URL_DISPLAY_PEMBAHASAN, {
             id_pembahasan: idPembahasan
         }, function(response) {
-    
-             if(response.status === 'success') {
-                    // Ambil status dan ID navigasi dari response
-                    let hasNext = response.hasNext; 
-                    let hasBack = response.hasBack;
-                    let nextId  = response.next_id; // ID asli dari DB
-                    let prevId  = response.prev_id; // ID asli dari DB
 
-                    $('#deskripsi-detail-materi').html(response.data.deskripsi);
-                    $('#judul-detail-materi').text(response.data.judul);
+            if (response.status === 'success') {
+                let hasNext = response.hasNext;
+                let hasBack = response.hasBack;
+                let nextId  = response.next_id;
+                let prevId  = response.prev_id;
 
-                    // Logika Tombol Next
-                    if(hasNext){
-                        $('.btn-next').show();
-                        // Pakai nextId dari server, jangan +1 manual
-                        $('.btn-next').data('target-id', nextId);
-                         $('.btn-complete').hide();
-                    } else {
-                        $('.btn-next').hide();
-                        $('.btn-complete').show();
-                    }
+                $('#deskripsi-detail-materi').html(response.data.deskripsi);
+                $('#judul-detail-materi').text(response.data.judul);
 
-                    // Logika Tombol Back
-                    if(hasBack){
-                        $('.btn-back').show();
-                        // Pakai prevId dari server, jangan -1 manual
-                        $('.btn-back').data('target-id', prevId);
-                        
-                    } else {
-                        $('.btn-back').hide();
-                    }
-
+                if (hasNext) {
+                    $('.btn-next').show();
+                    $('.btn-next').data('target-id', nextId);
+                    $('.btn-complete').hide();
+                } else {
+                    $('.btn-next').hide();
+                    $('.btn-complete').show();
                 }
-            
+
+                if (hasBack) {
+                    $('.btn-back').show();
+                    $('.btn-back').data('target-id', prevId);
+                } else {
+                    $('.btn-back').hide();
+                }
+
+                // ✅ Highlight item aktif di tree
+                highlightActiveItem(idPembahasan);
             }
-    
-        );
+
+        });
 
     });
 
+}
+
+// ✅ Fungsi highlight + auto-expand parent chapter
+function highlightActiveItem(idPembahasan) {
+    if (!idPembahasan) return;
+
+    // Reset semua highlight
+    $('.chapter-body .custom-checkbox').removeClass('active-item');
+
+    // Cari label yang cocok
+    let $label = $('.custom-control-label[data-target-id="' + idPembahasan + '"]');
+    if (!$label.length) return;
+
+    let $wrapper = $label.closest('.custom-checkbox');
+    $wrapper.addClass('active-item');
+
+    // Auto-expand parent chapter jika collapsed
+    let $chapterBody = $wrapper.closest('.chapter-body');
+    if ($chapterBody.length && !$chapterBody.is(':visible')) {
+        $chapterBody.slideDown(180);
+        $chapterBody.siblings('.chapter-header')
+            .find('.chapter-icon')
+            .removeClass('fa-folder')
+            .addClass('fa-folder-open');
+    }
 }
 
 function download_materi(){
 
     $('.link-download').on('click', function(){
         let idMateri = $(this).data('id');
-        window.location.href = _URL_DOWNLOAD_MATERI + '/' + idMateri;
+        window.location.href =  _URL_DOWNLOAD_MATERI + '/' + idMateri;
     });
 
 }

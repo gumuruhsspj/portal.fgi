@@ -1,7 +1,7 @@
-const _URL_DELETE_CUSTOM_MATERI = '/manage/materi/custom/delete';
-const _URL_DISPLAY_PEMBAHASAN = '/manage/materi/pembahasan?';
-const _URL_EDIT_CUSTOM_MATERI = '/manage/materi/custom/edit';
-const _URL_UPDATE_CUSTOM_MATERI = '/manage/materi/custom/update';
+const _URL_DELETE_CUSTOM_MATERI = _URL_MAIN_WEBSITE + 'manage/materi/custom/delete';
+const _URL_DISPLAY_PEMBAHASAN = _URL_MAIN_WEBSITE + 'manage/materi/pembahasan?';
+const _URL_EDIT_CUSTOM_MATERI = _URL_MAIN_WEBSITE + 'manage/materi/custom/edit';
+const _URL_UPDATE_CUSTOM_MATERI = _URL_MAIN_WEBSITE + 'manage/materi/custom/update';
 
 var table;
 

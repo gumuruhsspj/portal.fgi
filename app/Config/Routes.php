@@ -68,6 +68,8 @@ $routes->post('/manage/materi/quiz/update', 'Works::materi_quiz_update');
 $routes->post('/manage/materi/quiz/delete', 'Works::materi_quiz_delete');
 $routes->post('/manage/materi/quiz/edit', 'Works::materi_quiz_edit');
 
+$routes->post('/manage/materi/quiz/reorder', 'Works::materi_quiz_reorder');
+
 $routes->post('/manage/materi/comments-rating/all', 'Works::comments_rating_all');
 $routes->post('/manage/materi/comments-rating/delete', 'Works::comments_rating_delete');
 
@@ -76,6 +78,12 @@ $routes->get('/materi', 'Home::display_single_materi');
 $routes->get('/materi/kategori', 'Home::display_materi_kategori');
 $routes->get('/materi/start', 'Home::display_start_materi');
 $routes->get('/materi/download/(:num)', 'Works::download_materi/$1');
+
+// ====== QUIZ STUDENT ======
+$routes->get('/materi/quiz', 'Home::display_start_quiz');
+$routes->get('/materi/quiz/result', 'Home::display_quiz_result');
+$routes->post('/materi/quiz/submit', 'Works::quiz_submit');
+$routes->get('/materi/certificate/(:num)', 'Works::download_certificate/$1');
 
 
 // called by student

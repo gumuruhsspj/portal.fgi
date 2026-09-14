@@ -384,7 +384,7 @@ function sendRequestForm(datana, URLna){
 							$('#delete-icon-materi').show();
                     	}else if(URLna == _URL_ADD_ATTACHMENT_MATERI){
                     		let filena = dataObtained.filename;
-                    		let urlna = '/assets/attachment/uploads/materi/' + filena;
+                    		let urlna = _URL_MAIN_WEBSITE + 'assets/attachment/uploads/materi/' + filena;
 							$('#attachment-name').val(filena);
 							$('#preview-attachment-materi').attr('href', urlna);
 							$('#preview-attachment-materi').show();
@@ -624,6 +624,7 @@ function extractMateriData(dataCome){
 	$('#kategori-materi').val(dataCome.kategori);
 	$('#deskripsi-materi').text(dataCome.deskripsi);
 	$('#owner-materi').val(dataCome.username);
+	$('#url-alive-materi').val(dataCome.url_alive || '');
 	
 	let fileIcon = (dataCome.icon);
 	let fileAttachment = (dataCome.attachment);
@@ -631,7 +632,7 @@ function extractMateriData(dataCome){
 	//alert(fileAttachment);
 
 	let urlIcon = _URL_MAIN_WEBSITE + "assets/img/uploads/materi/" + fileIcon;
-	let urlAttachment = "/assets/attachment/uploads/materi/" + fileAttachment;
+	let urlAttachment = _URL_MAIN_WEBSITE + "assets/attachment/uploads/materi/" + fileAttachment;
 
 	$('#preview-icon-materi').attr('src', urlIcon);
 	$('#preview-attachment-materi').attr('href', urlAttachment);

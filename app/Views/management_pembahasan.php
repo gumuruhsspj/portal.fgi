@@ -121,7 +121,8 @@
                       <?php foreach ($management_data as $data) : ?>
                         <div class="col-md-6 mb-4 card-item" data-id-materi="<?= $data->id_materi; ?>" data-id="<?= $data->id; ?>">
                           <div class="card h-100">
-                            <div class="card-body" style="margin-left: 15px;">
+                            <div class="card-body">
+
                               <input type="checkbox" class="form-check-input selected-card mb-2">
 
                               <input type="text" class="form-control mb-2 judul"
@@ -130,36 +131,43 @@
                               <textarea class="form-control mb-2 deskripsi"
                                 placeholder="Deskripsi"><?= $data->deskripsi; ?></textarea>
 
-                              <p class="text-muted">
-
-                                <a href="#" class="add-pembahasan" data-bs-toggle="modal" data-bs-target="#modalPembahasan">Add Pembahasan</a>
-
-                              <div class="list-group">
-                                <?php if (!empty($management_pembahasan[$data->id])) : ?>
-                                  <?php foreach ($management_pembahasan[$data->id] as $pembahasan): ?>
-                                    <?php if ($pembahasan->id_bab == $data->id): ?>
-                                      <li class="list-group-item">
-                                        <?= $pembahasan->judul; ?>
-                                        <button data-id="<?= $pembahasan->id; ?>" class="btn btn-warning btn-sm float-end edit-pembahasan">
-                                          <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button data-id="<?= $pembahasan->id; ?>" class="btn btn-danger btn-sm float-end remove-pembahasan">
-                                          <i class="fas fa-trash-alt"></i>
-                                        </button>
-                                      </li>
-                                    <?php endif; ?>
-                                  <?php endforeach; ?>
-                                <?php endif; ?>
+                              <!-- Tombol Delete (kiri) & Save (kanan) tepat di bawah textarea -->
+                              <div class="d-flex justify-content-between mb-3">
+                                <button class="btn btn-sm btn-danger delete-card" data-id="<?= $data->id; ?>">
+                                  Delete
+                                </button>
+                                <button class="btn btn-sm btn-success save-card" data-id="<?= $data->id; ?>">
+                                  Save
+                                </button>
                               </div>
-                              </p>
 
-                              <button class="btn btn-sm btn-danger delete-card" data-id="<?= $data->id; ?>">
-                                Delete
-                              </button>
+                              <hr>
 
-                              <button class="btn btn-sm btn-success float-end save-card" data-id="<?= $data->id; ?>">
-                                Save
-                              </button>
+                              <!-- Section Pembahasan -->
+                              <div class="pembahasan-section">
+                                <a href="#" class="add-pembahasan" data-bs-toggle="modal" data-bs-target="#modalPembahasan">
+                                  + Add Pembahasan
+                                </a>
+
+                                <ul class="list-group mt-2">
+                                  <?php if (!empty($management_pembahasan[$data->id])) : ?>
+                                    <?php foreach ($management_pembahasan[$data->id] as $pembahasan): ?>
+                                      <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span><?= $pembahasan->judul; ?></span>
+                                        <span>
+                                          <button data-id="<?= $pembahasan->id; ?>" class="btn btn-danger btn-sm remove-pembahasan">
+                                            <i class="fas fa-trash-alt"></i>
+                                          </button>
+                                          <button data-id="<?= $pembahasan->id; ?>" class="btn btn-warning btn-sm edit-pembahasan">
+                                            <i class="fas fa-edit"></i>
+                                          </button>
+                                        </span>
+                                      </li>
+                                    <?php endforeach; ?>
+                                  <?php endif; ?>
+                                </ul>
+                              </div>
+
                             </div>
                           </div>
                         </div>
@@ -208,7 +216,12 @@
     <script src="<?= base_url(); ?>assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="<?= base_url(); ?>assets/vendor/datatables/jquery.dataTables.min.js"></script>
     <script src="<?= base_url(); ?>assets/js/sweetalert2@11.js<?= $random; ?>"></script>
-    <!-- AdminLTE -->
+    <script src="<?= base_url() ?>assets/js/autoNumeric.min.js"></script>
+
+    <script type="text/javascript">
+      const _URL_MAIN_WEBSITE = "<?= base_url(); ?>";
+    </script>
+
     <script src="<?= base_url(); ?>assets/js/manage-materi.js<?= $random; ?>"></script>
     <script src="<?= base_url(); ?>assets/js/settings.js<?= $random; ?>"></script>
     <script src="<?= base_url(); ?>assets/js/customer-services.js<?= $random; ?>"></script>

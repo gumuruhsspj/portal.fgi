@@ -73,6 +73,13 @@
 
           </div>
 
+          <div class="form-group">
+            <label for="url-alive-materi" class="col-form-label">Link Live Session (Zoom/GMeet):</label>
+            <input type="url" name="url_alive" id="url-alive-materi" class="form-control"
+              placeholder="https://zoom.us/j/... atau https://meet.google.com/...">
+            <small class="text-muted">Kosongkan jika materi ini tidak punya sesi live.</small>
+          </div>
+
         </div>
         <div class="modal-footer">
           <button type="submit" class="btn btn-primary">Save</button>

@@ -1,10 +1,10 @@
-<form id="materiCustomForm" action="/manage/materi/custom/add" method="post" >
+<form id="materiCustomForm" action="<?= base_url(); ?>manage/materi/custom/add" method="post">
   <div class="modal fade" id="materiCustomModal" tabindex="-1" role="dialog" aria-labelledby="materiCustomModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="materiCustomModalLabel">Materi</h5>
-          
+
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">

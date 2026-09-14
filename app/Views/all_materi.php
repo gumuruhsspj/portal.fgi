@@ -119,95 +119,130 @@
                       <table class="table table-striped projects">
                         <thead>
                           <tr>
-                            <th style="width: 1%">
-                              #
-                            </th>
-                            <th style="width: 20%">
-                              Nama Materi
-                            </th>
-                            <th>
-                              Kategori
-                            </th>
-                            <th>
-                              Paket
-                            </th>
-                            <th style="width: 30%">
-                              Deskripsi
-                            </th>
-                            <th style="width: 8%" class="text-center">
-                              Status
-                            </th>
-                            <th style="width: 20%">
-                            </th>
+                            <th style="width: 1%">#</th>
+                            <th style="width: 18%">Nama Materi</th>
+                            <th>Kategori</th>
+                            <th>Paket</th>
+                            <th style="width: 25%">Deskripsi</th>
+                            <th style="width: 8%" class="text-center">Status</th>
+                            <th style="width: 18%" class="text-center">Quiz / Sertifikat</th>
+                            <th style="width: 15%"></th>
                           </tr>
                         </thead>
                         <tbody>
                           <?php if (isset($data_materi_user)) : ?>
                             <?php if (sizeof($data_materi_user) > 0) : ?>
                               <?php foreach ($data_materi_user as $duser) : ?>
+
+                                <?php
+                                $id_materi = (int) $duser->id_materi;
+                                $attempt   = $quiz_map[$id_materi] ?? null;
+
+                                // status quiz
+                                $quiz_state  = 'none';   // none | pending | graded-locked | graded-release
+                                $quiz_score  = null;
+
+                                if ($attempt) {
+                                  if ($attempt->status === 'graded') {
+                                    $quiz_score = number_format((float) $attempt->final_score, 0);
+                                    $quiz_state = (($attempt->rilis_sertifikat ?? 'no') === 'yes')
+                                      ? 'graded-release'
+                                      : 'graded-locked';
+                                  } else {
+                                    $quiz_state = 'pending';
+                                  }
+                                }
+                                ?>
+
                                 <tr>
+                                  <td>#</td>
                                   <td>
-                                    #
-                                  </td>
-                                  <td>
-                                    <a href="/materi?title=<?= $duser->url; ?>">
+                                    <a href="<?= base_url(); ?>materi?title=<?= $duser->url; ?>">
                                       <?= $duser->judul; ?>
                                     </a>
                                     <br>
-                                    <small>
-                                      Sejak : <?= $duser->date_created; ?>
-                                    </small>
+                                    <small>Sejak : <?= $duser->date_created; ?></small>
                                   </td>
-                                  <td>
-                                    <?= $duser->kategori; ?>
-                                  </td>
-                                  <td>
-                                    <?= $duser->paket; ?>
-                                  </td>
-                                  <td class="project_progress">
-                                    <?= $duser->deskripsi; ?>
-                                  </td>
+                                  <td><?= $duser->kategori; ?></td>
+                                  <td><?= $duser->paket; ?></td>
+                                  <td class="project_progress"><?= $duser->deskripsi; ?></td>
                                   <td class="project-state">
                                     <?php
                                     $badge = "";
-
-                                    if ($duser->status == 'pending')
-                                      $badge = "badge-info";
-
-                                    if ($duser->status == 'in progress')
-                                      $badge = "badge-warning";
-
-                                    if ($duser->status == 'completed')
-                                      $badge = "badge-success";
-
-                                    if ($duser->status == 'error' || $duser->status == 'delete request')
-                                      $badge = "badge-error";
-
+                                    if ($duser->status == 'pending')           $badge = "badge-info";
+                                    if ($duser->status == 'in progress')       $badge = "badge-warning";
+                                    if ($duser->status == 'completed')         $badge = "badge-success";
+                                    if (
+                                      $duser->status == 'error' ||
+                                      $duser->status == 'delete request'
+                                    )    $badge = "badge-error";
                                     ?>
                                     <span class="badge <?= $badge; ?>"><?= $duser->status; ?></span>
                                   </td>
+
+                                  <!-- ============ KOLOM QUIZ / SERTIFIKAT ============ -->
+                                  <td class="text-center align-middle">
+                                    <?php if ($quiz_state === 'pending'): ?>
+
+                                      <span class="badge badge-warning" style="padding:6px 10px;">
+                                        <i class="fas fa-hourglass-half"></i> Menunggu Penilaian
+                                      </span>
+                                      <br>
+                                      <small class="text-muted">
+                                        <i class="far fa-clock"></i>
+                                        <?= date('d M Y', strtotime($attempt->date_created)); ?>
+                                      </small>
+
+                                    <?php elseif ($quiz_state === 'graded-release'): ?>
+
+                                      <a href="<?= base_url('materi/certificate/' . $id_materi); ?>"
+                                        class="btn btn-sm btn-success">
+                                        <i class="fas fa-download"></i> Download Sertifikat
+                                      </a>
+                                      <br>
+                                      <small class="text-muted">
+                                        Skor: <strong><?= $quiz_score; ?></strong>
+                                      </small>
+
+                                    <?php elseif ($quiz_state === 'graded-locked'): ?>
+
+                                      <span class="badge badge-info" style="padding:6px 10px;">
+                                        <i class="fas fa-check-circle"></i> Dinilai (<?= $quiz_score; ?>)
+                                      </span>
+                                      <br>
+                                      <small class="text-muted">Sertifikat belum dirilis</small>
+
+                                    <?php else: ?>
+
+                                      <?php if ($duser->status === 'completed'): ?>
+                                        <a href="<?= base_url('materi/quiz?id=' . $id_materi); ?>"
+                                          class="btn btn-sm btn-info">
+                                          <i class="fas fa-pen"></i> Kerjakan Quiz
+                                        </a>
+                                      <?php else: ?>
+                                        <span class="text-muted small">—</span>
+                                      <?php endif; ?>
+
+                                    <?php endif; ?>
+                                  </td>
+
+                                  <!-- ============ KOLOM AKSI ============ -->
                                   <td class="project-actions text-right">
                                     <?php if ($duser->status == 'in progress'): ?>
-                                      <a class="btn btn-primary btn-sm" href="/materi/start/?id=<?= $duser->id_materi; ?>">
-                                        <i class="fa-solid fa-play"></i>
-                                        </i>
-                                        Lanjutkan
+                                      <a class="btn btn-primary btn-sm" href="<?= base_url(); ?>materi/start/?id=<?= $id_materi; ?>">
+                                        <i class="fa-solid fa-play"></i> Lanjutkan
                                       </a>
                                     <?php endif; ?>
 
                                     <?php if ($duser->status == 'completed'): ?>
-                                      <a class="btn btn-primary btn-sm" href="/materi/start/?id=<?= $duser->id_materi; ?>">
-                                        <i class="fa-solid fa-play"></i>
-                                        </i>
-                                        Simak Lagi
+                                      <a class="btn btn-primary btn-sm" href="<?= base_url(); ?>materi/start/?id=<?= $id_materi; ?>">
+                                        <i class="fa-solid fa-play"></i> Simak Lagi
                                       </a>
                                     <?php endif; ?>
 
                                     <?php if ($duser->status != 'completed' && $duser->status != 'error' && $duser->status != 'delete request'): ?>
                                       <a class="btn btn-danger btn-sm" href="#">
-                                        <i class="fa-solid fa-xmark"></i>
-                                        </i>
-                                        Batalkan
+                                        <i class="fa-solid fa-xmark"></i> Batalkan
                                       </a>
                                     <?php endif; ?>
                                   </td>
