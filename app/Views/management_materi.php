@@ -21,6 +21,110 @@
   <link rel="stylesheet" href="<?= base_url() ?>assets/css/adminlte.min.css">
   <link rel="stylesheet" href="<?= base_url() ?>assets/css/styles-custom-homepage.css">
   <link rel="stylesheet" href="<?= base_url() ?>assets/css/styles-custom-portal.css">
+
+  <style>
+    .kategori-context-menu {
+      position: fixed;
+      z-index: 99999;
+      background: #fff;
+      border: 1px solid #e3e3e3;
+      border-radius: 8px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, .15);
+      min-width: 190px;
+      padding: 4px 0;
+      display: none;
+      font-size: 14px;
+    }
+
+    .kategori-context-menu ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .kategori-context-menu li a {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 14px;
+      color: #333;
+      text-decoration: none;
+      transition: background .12s;
+    }
+
+    .kategori-context-menu li a:hover {
+      background: #f3f6fb;
+      color: #007bff;
+    }
+
+    .kategori-context-menu li a i {
+      width: 16px;
+      color: #666;
+    }
+
+    .kategori-edit-popup {
+      position: fixed;
+      z-index: 100000;
+      background: #fff;
+      border: 1px solid #e3e3e3;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .18);
+      min-width: 280px;
+      padding: 16px;
+      display: none;
+      font-size: 14px;
+    }
+
+    .kategori-edit-header {
+      font-weight: 700;
+      color: #222;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .kategori-edit-sub {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 12px;
+    }
+
+    .kategori-edit-popup select {
+      width: 100%;
+      padding: 9px 10px;
+      border: 1px solid #ced4da;
+      border-radius: 6px;
+      margin-bottom: 14px;
+      font-size: 14px;
+      background: #fff;
+    }
+
+    .kategori-edit-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    td.kategori-cell {
+      cursor: pointer;
+    }
+
+    td.kategori-cell:hover {
+      background: #f3f6fb;
+    }
+
+    td.kategori-cell .fa-pen {
+      opacity: .45;
+      transition: opacity .15s;
+    }
+
+    td.kategori-cell:hover .fa-pen {
+      opacity: 1;
+      color: #007bff;
+    }
+  </style>
+
 </head>
 
 <!--
@@ -125,7 +229,15 @@
                               <img src="<?= base_url() ?>assets/img/uploads/materi/<?= $row->icon; ?>" alt="Product 1" class="img-circle img-size-32 mr-2">
                               <?= $row->judul; ?>
                             </td>
-                            <td><?= $row->kategori; ?></td>
+                            <?php $can_edit_kat = in_array(session()->get('usertype'), ['admin', 'instruktur']); ?>
+                            <?php if ($can_edit_kat): ?>
+                              <td class="kategori-cell" data-id="<?= $row->id; ?>" title="Klik untuk ganti kategori">
+                                <?= $row->kategori; ?>
+                                <i class="fas fa-pen fa-xs text-muted ml-1"></i>
+                              </td>
+                            <?php else: ?>
+                              <td><?= $row->kategori; ?></td>
+                            <?php endif; ?>
                             <td><a href="#">Detail</a></td>
                             <td><a class="link-view-comments-rating" data-id="<?= $row->id; ?>" data-bs-toggle="modal" data-bs-target="#comments-rating-modal" href="#"><?= $row->total_comments; ?> data.</a></td>
                             <?php if (!empty($row->attachment)): ?>
@@ -187,6 +299,35 @@
     <?php include('footer.php'); ?>
   </div>
   <!-- ./wrapper -->
+
+
+
+  <!-- ===== POPUP GANTI KATEGORI ===== -->
+  <div id="kategori-edit-popup" class="kategori-edit-popup">
+    <div class="kategori-edit-header">
+      <i class="fas fa-tags"></i> Ganti Kategori
+    </div>
+    <div class="kategori-edit-sub" id="kategori-edit-subtitle"></div>
+
+    <select id="kategori-edit-select"></select>
+
+    <!-- ▼▼ TAMBAHAN: input kategori baru ▼▼ -->
+    <input type="text"
+      id="kategori-edit-new"
+      placeholder="Nama kategori baru..."
+      autocomplete="off"
+      style="display:none; width:100%; padding:9px 10px; border:1px solid #ced4da;
+                border-radius:6px; margin-bottom:14px; font-size:14px;">
+    <!-- ▲▲ TAMBAHAN ▲▲ -->
+
+    <div class="kategori-edit-actions">
+      <button type="button" id="kategori-edit-cancel" class="btn btn-sm btn-secondary">Batal</button>
+      <button type="button" id="kategori-edit-save" class="btn btn-sm btn-primary">
+        <i class="fas fa-check"></i> Simpan
+      </button>
+    </div>
+  </div>
+
   <?php include('modal_materi_paket.php'); ?>
   <?php include('modal_materi.php'); ?>
   <?php include('modal_customer_services.php'); ?>
@@ -207,6 +348,7 @@
   <!-- AdminLTE -->
   <script type="text/javascript">
     const _URL_MAIN_WEBSITE = "<?= base_url(); ?>";
+    const _USERTYPE = "<?= $usertype; ?>";
   </script>
   <script src="<?= base_url() ?>assets/js/manage-materi.js<?= $random; ?>"></script>
   <script src="<?= base_url() ?>assets/js/settings.js<?= $random; ?>"></script>

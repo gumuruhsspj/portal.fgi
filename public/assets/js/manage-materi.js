@@ -12,6 +12,9 @@ const _URL_ALL_COMMENTS_RATING_MATERI 	= _URL_MAIN_WEBSITE+ "manage/materi/comme
 const _URL_ADD_ATTACHMENT_MATERI 	= _URL_MAIN_WEBSITE+ "manage/materi/attachment/add";
 const _URL_ADD_ICON_MATERI 			= _URL_MAIN_WEBSITE+ "manage/materi/icon/add";
 
+const _URL_ALL_DISTINCT_KATEGORI  = _URL_MAIN_WEBSITE + "manage/materi/kategori/distinct";
+const _URL_UPDATE_KATEGORI_MATERI = _URL_MAIN_WEBSITE + "manage/materi/kategori/change";
+
 
 const _DEBUG = true;
 
@@ -99,6 +102,24 @@ $( document ).ready(function() {
         requestDataKategori();
     });
 
+	// ===== Toggle submit button Paket Modal =====
+	// Saat modal dibuka
+	$('#paketModal').on('shown.bs.modal', function () {
+		updatePaketSubmitState();
+	});
+
+	// Saat salah satu checkbox paket diubah
+	$('body').on('change', 'input[name="paket[]"]', function () {
+		updatePaketSubmitState();
+	});
+
+	// Saat modal mau ditutup, biar bersih
+	$('#paketModal').on('hidden.bs.modal', function () {
+		// opsional: reset semua state checkbox kalau memang mau
+		// $('input[name="paket[]"]').prop('checked', false);
+		updatePaketSubmitState();
+	});
+
 	// when user owner is clicked changed
 	$('body').on('change', '#owner-materi', function(){
 
@@ -139,14 +160,15 @@ $( document ).ready(function() {
 	})
 
 	$('body').on('click', '#save-kategori', function(e){
+        e.preventDefault();
+        saveCustomKategori();
+    });
 
-		e.preventDefault();
+    // ★ bind context menu dulu — biar apapun yg terjadi ke DataTable, ini tetap jalan
+    initKategoriContextMenu();
 
-		saveCustomKategori();
-
-	});
-
-	prepareTable();
+    // baru init tabel (dibungkus try/catch di dalamnya)
+    prepareTable();
 
 });
 
@@ -242,10 +264,194 @@ function processDeleteMateri(numberValues){
 
 }
 
+// ===================== KATEGORI CONTEXT MENU =====================
+let _current_kategori_id    = null;
+let _current_kategori_value = '';
+
+function initKategoriContextMenu() {
+
+    // 1. Klik kiri cell kategori → tampilkan popup ganti kategori
+    $(document).on('click', 'td.kategori-cell', function(e) {
+        if (_USERTYPE !== 'admin' && _USERTYPE !== 'instruktur') return;
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        _current_kategori_id    = $(this).attr('data-id');
+        _current_kategori_value = $(this).clone().children('i').remove().end().text().trim();
+
+        $('#kategori-edit-subtitle').text('Materi ID #' + _current_kategori_id
+            + ' • sebelumnya: ' + _current_kategori_value);
+
+        // reset state input "kategori baru"
+        $('#kategori-edit-new').val('').hide();
+
+        let cell  = $(this);
+        let popup = $('#kategori-edit-popup');
+
+        $.ajax({
+            url: _URL_ALL_DISTINCT_KATEGORI,
+            type: 'POST',
+            dataType: 'json',
+            success: function(res) {
+                let opts = '';
+                if (res.status === 'valid' && res.data && res.data.length) {
+                    res.data.forEach(function(row) {
+                        let val = row.kategori || '';
+                        opts += '<option value="' + val + '">' + val + '</option>';
+                    });
+                } else {
+                    opts = '<option value="">- belum ada kategori -</option>';
+                }
+
+                // ▼▼ TAMBAHAN: option "kategori baru..." di paling bawah ▼▼
+                opts += '<option value="__NEW__">➕ Kategori baru...</option>';
+                // ▲▲ TAMBAHAN ▲▲
+
+                $('#kategori-edit-select').html(opts).val(_current_kategori_value);
+
+                popup.show();
+
+                let rect = cell[0].getBoundingClientRect();
+                let pw   = popup.outerWidth()  || 280;
+                let ph   = popup.outerHeight() || 200;
+
+                let left = rect.left;
+                if (left + pw > $(window).width() - 10) {
+                    left = $(window).width() - pw - 10;
+                }
+
+                let top = rect.bottom + 6;
+                if (top + ph > $(window).height() - 10) {
+                    top = rect.top - ph - 6;
+                }
+
+                popup.css({ top: top + 'px', left: left + 'px' });
+            },
+            error: function() {
+                alert('Gagal memuat daftar kategori.');
+            }
+        });
+    });
+
+    // ▼▼ TAMBAHAN: saat dropdown berubah ke "kategori baru..." ▼▼
+    $(document).on('change', '#kategori-edit-select', function() {
+        if ($(this).val() === '__NEW__') {
+            $('#kategori-edit-new').show().focus();
+        } else {
+            $('#kategori-edit-new').hide().val('');
+        }
+    });
+
+    // Enter di input baru = trigger tombol Simpan
+    $(document).on('keydown', '#kategori-edit-new', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            $('#kategori-edit-save').trigger('click');
+        }
+    });
+    // ▲▲ TAMBAHAN ▲▲
+
+    // 2. Tutup popup kalau klik di luar
+    $(document).on('mousedown', function(e) {
+        if (!$(e.target).closest('#kategori-edit-popup').length
+            && !$(e.target).closest('td.kategori-cell').length) {
+            $('#kategori-edit-popup').hide();
+        }
+    });
+
+    // 3. Sembunyikan saat scroll / resize / esc
+    $(window).on('scroll resize', function() {
+        $('#kategori-edit-popup').hide();
+    });
+    $(document).on('keydown', function(e) {
+        if (e.key === 'Escape') {
+            $('#kategori-edit-popup').hide();
+        }
+    });
+
+    // 4. Cancel
+    $(document).on('click', '#kategori-edit-cancel', function() {
+        $('#kategori-edit-popup').hide();
+    });
+
+    // 5. Save
+    $(document).on('click', '#kategori-edit-save', function() {
+        let selected = $('#kategori-edit-select').val();
+
+        // ▼▼ TAMBAHAN: tentukan value kategori final ▼▼
+        let newKat;
+        if (selected === '__NEW__') {
+            newKat = ($('#kategori-edit-new').val() || '').trim();
+            if (!newKat) {
+                alert('Isi nama kategori baru terlebih dahulu.');
+                $('#kategori-edit-new').focus();
+                return;
+            }
+        } else {
+            newKat = selected;
+            if (!newKat) {
+                alert('Pilih kategori terlebih dahulu.');
+                return;
+            }
+            if (newKat === _current_kategori_value) {
+                $('#kategori-edit-popup').hide();
+                return;
+            }
+        }
+        // ▲▲ TAMBAHAN ▲▲
+
+        let $btn = $(this);
+        $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Menyimpan...');
+
+        $.ajax({
+            url: _URL_UPDATE_KATEGORI_MATERI,   // manage/materi/kategori/change
+            type: 'POST',
+            dataType: 'json',
+            data: { id: _current_kategori_id, kategori: newKat },
+            success: function(res) {
+                if (res.status === 'valid') {
+                    location.reload();
+                } else {
+                    alert('Gagal: ' + (res.message || 'Unknown error'));
+                    $btn.prop('disabled', false).html('<i class="fas fa-check"></i> Simpan');
+                }
+            },
+            error: function() {
+                alert('Terjadi kesalahan jaringan.');
+                $btn.prop('disabled', false).html('<i class="fas fa-check"></i> Simpan');
+            }
+        });
+    });
+}
+
+function updatePaketSubmitState() {
+    let checkedCount = $('input[name="paket[]"]:checked').length;
+    let $btn = $('#paketModal #submitUpdate');
+
+    if (checkedCount > 0) {
+        $btn.prop('disabled', false).removeClass('disabled');
+    } else {
+        $btn.prop('disabled', true).addClass('disabled');
+    }
+}
+
 function prepareTable(){
 
 
-	new DataTable('#table-management-materi');
+	   try {
+        if (typeof DataTable !== 'undefined') {
+            // DataTables v2
+            new DataTable('#table-management-materi');
+        } else if ($.fn && $.fn.DataTable) {
+            // DataTables v1.x (jQuery plugin)
+            $('#table-management-materi').DataTable();
+        } else {
+            console.warn('DataTables library tidak terdeteksi — tabel jalan tanpa DataTable.');
+        }
+    } catch (err) {
+        console.warn('DataTable init gagal:', err);
+    }
 
 	$('body').on('click', '#select-all', function(){
 
@@ -499,6 +705,8 @@ function extractPaketData(dataCome){
 
     $('#materiId').val(dataCome.id);
     $('#paketForm').attr('action', _URL_UPDATE_PAKET_MATERI);
+
+	 updatePaketSubmitState();
 }
 
 function extractCommentsData(datana){

@@ -1,4 +1,4 @@
-<form id="materiForm" action="/manage/materi/add" method="post" enctype="multipart/form-data">
+<form id="materiForm" action="<?= base_url(); ?>manage/materi/add" method="post" enctype="multipart/form-data">
   <div class="modal fade" id="materiModal" tabindex="-1" role="dialog" aria-labelledby="materiModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">

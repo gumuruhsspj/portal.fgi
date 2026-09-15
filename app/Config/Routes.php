@@ -49,6 +49,7 @@ $routes->post('/manage/materi/delete', 'Works::materi_delete');
 $routes->post('/manage/materi/update', 'Works::materi_update');
 $routes->post('/manage/materi/edit', 'Works::materi_edit');
 
+
 $routes->post('/manage/materi/paket/update', 'Works::materi_paket_update');
 
 $routes->post('/manage/materi/icon/add', 'Works::materi_icon_add');
@@ -56,6 +57,9 @@ $routes->post('/manage/materi/attachment/add', 'Works::materi_attachment_add');
 $routes->post('/manage/materi/kategori/all', 'Works::materi_kategori_all');
 $routes->post('/manage/materi/kategori/add', 'Works::materi_kategori_add');
 $routes->post('/manage/materi/kategori/delete', 'Works::materi_kategori_delete');
+
+$routes->post('/manage/materi/kategori/distinct', 'Works::materi_kategori_distinct');
+$routes->post('/manage/materi/kategori/change',   'Works::materi_kategori_change');
 
 $routes->post('/manage/materi/pembahasan/bab/add', 'Works::pembahasan_bab_add');
 $routes->post('/manage/materi/pembahasan/bab/update', 'Works::pembahasan_bab_update');

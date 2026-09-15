@@ -295,6 +295,19 @@ class MateriModel extends Model
         ];
     }
 
+    public function get_all_distinct_kategori()
+    {
+        $builder = $this->db->table($this->table);
+        $builder->select('kategori')
+            ->distinct()
+            ->where('kategori IS NOT NULL', null, false)
+            ->where('kategori !=', '')
+            ->orderBy('kategori', 'ASC');
+
+        $rows = $builder->get()->getResult();
+        return count($rows) > 0 ? $rows : false;
+    }
+
     public function get_quiz_attempts_by_user($id_user)
     {
         $tbl_qa = $this->table_quiz_attempts_name . ' as qa';

@@ -3779,4 +3779,49 @@ Jangan tambahkan teks di luar format tersebut.";
             'data'    => $scores,
         ]);
     }
+
+    public function materi_kategori_distinct()
+    {
+        $result = ['status' => 'invalid', 'data' => []];
+
+        $rows = $this->model_materi->get_all_distinct_kategori();
+        if ($rows) {
+            $result['status'] = 'valid';
+            $result['data']   = $rows;
+        }
+
+        echo json_encode($result);
+    }
+
+    public function materi_kategori_change()
+    {
+        $result = ['status' => 'invalid', 'message' => 'error'];
+
+        $id       = $this->request->getPost('id');
+        $kategori = trim((string) $this->request->getPost('kategori'));
+
+        if (empty($id) || $kategori === '') {
+            $result['message'] = 'Data tidak lengkap';
+            echo json_encode($result);
+            return;
+        }
+
+        // Pastikan materi-nya ada
+        $materi = $this->model_materi->get_by(['id' => $id]);
+        if (!$materi) {
+            $result['message'] = 'Materi tidak ditemukan';
+            echo json_encode($result);
+            return;
+        }
+
+        $ok = $this->model_materi->update_existing(['kategori' => $kategori], $id);
+        if ($ok) {
+            $result['status']  = 'valid';
+            $result['message'] = 'Kategori berhasil diganti.';
+        } else {
+            $result['message'] = 'Gagal update kategori';
+        }
+
+        echo json_encode($result);
+    }
 }

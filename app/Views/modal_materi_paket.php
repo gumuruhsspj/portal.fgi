@@ -16,25 +16,19 @@
             <input type="text" class="form-control" id="judulMateri" name="title" readonly>
           </div>
 
-          <div class="mb-3">
+          <div class="mb-3" id="paket-checkbox-group">
             <label class="form-label">Pilih Model Paket:</label>
             <div class="form-check">
               <input class="form-check-input" type="checkbox" value="paket_belajar_sendiri" id="paket1" name="paket[]">
-              <label class="form-check-label" for="paket1">
-                Belajar Sendiri
-              </label>
+              <label class="form-check-label" for="paket1">Belajar Sendiri</label>
             </div>
             <div class="form-check">
               <input class="form-check-input" type="checkbox" value="paket_bimbingan" id="paket2" name="paket[]">
-              <label class="form-check-label" for="paket2">
-                Belajar + Bimbingan (Live)
-              </label>
+              <label class="form-check-label" for="paket2">Belajar + Bimbingan (Live)</label>
             </div>
             <div class="form-check">
               <input class="form-check-input" type="checkbox" value="paket_kasus_custom" id="paket3" name="paket[]">
-              <label class="form-check-label" for="paket3">
-                Belajar + Kasus Spesifik (Extra)
-              </label>
+              <label class="form-check-label" for="paket3">Belajar + Kasus Spesifik (Extra)</label>
             </div>
           </div>
 
@@ -76,7 +70,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-          <button type="submit" class="btn btn-primary" id="submitUpdate">Simpan Perubahan</button>
+          <button type="submit" class="btn btn-primary" id="submitUpdate" disabled>Simpan Perubahan</button>
         </div>
 
       </form>
