@@ -1284,6 +1284,7 @@ class ComposerStaticInit06a7c8ac31ae14837c040af9cdd8c70d
         'Evenement\\EventEmitter' => __DIR__ . '/..' . '/evenement/evenement/src/EventEmitter.php',
         'Evenement\\EventEmitterInterface' => __DIR__ . '/..' . '/evenement/evenement/src/EventEmitterInterface.php',
         'Evenement\\EventEmitterTrait' => __DIR__ . '/..' . '/evenement/evenement/src/EventEmitterTrait.php',
+        'FPDF' => __DIR__ . '/..' . '/setasign/fpdf/fpdf.php',
         'Faker\\Calculator\\Ean' => __DIR__ . '/..' . '/fakerphp/faker/src/Faker/Calculator/Ean.php',
         'Faker\\Calculator\\Iban' => __DIR__ . '/..' . '/fakerphp/faker/src/Faker/Calculator/Iban.php',
         'Faker\\Calculator\\Inn' => __DIR__ . '/..' . '/fakerphp/faker/src/Faker/Calculator/Inn.php',

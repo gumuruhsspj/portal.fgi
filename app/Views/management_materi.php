@@ -143,6 +143,7 @@
                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
 
                                 </button>
+
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                   <li><a class="dropdown-item edit-single" data-id="<?= $row->id; ?>" href="#">Edit </a></li>
                                   <li><a class="dropdown-item delete-single" data-id="<?= $row->id; ?>" href="#">Delete</a></li>
@@ -150,8 +151,11 @@
                                   <li><a class="dropdown-item paket-single" data-id="<?= $row->id; ?>" href="#">Paket</a></li>
                                   <li><a class="dropdown-item pembahasan-single" data-id="<?= $row->id; ?>" href="#">Pembahasan</a></li>
                                   <li><a class="dropdown-item quiz-single" data-id="<?= $row->id; ?>" href="#">Quiz</a></li>
+                                  <hr>
+                                  <li><a class="dropdown-item certificate-single" data-id="<?= $row->id; ?>" href="#">Sertifikat</a></li>
 
                                 </ul>
+
                               </div>
                             </td>
                           </tr>

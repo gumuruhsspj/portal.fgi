@@ -1878,8 +1878,7 @@ Jangan tambahkan teks di luar format tersebut.";
     public function download_certificate($id_materi)
     {
         $this->is_logged_in();
-        // placeholder — implementasi generator sertifikat menyusul
-        return "Sertifikat belum tersedia. Hubungi admin.";
+        return (new \App\Controllers\Certificate())->download($id_materi);
     }
 
     public function pembahasan_update()
@@ -3416,6 +3415,7 @@ Jangan tambahkan teks di luar format tersebut.";
         $opsi_d       = $this->request->getPost('opsi_d');
         $keterangan   = $this->request->getPost('keterangan');
         $final_answer = $this->request->getPost('final_answer');
+        $id_group = $this->request->getPost('id_group');
 
         if (empty($id_materi) || empty($pertanyaan)) {
             $result['message'] = 'Data tidak lengkap';
@@ -3429,6 +3429,7 @@ Jangan tambahkan teks di luar format tersebut.";
             'jenis'        => $jenis,
             'keterangan'   => $keterangan,
             'final_answer' => $final_answer,
+            'id_group'     => $id_group ?: null,
         ];
 
         $max_order = $this->model_materi->get_max_ordering_quiz($id_materi);
@@ -3494,6 +3495,7 @@ Jangan tambahkan teks di luar format tersebut.";
         $opsi_d       = $this->request->getPost('opsi_d');
         $keterangan   = $this->request->getPost('keterangan');
         $final_answer = $this->request->getPost('final_answer');
+        $id_group = $this->request->getPost('id_group');
 
         if (empty($id)) {
             $result['message'] = 'ID tidak ditemukan';
@@ -3506,7 +3508,7 @@ Jangan tambahkan teks di luar format tersebut.";
             'jenis'        => $jenis,
             'keterangan'   => $keterangan,
             'final_answer' => $final_answer,
-            // reset default
+            'id_group'     => $id_group ?: null,
             'opsi_a' => null,
             'opsi_b' => null,
             'opsi_c' => null,
@@ -3530,6 +3532,35 @@ Jangan tambahkan teks di luar format tersebut.";
         }
 
         echo json_encode($result);
+    }
+
+    public function materi_quiz_group_reorder()
+    {
+        $this->is_logged_in();
+        if (!$this->request->isAJAX()) {
+            return $this->response->setJSON(['status' => 'error']);
+        }
+
+        $items = $this->request->getPost('items');
+        if (!is_array($items) || empty($items)) {
+            return $this->response->setJSON(['status' => 'invalid', 'message' => 'Tidak ada item']);
+        }
+
+        $ok = true;
+        foreach ($items as $item) {
+            $id  = isset($item['id']) ? (int) $item['id'] : 0;
+            $ord = isset($item['ordering_index']) ? (int) $item['ordering_index'] : 0;
+            if ($id > 0) {
+                if (!$this->model_materi->update_existing_quiz_group(['ordering_index' => $ord], $id)) {
+                    $ok = false;
+                }
+            }
+        }
+
+        return $this->response->setJSON([
+            'status'  => $ok ? 'valid' : 'invalid',
+            'message' => $ok ? 'urutan section disimpan' : 'sebagian gagal'
+        ]);
     }
 
     public function materi_quiz_delete()
@@ -3577,5 +3608,175 @@ Jangan tambahkan teks di luar format tersebut.";
         }
 
         echo json_encode($result);
+    }
+
+    /* ===================== QUIZ GROUP CRUD ===================== */
+
+    public function materi_quiz_group_list()
+    {
+        $this->is_logged_in();
+        $id_materi = $this->request->getPost('id_materi');
+
+        if (!$id_materi) {
+            return $this->response->setJSON(['status' => 'invalid', 'message' => 'id_materi kosong']);
+        }
+
+        $rows = $this->model_materi->get_all_quiz_groups($id_materi);
+        return $this->response->setJSON([
+            'status' => $rows ? 'valid' : 'invalid',
+            'data'   => $rows ?: [],
+        ]);
+    }
+
+    public function materi_quiz_group_add()
+    {
+        $this->is_logged_in();
+        if (!$this->request->isAJAX()) {
+            return $this->response->setJSON(['status' => 'error']);
+        }
+
+        $id_materi = $this->request->getPost('id_materi');
+        $nama      = trim((string) $this->request->getPost('nama'));
+        $deskripsi = trim((string) $this->request->getPost('deskripsi'));
+
+        if (!$id_materi || $nama === '') {
+            return $this->response->setJSON(['status' => 'invalid', 'message' => 'Data tidak lengkap']);
+        }
+
+        $next_order = $this->model_materi->get_max_ordering_quiz_group($id_materi) + 1;
+
+        $new_id = $this->model_materi->insert_new_quiz_group([
+            'id_materi'      => $id_materi,
+            'nama'           => $nama,
+            'deskripsi'      => $deskripsi,
+            'ordering_index' => $next_order,
+        ]);
+
+        return $this->response->setJSON([
+            'status'  => $new_id ? 'valid' : 'invalid',
+            'message' => $new_id ? 'Grup berhasil ditambahkan' : 'Gagal menambahkan grup',
+            'id'      => $new_id,
+        ]);
+    }
+
+    public function materi_quiz_group_update()
+    {
+        $this->is_logged_in();
+        if (!$this->request->isAJAX()) return $this->response->setJSON(['status' => 'error']);
+
+        $id        = $this->request->getPost('id');
+        $nama      = trim((string) $this->request->getPost('nama'));
+        $deskripsi = trim((string) $this->request->getPost('deskripsi'));
+
+        if (!$id || $nama === '') {
+            return $this->response->setJSON(['status' => 'invalid', 'message' => 'Data tidak lengkap']);
+        }
+
+        $ok = $this->model_materi->update_existing_quiz_group(
+            ['nama' => $nama, 'deskripsi' => $deskripsi],
+            $id
+        );
+
+        return $this->response->setJSON([
+            'status'  => $ok ? 'valid' : 'invalid',
+            'message' => $ok ? 'Grup diupdate' : 'Gagal update',
+        ]);
+    }
+
+    public function materi_quiz_group_delete()
+    {
+        $this->is_logged_in();
+        if (!$this->request->isAJAX()) return $this->response->setJSON(['status' => 'error']);
+
+        $id = $this->request->getPost('id');
+        if (!$id) return $this->response->setJSON(['status' => 'invalid']);
+
+        $ok = $this->model_materi->delete_existing_quiz_group($id);
+        return $this->response->setJSON([
+            'status'  => $ok ? 'valid' : 'invalid',
+            'message' => $ok ? 'Grup dihapus' : 'Gagal hapus',
+        ]);
+    }
+
+    public function materi_quiz_group_edit()
+    {
+        $this->is_logged_in();
+        if (!$this->request->isAJAX()) return $this->response->setJSON(['status' => 'error']);
+
+        $id = $this->request->getPost('id');
+        $row = $this->model_materi->get_quiz_group_by(['id' => $id]);
+        return $this->response->setJSON([
+            'status' => $row ? 'valid' : 'invalid',
+            'data'   => $row ?: null,
+        ]);
+    }
+
+    public function materi_quiz_assign_group()
+    {
+        $this->is_logged_in();
+        if (!$this->request->isAJAX()) return $this->response->setJSON(['status' => 'error']);
+
+        $id_quiz  = (int) $this->request->getPost('id_quiz');
+        $id_group = (int) $this->request->getPost('id_group');
+
+        if (!$id_quiz) return $this->response->setJSON(['status' => 'invalid']);
+
+        $ok = $this->model_materi->assign_quiz_to_group($id_quiz, $id_group);
+        return $this->response->setJSON([
+            'status'  => $ok ? 'valid' : 'invalid',
+            'message' => $ok ? 'Soal dipindah grup' : 'Gagal',
+        ]);
+    }
+
+    /* ===================== CERTIFICATE ===================== */
+
+    public function certificate_preview()
+    {
+        $this->is_logged_in();
+        $attempt_id = $this->request->getPost('attempt_id');
+
+        $attempt = $this->model_materi->get_quiz_attempt_by_id($attempt_id);
+        if (!$attempt) {
+            return $this->response->setJSON(['status' => 'invalid', 'message' => 'Attempt tidak ditemukan']);
+        }
+
+        $scores = $this->model_materi->get_group_scores_for_attempt($attempt_id);
+        $materi = $this->model_materi->get_by(['id' => $attempt->id_materi]);
+        $user   = $this->model_user->find($attempt->id_user);
+
+        // Cache ke table_certificate_scores
+        $this->model_materi->persist_certificate_scores($attempt, $scores);
+
+        return $this->response->setJSON([
+            'status' => 'valid',
+            'data'   => [
+                'attempt' => $attempt,
+                'scores'  => $scores,
+                'materi'  => $materi,
+                'user'    => $user,
+            ],
+        ]);
+    }
+
+    public function certificate_generate()
+    {
+        $this->is_logged_in();
+        // Placeholder generator — integrate dengan library PDF nanti
+        $attempt_id = $this->request->getPost('attempt_id');
+
+        $attempt = $this->model_materi->get_quiz_attempt_by_id($attempt_id);
+        if (!$attempt) {
+            return $this->response->setJSON(['status' => 'invalid', 'message' => 'Attempt tidak ditemukan']);
+        }
+
+        // Recompute + cache
+        $scores = $this->model_materi->get_group_scores_for_attempt($attempt_id);
+        $this->model_materi->persist_certificate_scores($attempt, $scores);
+
+        return $this->response->setJSON([
+            'status'  => 'valid',
+            'message' => 'Sertifikat siap digenerate (integrasi PDF pending).',
+            'data'    => $scores,
+        ]);
     }
 }

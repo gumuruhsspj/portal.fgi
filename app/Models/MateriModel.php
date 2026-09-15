@@ -45,6 +45,228 @@ class MateriModel extends Model
     private $table_pembahasan_materi_name = "table_pembahasan_materi";
     private $table_pembahasan_custom_name = "table_pembahasan_custom";
 
+    private $table_quiz_groups_name        = "table_quiz_groups";
+    private $table_certificate_scores_name = "table_certificate_scores";
+    private $table_certificate_templates_name = "table_certificate_templates";
+
+
+    /* ===================== CERTIFICATE TEMPLATES ===================== */
+
+    public function get_cert_templates($id_materi = null)
+    {
+        $b = $this->db->table($this->table_certificate_templates_name . ' as t');
+        $b->select('t.*, m.judul as judul_materi');
+        $b->join($this->table . ' as m', 'm.id = t.id_materi', 'left');
+        if ($id_materi) $b->where('t.id_materi', $id_materi);
+        $b->orderBy('t.id_materi', 'ASC')->orderBy('t.id', 'DESC');
+        $rows = $b->get()->getResult();
+        return count($rows) > 0 ? $rows : [];
+    }
+
+    public function get_cert_template_by_id($id)
+    {
+        $b = $this->db->table($this->table_certificate_templates_name);
+        $row = $b->where('id', $id)->get()->getRow();
+        return $row ?: false;
+    }
+
+    public function insert_cert_template($data)
+    {
+        if (empty($data)) return false;
+        $this->db->table($this->table_certificate_templates_name)->insert($data);
+        return $this->db->insertID();
+    }
+
+    public function update_cert_template($data, $id)
+    {
+        return $this->db->table($this->table_certificate_templates_name)
+            ->update($data, ['id' => $id]) ? true : false;
+    }
+
+    public function delete_cert_template($id)
+    {
+        return $this->db->table($this->table_certificate_templates_name)
+            ->delete(['id' => $id]);
+    }
+
+    /**
+     * Cari template yang cocok untuk 1 attempt (user + materi + paket).
+     */
+    public function find_cert_template_for_attempt($attempt)
+    {
+        // Cari student_materi untuk tahu paket + id_custom_materi
+        $b = $this->db->table($this->table_student_materi_name);
+        $sm = $b->where('id_user', $attempt->id_user)
+            ->where('id_materi', $attempt->id_materi)
+            ->get()->getRow();
+
+        if (!$sm) return false;
+
+        $paket = $sm->paket;
+        $cid   = $sm->id_custom_materi ?? null;
+
+        $b2 = $this->db->table($this->table_certificate_templates_name);
+        $b2->where('id_materi', $attempt->id_materi)
+            ->where('paket', $paket)
+            ->where('status', 'active');
+
+        if ($paket === 'paket_kasus_custom' && $cid) {
+            $b2->where('id_custom_materi', $cid);
+        } else {
+            $b2->where('id_custom_materi IS NULL', null, false);
+        }
+
+        $row = $b2->orderBy('id', 'DESC')->limit(1)->get()->getRow();
+        return $row ?: false;
+    }
+
+    /* ===================== QUIZ GROUPS ===================== */
+
+    public function get_all_quiz_groups($id_materi)
+    {
+        // Guard: kalau tabel belum dimigrasi, jangan crash
+        if (!$this->db->tableExists($this->table_quiz_groups_name)) {
+            return false;
+        }
+        $b = $this->db->table($this->table_quiz_groups_name);
+        $b->where('id_materi', $id_materi);
+        $b->orderBy('ordering_index', 'ASC')->orderBy('id', 'ASC');
+        $rows = $b->get()->getResult();
+        return count($rows) > 0 ? $rows : false;
+    }
+
+    public function get_quiz_group_by($filter)
+    {
+        $b = $this->db->table($this->table_quiz_groups_name);
+        $b->where($filter);
+        $row = $b->get()->getRow();
+        return $row ?: false;
+    }
+
+    public function insert_new_quiz_group($data)
+    {
+        if (empty($data)) return false;
+        if (!$this->db->tableExists($this->table_quiz_groups_name)) return false;
+        $this->db->table($this->table_quiz_groups_name)->insert($data);
+        return $this->db->insertID();
+    }
+
+    public function update_existing_quiz_group($data, $id)
+    {
+        return $this->db->table($this->table_quiz_groups_name)
+            ->update($data, ['id' => $id]) ? true : false;
+    }
+
+    public function delete_existing_quiz_group($id)
+    {
+        // FK akan set NULL id_group di table_quiz_materi
+        return $this->db->table($this->table_quiz_groups_name)
+            ->delete(['id' => $id]);
+    }
+
+    public function get_max_ordering_quiz_group($id_materi)
+    {
+        if (!$this->db->tableExists($this->table_quiz_groups_name)) return 0;
+        $row = $this->db->table($this->table_quiz_groups_name)
+            ->selectMax('ordering_index')
+            ->where('id_materi', $id_materi)
+            ->get()->getRow();
+        return ($row && $row->ordering_index) ? (int) $row->ordering_index : 0;
+    }
+
+    public function assign_quiz_to_group($id_quiz, $id_group)
+    {
+        // Kalau kolom id_group belum ada → skip tanpa error
+        if (!$this->db->fieldExists('id_group', $this->table_quiz_materi_name)) {
+            return false;
+        }
+        return $this->db->table($this->table_quiz_materi_name)
+            ->update(['id_group' => $id_group ?: null], ['id' => $id_quiz]);
+    }
+
+/* ===================== CERTIFICATE SCORING ===================== */
+
+    /**
+     * Hitung scoring per group dari satu attempt.
+     * Hasil: array of object { id_group, group_name, total_questions,
+     *                          correct_count, avg_score }
+     */
+    public function get_group_scores_for_attempt($id_attempt)
+    {
+        $tbl_g = $this->table_quiz_groups_name;
+        $tbl_q = $this->table_quiz_materi_name;
+        $tbl_a = $this->table_quiz_answers_name;
+
+        $b = $this->db->table($tbl_g . ' as g');
+        $b->select('
+        g.id as id_group,
+        g.nama as group_name,
+        g.ordering_index,
+        COUNT(a.id) as total_questions,
+        SUM(CASE WHEN a.is_correct = 1 THEN 1 ELSE 0 END) as correct_count,
+        ROUND(AVG(COALESCE(a.score, 0)), 2) as avg_score
+    ');
+        $b->join($tbl_q . ' as q', 'q.id_group = g.id', 'left');
+        $b->join($tbl_a . ' as a', 'a.id_quiz = q.id', 'left');
+        $b->where('a.id_attempt', $id_attempt);
+        $b->groupBy('g.id, g.nama, g.ordering_index');
+        $b->orderBy('g.ordering_index', 'ASC');
+
+        return $b->get()->getResult();
+    }
+
+    /**
+     * Persist scoring ke cache (dipanggil setelah attempt graded).
+     */
+    public function persist_certificate_scores($attempt, $rows)
+    {
+        $this->db->table($this->table_certificate_scores_name)
+            ->where('id_attempt', $attempt->id)
+            ->delete();
+
+        foreach ($rows as $r) {
+            $this->db->table($this->table_certificate_scores_name)->insert([
+                'id_attempt'      => $attempt->id,
+                'id_user'         => $attempt->id_user,
+                'id_materi'       => $attempt->id_materi,
+                'id_group'        => $r->id_group,
+                'group_name'      => $r->group_name,
+                'total_questions' => (int) $r->total_questions,
+                'correct_count'   => (int) $r->correct_count,
+                'avg_score'       => (float) $r->avg_score,
+            ]);
+        }
+    }
+
+    public function get_certificate_scores($id_attempt)
+    {
+        $b = $this->db->table($this->table_certificate_scores_name);
+        $b->where('id_attempt', $id_attempt);
+        $b->orderBy('id', 'ASC');
+        $rows = $b->get()->getResult();
+        return count($rows) > 0 ? $rows : false;
+    }
+
+    /**
+     * Ambil seluruh attempt yang sudah graded (untuk list certificate admin).
+     */
+    public function get_graded_attempts_with_user($id_materi = null)
+    {
+        $tbl_qa = $this->table_quiz_attempts_name . ' as qa';
+        $tbl_u  = 'table_users as u';
+        $tbl_m  = $this->table . ' as m';
+
+        $b = $this->db->table($tbl_qa);
+        $b->select('qa.*, u.username, u.nama_lengkap, u.email,
+                m.judul as judul_materi, m.icon, m.rilis_sertifikat');
+        $b->join($tbl_u, 'u.id = qa.id_user', 'left');
+        $b->join($tbl_m, 'm.id = qa.id_materi', 'left');
+        $b->where('qa.status', 'graded');
+        if (!empty($id_materi)) $b->where('qa.id_materi', $id_materi);
+        $b->orderBy('qa.date_graded', 'DESC');
+
+        return $b->get()->getResult();
+    }
 
     public function get_student_materi_progress($id_user)
     {
@@ -81,6 +303,7 @@ class MateriModel extends Model
         $b = $this->db->table($tbl_qa);
         $b->select('
         qa.id,
+          qa.id_user, 
         qa.id_materi,
         qa.total_questions,
         qa.pg_questions,
@@ -179,6 +402,63 @@ class MateriModel extends Model
     {
         $b = $this->db->table($this->table_quiz_attempts_name);
         $row = $b->where('id', $id)->get()->getRow();
+        return $row ?: false;
+    }
+
+    /* ===================== CERTIFICATE TOKEN ===================== */
+
+    /**
+     * Ambil token existing atau generate baru untuk attempt ini.
+     * Return token (string 32 char hex) atau false kalau gagal.
+     */
+    public function ensure_certificate_token($attempt_id)
+    {
+        $b = $this->db->table($this->table_quiz_attempts_name);
+        $row = $b->select('certificate_token')->where('id', $attempt_id)->get()->getRow();
+
+        if (!$row) return false;
+
+        // Kalau sudah ada, langsung return
+        if (!empty($row->certificate_token)) {
+            return $row->certificate_token;
+        }
+
+        // Generate token baru — retry kalau collision (super jarang)
+        $token = false;
+        for ($i = 0; $i < 5; $i++) {
+            $candidate = bin2hex(random_bytes(16)); // 32 char hex
+            $exists = $this->db->table($this->table_quiz_attempts_name)
+                ->where('certificate_token', $candidate)
+                ->countAllResults();
+            if ($exists === 0) {
+                $token = $candidate;
+                break;
+            }
+        }
+
+        if (!$token) return false;
+
+        $ok = $this->db->table($this->table_quiz_attempts_name)
+            ->update(['certificate_token' => $token], ['id' => $attempt_id]);
+
+        return $ok ? $token : false;
+    }
+
+    public function has_cert_template_for_attempt($attempt)
+    {
+        return $this->find_cert_template_for_attempt($attempt) !== false;
+    }
+
+    /**
+     * Cari attempt berdasarkan token. Return object attempt atau false.
+     */
+    public function get_attempt_by_certificate_token($token)
+    {
+        if (empty($token) || !preg_match('/^[a-f0-9]{32}$/', $token)) {
+            return false;
+        }
+        $b = $this->db->table($this->table_quiz_attempts_name);
+        $row = $b->where('certificate_token', $token)->get()->getRow();
         return $row ?: false;
     }
 
@@ -490,26 +770,19 @@ class MateriModel extends Model
 
     public function get_all_quiz_by_materi_id($id)
     {
+        if (empty($id)) {
+            return false;
+        }
 
         $builder = $this->db->table($this->table_quiz_materi_name);
-
-        $filter = array(
-            'id_materi' => $id
-        );
-
-        $builder->where($filter);
+        $builder->where('id_materi', $id);
         $builder->orderBy('ordering_index', 'ASC');
         $builder->orderBy('id', 'ASC');
 
-        $query = $builder->get();
-        $manyData = $builder->countAllResults();
+        // AMAN: ambil hasil LANGSUNG tanpa countAllResults() perantara
+        $rows = $builder->get()->getResult();
 
-        if ($manyData > 0) {
-
-            return $query->getResult();
-        } else {
-            return false;
-        }
+        return count($rows) > 0 ? $rows : false;
     }
 
     public function get_quiz_by($filter)
@@ -530,22 +803,25 @@ class MateriModel extends Model
     {
         $hasil = false;
 
+        // Kalau kolom id_group belum ada tapi data mau insert id_group, buang dulu
+        if (isset($data['id_group']) && !$this->db->fieldExists('id_group', $this->table_quiz_materi_name)) {
+            unset($data['id_group']);
+        }
+
         if (!empty($data)) {
             $hasil = $this->db->table($this->table_quiz_materi_name)->insert($data);
         }
 
-        if ($hasil) {
-            return $this->db->insertID();
-        }
-
-        return $hasil;
+        return $hasil ? $this->db->insertID() : $hasil;
     }
 
     public function update_existing_quiz($data, $id)
     {
+        if (isset($data['id_group']) && !$this->db->fieldExists('id_group', $this->table_quiz_materi_name)) {
+            unset($data['id_group']);
+        }
         $query = $this->db->table($this->table_quiz_materi_name)
             ->update($data, array('id' => $id));
-
         return $query ? true : false;
     }
 
@@ -740,16 +1016,8 @@ class MateriModel extends Model
             $builder->where('id_materi', $id_materi);
         }
 
-
-        $query = $builder->get();
-        $manyData = $builder->countAllResults();
-
-        if ($manyData > 0) {
-
-            return $query->getResult();
-        } else {
-            return false;
-        }
+        $rows = $builder->get()->getResult();
+        return count($rows) > 0 ? $rows : false;
     }
 
     public function update_status($id_materi, $status)

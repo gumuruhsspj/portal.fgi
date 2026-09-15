@@ -23,7 +23,7 @@
 
     <li class="nav-item">
       <a href="<?= base_url() ?>homepage" class="nav-link <?= isset($menu_dashboard_active) ? $menu_dashboard_active : ''; ?>">
-        <i class="nav-icon fa-thin fa-house"></i>
+        <i class="nav-icon fa-solid fa-house"></i>
         <p>
           Dashboard
         </p>
@@ -35,7 +35,7 @@
 
     <li class="nav-item <?= isset($menu_materi_open) ? $menu_materi_open : ""; ?>">
       <a href="#" class="nav-link <?= isset($menu_materi_open) ? 'active' : ""; ?>">
-        <i class="nav-icon fas fa-books"></i>
+        <i class="nav-icon fa-solid fa-book"></i>
         <p>
           Materi
           <i class="right fas fa-angle-left"></i>
@@ -44,20 +44,20 @@
       <ul class="nav nav-treeview">
         <li class="nav-item">
           <a href="<?= base_url() ?>all-materi" class="nav-link <?= isset($menu_seluruh_materi_active) ? $menu_seluruh_materi_active : ""; ?> ">
-            <i class="far fa-circle nav-icon"></i>
+            <i class="fa-solid fa-book-open nav-icon"></i>
             <p>Seluruh Materi</p>
           </a>
         </li>
         <li class="nav-item">
           <a href="<?= base_url() ?>materi-terpilih" class="nav-link <?= isset($menu_materi_terpilih_active) ? $menu_materi_terpilih_active : ""; ?>">
-            <i class="far fa-circle nav-icon"></i>
+            <i class="fa-solid fa-check-circle nav-icon"></i>
             <p>Materi Terpilih</p>
           </a>
         </li>
 
         <li class="nav-item">
           <a href="#" data-bs-toggle="modal" data-bs-target="#usulanMateriModal" class="nav-link">
-            <i class="far fa-circle nav-icon"></i>
+            <i class="fa-solid fa-lightbulb nav-icon"></i>
             <p>Usulan</p>
           </a>
         </li>
@@ -74,7 +74,7 @@
     </li>
     <li class="nav-item">
       <a href="<?= base_url() ?>perangkat-tautan" class="nav-link <?= isset($menu_perangkat_tautan_active) ? $menu_perangkat_tautan_active : ""; ?>">
-        <i class="nav-icon fa-solid fa-square-arrow-up-right"></i>
+        <i class="nav-icon fa-solid fa-link"></i>
         <p>
           Perangkat Tautan
         </p>
@@ -103,7 +103,7 @@
     <li class="nav-header">Online CS</li>
     <li class="nav-item">
       <a target="_blank" title="<?= $wa_cs01_name; ?>" href="<?= $wa_cs01_link; ?>" class="nav-link <?= $wa_cs01_display; ?>">
-        <i class="nav-icon fas fa-headset"></i>
+        <i class="nav-icon fa-solid fa-headset"></i>
         <p>
           CS #01
         </p>
@@ -111,7 +111,7 @@
     </li>
     <li class="nav-item">
       <a target="_blank" title="<?= $wa_cs02_name; ?>" href="<?= $wa_cs02_link; ?>" class="nav-link <?= $wa_cs02_display; ?>">
-        <i class="nav-icon fas fa-headset"></i>
+        <i class="nav-icon fa-solid fa-headset"></i>
         <p>
           CS #02
         </p>

@@ -20,6 +20,7 @@
         "phpoffice/phpspreadsheet": "^5.8",
         "phpoffice/phpword": "^1.4",
         "psr/log": "^3.0",
+        "setasign/fpdf": "^1.9",
         "setasign/fpdi": "^2.6",
         "tecnickcom/tcpdf": "^6.11"
     },

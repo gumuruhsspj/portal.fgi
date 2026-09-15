@@ -76,6 +76,23 @@ $routes->post('/manage/materi/quiz/reorder', 'Works::materi_quiz_reorder');
 $routes->post('/manage/materi/comments-rating/all', 'Works::comments_rating_all');
 $routes->post('/manage/materi/comments-rating/delete', 'Works::comments_rating_delete');
 
+// ====== QUIZ GROUP (admin) ======
+$routes->post('/manage/materi/quiz/group/list',   'Works::materi_quiz_group_list');
+$routes->post('/manage/materi/quiz/group/add',    'Works::materi_quiz_group_add');
+$routes->post('/manage/materi/quiz/group/update', 'Works::materi_quiz_group_update');
+$routes->post('/manage/materi/quiz/group/delete', 'Works::materi_quiz_group_delete');
+$routes->post('/manage/materi/quiz/group/edit',   'Works::materi_quiz_group_edit');
+$routes->post('/manage/materi/quiz/assign-group', 'Works::materi_quiz_assign_group');
+$routes->post('/manage/materi/quiz/group/reorder', 'Works::materi_quiz_group_reorder');
+
+// ====== CERTIFICATE (admin) ======
+$routes->get('/manage/certificate',              'Certificate::index');
+$routes->get('/manage/certificate/editor',       'Certificate::editor');
+$routes->post('/manage/certificate/save',         'Certificate::save');
+$routes->post('/manage/certificate/load',         'Certificate::load');
+$routes->post('/manage/certificate/delete',       'Certificate::delete');
+$routes->get('/manage/certificate/preview/(:num)', 'Certificate::preview/$1');
+
 // display as student
 $routes->get('/materi', 'Home::display_single_materi');
 $routes->get('/materi/kategori', 'Home::display_materi_kategori');
@@ -86,7 +103,12 @@ $routes->get('/materi/download/(:num)', 'Works::download_materi/$1');
 $routes->get('/materi/quiz', 'Home::display_start_quiz');
 $routes->get('/materi/quiz/result', 'Home::display_quiz_result');
 $routes->post('/materi/quiz/submit', 'Works::quiz_submit');
-$routes->get('/materi/certificate/(:num)', 'Works::download_certificate/$1');
+
+// Step 1: dari dashboard, generate token + redirect
+$routes->get('/materi/certificate/(:num)', 'Certificate::prepare_download/$1');
+
+// Step 2: serve PDF via token
+$routes->get('/certificate/download/(:segment)', 'Certificate::download/$1');
 
 
 // called by student

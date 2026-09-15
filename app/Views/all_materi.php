@@ -20,6 +20,41 @@
   <link rel="stylesheet" href="<?= base_url(); ?>assets/css/styles-custom-homepage.css">
   <link rel="stylesheet" href="<?= base_url(); ?>assets/css/styles-custom-portal.css">
 
+  <style>
+    /* 1. Styling untuk Tombol Default "Akses Masuk" */
+    .materi-card .default-overlay {
+      opacity: 1;
+      transition: opacity 0.3s ease-in-out;
+      background-color: transparent;
+      z-index: 1;
+    }
+
+    /* 2. Styling untuk Detail Overlay */
+    .materi-card .detail-overlay {
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+      background-color: rgba(0, 0, 0, 0.85);
+      z-index: 2;
+      text-decoration: none;
+      /* Menghilangkan garis bawah link */
+    }
+
+    /* 3. Saat card di-hover: Sembunyikan tombol default */
+    .materi-card:hover .default-overlay {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .detail-overlay p {
+      margin-top: 20px;
+    }
+
+    /* 4. Saat card di-hover: Munculkan detail overlay */
+    .materi-card:hover .detail-overlay {
+      opacity: 1;
+    }
+  </style>
+
 </head>
 <!--
 `body` tag options:
@@ -92,18 +127,25 @@
                     <?php if (isset($data_materi)) : ?>
                       <?php foreach ($data_materi as $dmateri): ?>
                         <div class="col-md-12 col-lg-6 col-xl-4">
-                          <div class="card mb-2 bg-gradient-dark">
+                          <!-- Tambahkan class "materi-card" di sini -->
+                          <div class="card mb-2 bg-gradient-dark materi-card">
                             <img class="card-img-top" src="<?= base_url(); ?>assets/img/uploads/materi/<?= $dmateri->icon; ?>" alt="Dist Photo 1">
-                            <div class="card-img-overlay d-flex flex-column justify-content-end">
-                              <a href="<?= base_url(); ?>materi?title=<?= string_to_url($dmateri->judul); ?>">
-                                <h5 class="card-title text-primary text-white"><?= strtoupper($dmateri->judul); ?></h5>
+
+                            <!-- Overlay Default untuk Tombol "Akses Masuk" -->
+                            <div class="card-img-overlay default-overlay d-flex justify-content-end align-items-end">
+                              <a href="<?= base_url(); ?>materi?title=<?= string_to_url($dmateri->judul); ?>" class="btn btn-primary btn-sm shadow m-2">
+                                <i class="fas fa-sign-in-alt"></i> Akses Masuk
                               </a>
-                              <a href="<?= base_url(); ?>all-materi?kategori=<?= string_to_url($dmateri->kategori); ?>">
-                                <h5 class="card-title text-primary text-white"><?= $dmateri->kategori; ?></h5>
-                              </a>
-                              <p class="card-text text-white pb-2 pt-1"><?= $dmateri->deskripsi; ?></p>
-                              <span>Last update <?= calculate_time_elapsed($dmateri->date_modified); ?></span>
                             </div>
+
+                            <!-- Detail Overlay: Ubah div menjadi tag <a> agar seluruh box bisa diklik -->
+                            <a href="<?= base_url(); ?>materi?title=<?= string_to_url($dmateri->judul); ?>" class="card-img-overlay detail-overlay d-flex flex-column justify-content-end">
+                              <h5 class="card-title text-primary text-white"><?= strtoupper($dmateri->judul); ?></h5>
+                              <h5 class="card-title text-primary text-white"><?= $dmateri->kategori; ?></h5>
+                              <p class="card-text text-white pb-2 pt-1"><?= $dmateri->deskripsi; ?></p>
+                              <span class="text-white">Last update <?= calculate_time_elapsed($dmateri->date_modified); ?></span>
+                            </a>
+
                           </div>
                         </div>
                       <?php endforeach; ?>
@@ -197,12 +239,10 @@
 
                                       <a href="<?= base_url('materi/certificate/' . $id_materi); ?>"
                                         class="btn btn-sm btn-success">
-                                        <i class="fas fa-download"></i> Download Sertifikat
+                                        <i class="fas fa-download"></i> Download
                                       </a>
                                       <br>
-                                      <small class="text-muted">
-                                        Skor: <strong><?= $quiz_score; ?></strong>
-                                      </small>
+
 
                                     <?php elseif ($quiz_state === 'graded-locked'): ?>
 

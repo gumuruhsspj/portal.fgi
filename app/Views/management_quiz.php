@@ -22,7 +22,89 @@
   <link rel="stylesheet" href="<?= base_url(); ?>assets/css/adminlte.min.css">
   <link rel="stylesheet" href="<?= base_url(); ?>assets/css/styles-custom-homepage.css">
   <link rel="stylesheet" href="<?= base_url(); ?>assets/css/styles-custom-portal.css">
+
+
+
   <style>
+    .quiz-section {
+      border: 1px solid #e3e6ef;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fff;
+      transition: box-shadow .15s;
+    }
+
+    .quiz-section:hover {
+      box-shadow: 0 2px 12px rgba(0, 0, 0, .05);
+    }
+
+    .quiz-section.ui-sortable-helper {
+      box-shadow: 0 12px 32px rgba(0, 0, 0, .15);
+      transform: rotate(-0.5deg);
+    }
+
+    .section-header {
+      background: #eef3fa;
+      padding: 10px 14px;
+      border-bottom: 1px solid #e3e6ef;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-drag-handle {
+      cursor: grab;
+      padding: 4px 6px;
+      border-radius: 4px;
+      transition: background .15s;
+    }
+
+    .section-drag-handle:hover {
+      background: #dbe7f5;
+    }
+
+    .section-drag-handle:active {
+      cursor: grabbing;
+    }
+
+    .section-body {
+      background: #f8f9fc;
+      min-height: 70px;
+      padding: 12px;
+      transition: background .15s;
+    }
+
+    .section-body.ui-sortable-over {
+      background: #e7f3ff;
+    }
+
+    .section-body .card-item.ui-sortable-placeholder {
+      visibility: visible !important;
+      border: 2px dashed #007bff;
+      background: #e7f3ff;
+      border-radius: 8px;
+      min-height: 80px;
+    }
+
+    .section-body:empty::after {
+      content: "Drop soal di sini...";
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 60px;
+      color: #98a2b3;
+      font-style: italic;
+      font-size: .9rem;
+    }
+
+    .section-count {
+      font-size: .75rem;
+    }
+
+    .quiz-section[data-is-ungrouped="1"] .section-header {
+      background: #fff4e0;
+    }
+
     .drag-handle {
       cursor: grab;
       padding: 4px 6px;
@@ -140,76 +222,34 @@
                   </div>
                 </div>
 
-                <div id="card-mode" class="row mt-4" style="<?= empty($management_data) ? 'display:none;' : '' ?>">
-                  <!-- JS akan append card-card disini -->
-                  <?php if (!empty($management_data)) : ?>
-                    <?php $nomor = 1; ?>
-                    <?php foreach ($management_data as $data) : ?>
-                      <div class="col-md-6 mb-4 card-item" data-id-materi="<?= $data->id_materi; ?>" data-id="<?= $data->id; ?>">
-                        <div class="card h-100">
-                          <div class="card-body">
-                            <div class="d-flex align-items-center gap-2 mb-3">
-                              <input type="checkbox" class="form-check-input is-selected">
-                              <span class="drag-handle" title="Drag untuk pindah">
-                                <i class="fas fa-grip-vertical text-muted"></i>
-                              </span>
-                              <span class="order-badge badge bg-secondary">#<?= str_pad($nomor, 2, '0', STR_PAD_LEFT) ?></span>
-                            </div>
+                <!-- ========== QUIZ GROUP PANEL ========== -->
+                <div class="card-body border-bottom bg-light" id="group-panel">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="mb-0"><i class="fas fa-layer-group"></i> Grup Quiz (kategori sertifikat)</h5>
+                    <button class="btn btn-sm btn-primary" id="add-group">
+                      <i class="fas fa-plus"></i> Tambah Grup
+                    </button>
+                  </div>
+                  <div id="group-list" class="row g-2">
+                    <!-- JS render disini -->
+                  </div>
+                </div>
+                <!-- ========== END QUIZ GROUP PANEL ========== -->
 
-                            <label>Pertanyaan:</label>
-                            <textarea class="form-control mb-2 pertanyaan" placeholder="tulis Pertanyaan disini"><?= $data->pertanyaan ?? '' ?></textarea>
-                            <!-- Jenis Soal -->
-                            <select class="form-select mb-2 jenis-soal">
-                              <option value="essay" <?= isset($data->jenis) && $data->jenis == 'essay' ? 'selected' : '' ?>>Essay</option>
-                              <option value="pg2" <?= isset($data->jenis) && $data->jenis == 'pg2' ? 'selected' : '' ?>>PG 2 opsi</option>
-                              <option value="pg4" <?= isset($data->jenis) && $data->jenis == 'pg4' ? 'selected' : '' ?>>PG 4 opsi</option>
-                            </select>
 
-                            <!-- Opsi PG -->
-                            <div class="pg-opsi mb-2" style="<?= isset($data->jenis) && $data->jenis != 'essay' ? '' : 'display:none;' ?>">
-                              <?php if (isset($data->jenis) && $data->jenis == 'pg2'): ?>
-                                <input type="text" class="form-control mb-1 opsi-a" placeholder="Opsi A" value="<?= $data->opsi_a ?? '' ?>">
-                                <input type="text" class="form-control mb-1 opsi-b" placeholder="Opsi B" value="<?= $data->opsi_b ?? '' ?>">
-                              <?php elseif (isset($data->jenis) && $data->jenis == 'pg4'): ?>
-                                <input type="text" class="form-control mb-1 opsi-a" placeholder="Opsi A" value="<?= $data->opsi_a ?? '' ?>">
-                                <input type="text" class="form-control mb-1 opsi-b" placeholder="Opsi B" value="<?= $data->opsi_b ?? '' ?>">
-                                <input type="text" class="form-control mb-1 opsi-c" placeholder="Opsi C" value="<?= $data->opsi_c ?? '' ?>">
-                                <input type="text" class="form-control mb-1 opsi-d" placeholder="Opsi D" value="<?= $data->opsi_d ?? '' ?>">
-                              <?php endif; ?>
-                            </div>
+                <input type="hidden" id="id_materi_group_ctx" value="<?= $id_materi; ?>">
 
-                            <!-- Keterangan -->
-                            <textarea class="form-control mb-2 keterangan" placeholder="Keterangan"><?= $data->keterangan ?? '' ?></textarea>
+                <script>
+                  window.__QUIZ_DATA__ = <?= json_encode(
+                                            $quiz_payload,
+                                            JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
+                                          ) ?>;
+                </script>
 
-                            <!-- Final Answer -->
-                            <div class="mb-2 jawaban-akhir-part <?= isset($data->jenis) && $data->jenis == 'essay' ? 'd-none' : '' ?>">
-                              <label>Jawaban Final:</label>
-                              <select class="form-select mb-2 jawaban-akhir">
-                                <?php
-                                $jenis_na = $data->jenis ?? 'essay';
-                                $opsi_list = ['A' => 'Opsi A', 'B' => 'Opsi B'];
-                                if ($jenis_na === 'pg4') {
-                                  $opsi_list['C'] = 'Opsi C';
-                                  $opsi_list['D'] = 'Opsi D';
-                                }
-                                foreach ($opsi_list as $val => $label):
-                                ?>
-                                  <option value="<?= $val ?>" <?= (isset($data->final_answer) && $data->final_answer == $val) ? 'selected' : '' ?>>
-                                    <?= $label ?>
-                                  </option>
-                                <?php endforeach; ?>
-                              </select>
-                            </div>
-
-                            <!-- Buttons -->
-                            <button class="btn btn-sm btn-danger delete-card" data-id="<?= $data->id; ?>">Delete</button>
-                            <button class="btn btn-sm btn-success float-end save-card" data-id="<?= $data->id; ?>">Save</button>
-                          </div>
-                        </div>
-                      </div>
-                      <?php $nomor++; ?>
-                    <?php endforeach; ?>
-                  <?php endif; ?>
+                <div class="card-body">
+                  <div id="section-container">
+                    <!-- JS akan render sections disini -->
+                  </div>
                 </div>
 
 

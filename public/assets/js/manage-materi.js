@@ -37,6 +37,7 @@ $( document ).ready(function() {
 
 	linkPembahasan();
 	linkQuiz();
+	linkCertificate();
 
 	prepareUploads('#icon-materi', '#icon-error', '#icon-loading', 2);
 	prepareUploads('#attachment-materi', '#attachment-error', '#attachment-loading', 2);
@@ -677,6 +678,20 @@ function calculateTax(){
 // helper kecil buat nampilin angka di display (bukan input)
 function formatRupiah(angka){
     return 'Rp ' + new Intl.NumberFormat('id-ID').format(Math.round(angka));
+}
+
+function linkCertificate(){
+
+	$('body').on('click', '.certificate-single', function(e){
+
+		e.preventDefault();
+
+		let idna = $(this).attr('data-id');
+		
+		location.href = _URL_MAIN_WEBSITE+'manage/certificate?materi_id=' + idna;
+		
+	});
+
 }
 
 function linkPembahasan(){

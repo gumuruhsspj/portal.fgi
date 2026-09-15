@@ -3,7 +3,7 @@
         'name' => 'codeigniter4/codeigniter4',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '3931ff3cd597333c183c560599e77af19385ea9f',
+        'reference' => 'c422bc7a896ae2d763fc141c2d5400ea57e8dfc2',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -67,7 +67,7 @@
         'codeigniter4/codeigniter4' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '3931ff3cd597333c183c560599e77af19385ea9f',
+            'reference' => 'c422bc7a896ae2d763fc141c2d5400ea57e8dfc2',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -897,6 +897,15 @@
             'install_path' => __DIR__ . '/../sebastian/version',
             'aliases' => array(),
             'dev_requirement' => true,
+        ),
+        'setasign/fpdf' => array(
+            'pretty_version' => '1.9.0',
+            'version' => '1.9.0.0',
+            'reference' => '051b70e4c57dedc88df41b1eff1c62894e5f9ed0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../setasign/fpdf',
+            'aliases' => array(),
+            'dev_requirement' => false,
         ),
         'setasign/fpdi' => array(
             'pretty_version' => 'v2.6.8',

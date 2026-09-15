@@ -89,24 +89,72 @@ class Home extends BaseController
     public function management_quiz_materi()
     {
         $this->is_logged_in();
-
         $data = $this->get_user_data();
+
         $id = $this->request->getGet('materi_id');
 
-        $data_materi = $this->model_materi->get_by(['id' => $id]);
-
-        // data returned is in object instead of array
+        $data_materi   = $this->model_materi->get_by(['id' => $id]);
         $data_all_quiz = $this->model_materi->get_all_quiz_by_materi_id($id);
+        $quiz_groups   = $this->model_materi->get_all_quiz_groups($id) ?: [];
 
-        $data['judul_materi'] = $data_materi->judul;
-        $data['id_materi'] = $data_materi->id;
+        // ============================================================
+        // BUILD PAYLOAD QUIZ UNTUK VIEW (grup + ungrouped)
+        // ============================================================
+        $groups_map = [];
+        foreach ($quiz_groups as $g) {
+            $groups_map[(int)$g->id] = [
+                'id'             => (int)$g->id,
+                'nama'           => $g->nama,
+                'deskripsi'      => $g->deskripsi,
+                'ordering_index' => (int)($g->ordering_index ?? 0),
+                'cards'          => [],
+            ];
+        }
+
+        $ungrouped = [];
+
+        if (!empty($data_all_quiz)) {
+            foreach ($data_all_quiz as $m) {
+                $cid = isset($m->id_group) ? (int)$m->id_group : 0;
+
+                $card = [
+                    'id'             => (int)$m->id,
+                    'id_materi'      => (int)$m->id_materi,
+                    'pertanyaan'     => $m->pertanyaan,
+                    'jenis'          => $m->jenis,
+                    'opsi_a'         => $m->opsi_a,
+                    'opsi_b'         => $m->opsi_b,
+                    'opsi_c'         => $m->opsi_c,
+                    'opsi_d'         => $m->opsi_d,
+                    'final_answer'   => $m->final_answer,
+                    'keterangan'     => $m->keterangan,
+                    'ordering_index' => (int)($m->ordering_index ?? 0),
+                ];
+
+                if ($cid > 0 && isset($groups_map[$cid])) {
+                    $groups_map[$cid]['cards'][] = $card;
+                } else {
+                    $ungrouped[] = $card;
+                }
+            }
+        }
+
+        $data['quiz_payload'] = [
+            'id_materi' => (int)($data_materi->id ?? 0),
+            'groups'    => array_values($groups_map),
+            'ungrouped' => $ungrouped,
+        ];
+        // ============================================================
+
+        $data['judul_materi']    = $data_materi->judul ?? '';
+        $data['id_materi']       = $data_materi->id ?? 0;
         $data['management_data'] = $data_all_quiz;
+        $data['quiz_groups']     = $quiz_groups;
+        $data['jumlah_data']     = !empty($data_all_quiz) ? sizeof($data_all_quiz) : 0;
 
-        $data['jumlah_data'] = !empty($data_all_quiz) ? sizeof($data_all_quiz) : 0;
-
-        $data['link_management_open'] = 'menu-open';
+        $data['link_management_open']          = 'menu-open';
         $data['link_management_materi_active'] = 'active';
-        $data['random'] = '?' . rand(0, 11);
+        $data['random']                        = '?v=' . time();
 
         return view('management_quiz', $data);
     }
@@ -368,6 +416,24 @@ class Home extends BaseController
         return view('management_group_diskusi', $data);
         //echo var_dump($as);
 
+    }
+
+    public function management_certificate()
+    {
+        $this->is_logged_in();
+        $data = $this->get_user_data();
+
+        $id_materi = $this->request->getGet('materi_id');
+
+        $data['attempts']        = $this->model_materi->get_graded_attempts_with_user($id_materi);
+        $data['materi_filter']   = $this->model_materi->get_materi_with_quiz_attempts();
+        $data['selected_materi'] = $id_materi;
+
+        $data['link_management_open'] = 'menu-open';
+        $data['link_management_certificate_active'] = 'active';
+        $data['random'] = '?v=' . time();
+
+        return view('management_certificate', $data);
     }
 
     public function management_perangkat_tautan()
@@ -891,14 +957,31 @@ class Home extends BaseController
 
             // ====== QUIZ ATTEMPTS (card baru) ======
             $quiz_attempts = $this->model_materi->get_quiz_attempts_by_user($id_user);
+
+            // Inject token untuk yang sudah graded & siap rilis
+            foreach ($quiz_attempts as $q) {
+                $is_graded  = ($q->status === 'graded');
+                // Cek template per paket user, bukan global rilis
+                $has_tpl    = $is_graded
+                    ? $this->model_materi->has_cert_template_for_attempt($q)
+                    : false;
+
+                if ($has_tpl) {
+                    $q->certificate_token = $this->model_materi->ensure_certificate_token($q->id);
+                    $q->can_download      = true;
+                } else {
+                    $q->certificate_token = null;
+                    $q->can_download      = false;
+                }
+                $q->is_graded = $is_graded;
+            }
+
             $data['quiz_attempts'] = $quiz_attempts;
 
             // hitung sertifikat yang SUDAH bisa didownload
             $total_cert = 0;
             foreach ($quiz_attempts as $q) {
-                if ($q->status === 'graded' && ($q->rilis_sertifikat ?? 'no') === 'yes') {
-                    $total_cert++;
-                }
+                if ($q->can_download) $total_cert++;
             }
             $data['total_sertifikat'] = $total_cert;
 
@@ -957,6 +1040,7 @@ class Home extends BaseController
         }
 
         // default admin
+        $data['link_dashboard_active'] = 'active';
         return view('homepage_admin', $data);
     }
 

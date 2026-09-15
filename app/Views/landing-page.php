@@ -167,7 +167,7 @@
                 <span>Mendapatkan Kesempatan Berkarir Lebih baik.</span>
               </li>
             </ul>
-            <a href="#" data-bs-toggle="modal" data-bs-target="#KursusKomputerModal" class="read-more"><span>Read More</span><i class="bi bi-arrow-right"></i></a>
+            <a href="#" data-bs-toggle="modal" data-bs-target="#KursusKomputerModal" class="read-more"><span>Selengkapnya</span><i class="bi bi-arrow-right"></i></a>
           </div>
 
           <div class="col-lg-6 about-images" data-aos="fade-up" data-aos-delay="200">
@@ -403,7 +403,7 @@
               <h3 style="color: #0dcaf0;">Pelajar</h3>
               <div class="price"><sup>Rp.</sup>15rb<span> / 1x</span></div>
               <div class="icon">
-                <i class="bi bi-send" style="color: #0dcaf0;"></i>
+                <i class="bi bi-mortarboard" style="color: #0dcaf0;"></i>
               </div>
               <ul>
                 <li>Dapat Materi Khusus</li>
@@ -422,7 +422,7 @@
               <h3 style="color: #fd7e14;">Pengajar Reguler</h3>
               <div class="price"><sup>Rp.</sup>25rb<span> / bln</span></div>
               <div class="icon">
-                <i class="bi bi-airplane" style="color: #fd7e14;"></i>
+                <i class="bi bi-person-video3" style="color: #fd7e14;"></i>
               </div>
               <ul>
                 <li>Fokus 4 peserta / materi</li>
@@ -440,7 +440,7 @@
               <h3 style="color: #0d6efd;">Pengajar Master</h3>
               <div class="price"><sup>Rp.</sup>300rb<span> / semester</span></div>
               <div class="icon">
-                <i class="bi bi-rocket" style="color: #0d6efd;"></i>
+                <i class="bi bi-patch-check-fill" style="color: #0d6efd;"></i>
               </div>
               <ul>
                 <li>Unlimited peserta / materi</li>

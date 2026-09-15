@@ -750,6 +750,7 @@ return array(
     'Evenement\\EventEmitter' => $vendorDir . '/evenement/evenement/src/EventEmitter.php',
     'Evenement\\EventEmitterInterface' => $vendorDir . '/evenement/evenement/src/EventEmitterInterface.php',
     'Evenement\\EventEmitterTrait' => $vendorDir . '/evenement/evenement/src/EventEmitterTrait.php',
+    'FPDF' => $vendorDir . '/setasign/fpdf/fpdf.php',
     'Faker\\Calculator\\Ean' => $vendorDir . '/fakerphp/faker/src/Faker/Calculator/Ean.php',
     'Faker\\Calculator\\Iban' => $vendorDir . '/fakerphp/faker/src/Faker/Calculator/Iban.php',
     'Faker\\Calculator\\Inn' => $vendorDir . '/fakerphp/faker/src/Faker/Calculator/Inn.php',
