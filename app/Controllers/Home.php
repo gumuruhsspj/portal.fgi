@@ -9,8 +9,7 @@ class Home extends BaseController
     {
 
         // $this->session = session();
-
-
+        date_default_timezone_set('Asia/Jakarta');
     }
 
     public function index(): string
@@ -225,7 +224,7 @@ class Home extends BaseController
         $data['jumlah_data']         = ($data_all_bab != false) ? sizeof($data_all_bab) : 0;
         $data['link_management_open'] = 'menu-open';
         $data['link_management_materi_active'] = 'active';
-        $data['random'] = '?v=' . rand(0, 11);
+        $data['random'] = '?v=' . rand(0, 121);
 
         return view('management_pembahasan', $data);
     }
@@ -542,31 +541,32 @@ class Home extends BaseController
 
     public function display_all_materi()
     {
-
         $this->is_logged_in();
-
         $data = $this->get_user_data();
 
-        $cat = $this->request->getGet('kategori');
+        $cat      = $this->request->getGet('kategori');
+        $search   = $this->request->getGet('search') ?? '';
+        $sort     = $this->request->getGet('sort')   ?? 'newest'; // newest | az
+        $page     = (int) ($this->request->getGet('page') ?: 1);
+        $perPage  = 10;
 
-        if (isset($cat)) {
-            $cat = str_replace('-', ' ', $cat);
-            // gedein huruf
-            $cat = ucwords($cat);
-
-            $filter = array('kategori' => $cat);
-
-            $data_materi = $this->model_materi->get_all_by($filter);
-        } else {
-            $data_materi = $this->model_materi->get_all();
+        $filter = [];
+        if (!empty($cat)) {
+            $cat = ucwords(str_replace('-', ' ', $cat));
+            $filter['kategori'] = $cat;
         }
 
-        $data['data_materi'] = $data_materi;
+        $data['data_materi']   = $this->model_materi->get_all_paginated($filter, $search, $sort, $perPage, $page);
+        $data['total_materi']  = $this->model_materi->count_all_paginated($filter, $search);
+        $data['per_page']      = $perPage;
+        $data['current_page']  = $page;
+        $data['search']        = $search;
+        $data['sort']          = $sort;
 
-        $data['title'] = "Seluruh Materi";
-        $data['category'] = $cat;
-        $data['menu_materi_open'] = "menu-open";
-        $data['menu_seluruh_materi_active'] = "active";
+        $data['title']                       = "Seluruh Materi";
+        $data['category']                    = $cat;
+        $data['menu_materi_open']            = "menu-open";
+        $data['menu_seluruh_materi_active']  = "active";
         $data['menu_materi_terpilih_active'] = "";
 
         return view('all_materi', $data);

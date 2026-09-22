@@ -752,6 +752,53 @@
 
     })();
   </script>
+
+  <script>
+    (function() {
+      const KEY = 'fg_remember_v1';
+      const $form = $('#loginModal form');
+      if (!$form.length) return;
+
+      const $user = $form.find('input[name="username"]');
+      const $pass = $form.find('#loginPassword');
+      const $type = $form.find('#usertypeSelect');
+      const $chk = $('#rememberMe');
+
+      // --- Load tersimpan ---
+      try {
+        const raw = localStorage.getItem(KEY);
+        if (raw) {
+          const d = JSON.parse(atob(raw));
+          $user.val(d.u || '');
+          $pass.val(d.p || '');
+          $type.val(d.t || 'peserta');
+          $chk.prop('checked', true);
+        }
+      } catch (e) {
+        localStorage.removeItem(KEY);
+      }
+
+      // --- Simpan saat submit (hanya kalau checkbox dicentang) ---
+      $form.on('submit', function() {
+        if ($chk.is(':checked')) {
+          const payload = {
+            u: $user.val(),
+            p: $pass.val(),
+            t: $type.val()
+          };
+          localStorage.setItem(KEY, btoa(JSON.stringify(payload)));
+        } else {
+          localStorage.removeItem(KEY);
+        }
+      });
+
+      // --- Kalau user uncheck manual, langsung hapus ---
+      $chk.on('change', function() {
+        if (!this.checked) localStorage.removeItem(KEY);
+      });
+    })();
+  </script>
+
   <script src="<?= base_url('assets/js/main.js' . $random); ?>"></script>
   <script src="<?= base_url('assets/js/forgot-pass.js' . $random); ?>"></script>
 

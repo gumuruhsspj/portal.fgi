@@ -122,6 +122,42 @@
 
             <div class="card card-success">
               <div class="card-body">
+                <div class="row mb-3">
+                  <div class="col-md-8">
+                    <form method="get" id="filterForm" class="form-inline">
+                      <?php if (!empty($category)): ?>
+                        <input type="hidden" name="kategori" value="<?= strtolower(str_replace(' ', '-', $category)); ?>">
+                      <?php endif; ?>
+
+                      <label class="mr-2">Search :</label>
+                      <input type="text" name="search" id="searchInput"
+                        class="form-control form-control-sm mr-3"
+                        placeholder="Cari judul / deskripsi..."
+                        value="<?= esc($search ?? ''); ?>"
+                        style="min-width:220px;">
+
+                      <label class="mr-2">Urutkan :</label>
+                      <select name="sort" id="sortSelect" class="form-control form-control-sm mr-3">
+                        <option value="newest" <?= (($sort ?? 'newest') === 'newest') ? 'selected' : ''; ?>>
+                          Materi Terbaru
+                        </option>
+                        <option value="az" <?= (($sort ?? '') === 'az') ? 'selected' : ''; ?>>
+                          Abjad (A to Z)
+                        </option>
+                      </select>
+
+                      <button type="submit" class="btn btn-sm btn-primary">
+                        <i class="fas fa-search"></i> Terapkan
+                      </button>
+                    </form>
+                  </div>
+                  <div class="col-md-4 text-right align-self-center">
+                    <small class="text-muted">
+                      Total: <b><?= (int)($total_materi ?? 0); ?></b> materi
+                    </small>
+                  </div>
+                </div>
+
                 <div class="row">
                   <?php if ($title == "Seluruh Materi"): ?>
                     <?php if (isset($data_materi)) : ?>
@@ -300,6 +336,51 @@
 
 
                 </div>
+
+                <!-- ▼▼▼ TARUH PAGINATION DI SINI ▼▼▼ -->
+                <?php if ($title == "Seluruh Materi"): ?>
+                  <?php
+                  $total      = (int)($total_materi ?? 0);
+                  $perPage    = (int)($per_page ?? 10);
+                  $totalPages = $perPage > 0 ? (int) ceil($total / $perPage) : 1;
+                  $current    = (int)($current_page ?? 1);
+
+                  $qBase = [
+                    'search' => $search ?? '',
+                    'sort'   => $sort ?? 'newest',
+                  ];
+                  if (!empty($category)) {
+                    $qBase['kategori'] = strtolower(str_replace(' ', '-', $category));
+                  }
+                  ?>
+                  <?php if ($totalPages > 1): ?>
+                    <nav class="mt-3">
+                      <ul class="pagination pagination-sm justify-content-center">
+                        <?php
+                        $mkUrl = function ($p) use ($qBase) {
+                          $qBase['page'] = $p;
+                          return base_url('all-materi') . '?' . http_build_query($qBase);
+                        };
+                        ?>
+                        <li class="page-item <?= $current <= 1 ? 'disabled' : ''; ?>">
+                          <a class="page-link" href="<?= $mkUrl(max(1, $current - 1)); ?>">&laquo;</a>
+                        </li>
+
+                        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                          <li class="page-item <?= $i === $current ? 'active' : ''; ?>">
+                            <a class="page-link" href="<?= $mkUrl($i); ?>"><?= $i; ?></a>
+                          </li>
+                        <?php endfor; ?>
+
+                        <li class="page-item <?= $current >= $totalPages ? 'disabled' : ''; ?>">
+                          <a class="page-link" href="<?= $mkUrl(min($totalPages, $current + 1)); ?>">&raquo;</a>
+                        </li>
+                      </ul>
+                    </nav>
+                  <?php endif; ?>
+                <?php endif; ?>
+                <!-- ▲▲▲ SAMPAI SINI ▲▲▲ -->
+
               </div>
             </div>
 
@@ -341,6 +422,18 @@
   <script src="<?= base_url(); ?>assets/js/adminlte.js"></script>
 
   <!-- OPTIONAL SCRIPTS -->
+  <script type="text/javascript">
+    const _URL_MAIN_WEBSITE = "<?= base_url(); ?>";
+
+    document.getElementById('sortSelect')?.addEventListener('change', function() {
+      document.getElementById('filterForm').submit();
+    });
+    let tmr;
+    document.getElementById('searchInput')?.addEventListener('input', function() {
+      clearTimeout(tmr);
+      tmr = setTimeout(() => document.getElementById('filterForm').submit(), 500);
+    });
+  </script>
   <script src="<?= base_url(); ?>assets/js/cleave.min.js"></script>
   <script src="<?= base_url(); ?>assets/vendor/chart.js/Chart.min.js"></script>
   <script src="<?= base_url(); ?>assets/js/settings.js"></script>

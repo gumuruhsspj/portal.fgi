@@ -70,7 +70,11 @@
                         </span>
                     </div>
 
-                    <div class="text-end mt-1">
+                    <div class="d-flex justify-content-between align-items-center mt-1">
+                        <div class="form-check m-0">
+                            <input class="form-check-input" type="checkbox" id="rememberMe">
+                            <label class="form-check-label small" for="rememberMe" style="font-size:0.8rem;">Ingatkan saya</label>
+                        </div>
                         <a href="#" id="fp-open-modal" class="fp-link" style="font-size:0.8rem;">Lupa Password?</a>
                     </div>
 

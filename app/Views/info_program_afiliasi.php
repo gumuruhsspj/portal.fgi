@@ -123,6 +123,9 @@
   <script src="<?= base_url() ?>assets/js/adminlte.js<?= $rand; ?>"></script>
 
   <!-- OPTIONAL SCRIPTS -->
+  <script type="text/javascript">
+    const _URL_MAIN_WEBSITE = "<?= base_url(); ?>";
+  </script>
   <script src="<?= base_url() ?>assets/js/cleave.min.js<?= $rand; ?>"></script>
   <script src="<?= base_url() ?>assets/vendor/chart.js/Chart.min.js<?= $rand; ?>"></script>
   <script src="<?= base_url() ?>assets/js/settings.js<?= $rand; ?>"></script>

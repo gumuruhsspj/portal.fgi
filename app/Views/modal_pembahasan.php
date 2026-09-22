@@ -1,4 +1,3 @@
-
 <div class="modal fade" id="modalPembahasan" tabindex="-1" aria-labelledby="modalPembahasanLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -8,20 +7,27 @@
             </div>
             <div class="modal-body">
                 <form id="formPembahasan">
-                    
-                    <input type="hidden" id="pembahasan_id" name="id" >
-                    <input type="hidden" id="materi_id" name="id_materi" >
-                    <input type="hidden" id="custom_id" name="id_materi_custom" value="<?=$id_materi_custom ?? ''?>" >
-                    <input type="hidden" id="pembahasan_id_bab" name="id_bab" >
-                    <input type="hidden" id="pembahasan_id_user" name="id_user" >
+
+                    <input type="hidden" id="pembahasan_id" name="id">
+                    <input type="hidden" id="materi_id" name="id_materi">
+                    <input type="hidden" id="custom_id" name="id_materi_custom" value="<?= $id_materi_custom ?? '' ?>">
+                    <input type="hidden" id="pembahasan_id_bab" name="id_bab">
+                    <input type="hidden" id="pembahasan_id_user" name="id_user">
 
                     <div class="col-md-2">
                         <label for="pembahasan_ordering_index" class="form-label">No.Urut</label>
-                        <input type="number" class="form-control"  id="pembahasan_ordering_index" name="ordering_index" required>
+                        <input type="number" class="form-control" id="pembahasan_ordering_index" name="ordering_index" required>
                     </div>
 
                     <div class="mb-3">
-                        <label for="judul" class="form-label">Judul</label>
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <label for="judul" class="form-label mb-0">Judul</label>
+                            <div class="btn-group btn-group-sm" role="group" aria-label="Format Judul">
+                                <button type="button" class="btn btn-outline-secondary" id="btnJudulLower" title="All small caps / lowercase">abc</button>
+                                <button type="button" class="btn btn-outline-secondary" id="btnJudulUpper" title="All capital">ABC</button>
+                                <button type="button" class="btn btn-outline-secondary" id="btnJudulCapitalize" title="Each word beginning capital">Abc</button>
+                            </div>
+                        </div>
                         <input type="text" class="form-control" placeholder="tuliskan judulnya" id="judul" name="judul" required>
                     </div>
                     <div class="mb-3">

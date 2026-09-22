@@ -7,6 +7,13 @@ const _URL_EDIT_PEMBAHASAN          = _URL_MAIN_WEBSITE+ "manage/materi/pembahas
 const _URL_UPDATE_PEMBAHASAN        = _URL_MAIN_WEBSITE+ "manage/materi/pembahasan/update";
 const _URL_NEXT_NO_URUT_PEMBAHASAN  = _URL_MAIN_WEBSITE+ "manage/materi/pembahasan/no-urut/next";
 
+
+function toTitleCase(str) {
+    return str.toLowerCase().replace(/\b\w/g, function(char) {
+        return char.toUpperCase();
+    });
+}
+
 function inputOnBab(){
 
     // deteck enter on input judul
@@ -50,9 +57,7 @@ function createCard() {
                 <hr>
 
                 <div class="pembahasan-section">
-                    <a href="#" class="add-pembahasan" data-bs-toggle="modal" data-bs-target="#modalPembahasan">
-                        + Add Pembahasan
-                    </a>
+                    <!-- Link + Add Pembahasan akan di-inject via JS setelah card disave -->
                     <ul class="list-group mt-2"></ul>
                 </div>
 
@@ -73,77 +78,117 @@ function decrementTotalData(){
 
 $(document).ready(function() {  
 
+// Format Judul: all lowercase
+$(document).on('click', '#btnJudulLower', function() {
+    let $input = $('#judul');
+    $input.val($input.val().toLowerCase());
+    $input.focus();
+});
+
+// Format Judul: all uppercase
+$(document).on('click', '#btnJudulUpper', function() {
+    let $input = $('#judul');
+    $input.val($input.val().toUpperCase());
+    $input.focus();
+});
+
+// Format Judul: each word beginning capital
+$(document).on('click', '#btnJudulCapitalize', function() {
+    let $input = $('#judul');
+    $input.val(toTitleCase($input.val()));
+    $input.focus();
+});
+
     _jumlah_bab = $('#total_data').attr('data-jumlah');
 
     // showing save button when user changes data inform
     inputOnBab();
 
     $("#add-card").on("click", function(e){
-        e.preventDefault();
-        $("#card-mode").show();     
-        $("#card-mode").append(createCard());
-    });
+    e.preventDefault();
+    $("#card-mode").show();     
+    $("#card-mode").append(createCard());
 
-    $(document).on("click", ".save-card", function(){
-        let card = $(this).closest(".card-item");
-        let id_userna = $('#id_user').val();
-        let id_babna = card.data("id");          // ID bab (kosong jika baru)
-        let id_materina = card.data("id-materi");
-        let id_materi_custom = $('#id_materi_custom').val();
+    // ✅ Fokus ke Judul card terbaru + smooth scroll ke card tersebut
+    let $newCard = $("#card-mode .card-item").last();
+    let $judul   = $newCard.find(".judul");
 
-        let judul_na = card.find(".judul").val();
-        let deskripsi_na = card.find(".deskripsi").val();
-        let btn_save = card.find('.save-card');
+    // fokus tanpa auto-scroll bawaan browser (biar tidak "loncat")
+    $judul[0].focus({ preventScroll: true });
 
-        let dataNa = null;
-        let urlTarget = '';
+    // lalu scroll halus ke posisi card baru
+    $newCard[0].scrollIntoView({ behavior: "smooth", block: "center" });
+});
 
-        if (id_babna) {
-            // UPDATE bab yang sudah ada
-            dataNa = {
-                id: id_babna,
-                id_materi: id_materina,
-                id_user: id_userna,
-                judul: judul_na,
-                deskripsi: deskripsi_na
-            };
-            urlTarget = _URL_UPDATE_BAB_PEMBAHASAN;
-        } else {
-            // INSERT bab baru
-            dataNa = {
-                id_materi: id_materina,
-                id_user: id_userna,
-                judul: judul_na,
-                deskripsi: deskripsi_na
-            };
-            if (id_materi_custom) {
-                dataNa.id_materi_custom = id_materi_custom;
-            }
-            urlTarget = _URL_ADD_BAB_PEMBAHASAN;
+   $(document).on("click", ".save-card", function(){
+    let card = $(this).closest(".card-item");
+    let id_userna = $('#id_user').val();
+    let id_babna = card.data("id");
+    let id_materina = card.data("id-materi");
+    let id_materi_custom = $('#id_materi_custom').val();
+
+    let judul_na = card.find(".judul").val();
+    let deskripsi_na = card.find(".deskripsi").val();
+    let btn_save = card.find('.save-card');
+
+    let dataNa = null;
+    let urlTarget = '';
+
+    if (id_babna) {
+        dataNa = {
+            id: id_babna,
+            id_materi: id_materina,
+            id_user: id_userna,
+            judul: judul_na,
+            deskripsi: deskripsi_na
+        };
+        urlTarget = _URL_UPDATE_BAB_PEMBAHASAN;
+    } else {
+        dataNa = {
+            id_materi: id_materina,
+            id_user: id_userna,
+            judul: judul_na,
+            deskripsi: deskripsi_na
+        };
+        if (id_materi_custom) {
+            dataNa.id_materi_custom = id_materi_custom;
         }
+        urlTarget = _URL_ADD_BAB_PEMBAHASAN;
+    }
 
-        $.ajax({
-            url: urlTarget,
-            method: "POST",
-            data: dataNa,
-            dataType: "json",
-            success: function(response) {
-                console.log("Card saved successfully:", response);
-                btn_save.hide();
+    $.ajax({
+        url: urlTarget,
+        method: "POST",
+        data: dataNa,
+        dataType: "json",
+        success: function(response) {
+            console.log("Card saved successfully:", response);
+            btn_save.hide();
 
-                // ✅ UPDATE data-id card dengan ID baru dari server
-                if (!id_babna && response.id) {
-                    card.attr("data-id", response.id);
-                    card.find(".delete-card").data("id", response.id);
-                    card.find(".save-card").data("id", response.id);
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error("Error saving card:", error);
-                btn_save.show();
+            // ✅ UPDATE data-id card dengan ID baru dari server
+            if (!id_babna && response.id) {
+                card.attr("data-id", response.id);
+                  card.data("id", response.id); 
+                card.find(".delete-card").data("id", response.id);
+                card.find(".save-card").data("id", response.id);
+
+                // ✅ Inject link "+ Add Pembahasan" sekarang karena card sudah punya ID
+                let linkPembahasan = `
+                    <a href="#" class="add-pembahasan" 
+                       data-bs-toggle="modal" 
+                       data-bs-target="#modalPembahasan">
+                        + Add Pembahasan
+                    </a>`;
+                card.find(".pembahasan-section").prepend(linkPembahasan);
             }
-        });
+        },
+        error: function(xhr, status, error) {
+            console.error("Error saving card:", error);
+            btn_save.show();
+            Swal.fire('Error', 'Gagal menyimpan bab.', 'error');
+        }
     });
+});
     
     // DELETE
     $(document).on("click", ".delete-card", function(){
@@ -276,52 +321,52 @@ $(document).ready(function() {
 
     // saat mulai di klik
     $(document).on('click', '.add-pembahasan', function(e){
-        e.preventDefault();
+    e.preventDefault();
 
-        let card = $(this).closest(".card-item");
-        let id_babna = card.data("id");
+    let card = $(this).closest(".card-item");
+    let id_babna = card.data("id");
 
-        // ✅ Validasi: bab harus sudah disimpan
-        if (!id_babna || id_babna === "") {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Bab belum disimpan',
-                text: 'Simpan bab terlebih dahulu sebelum menambah pembahasan.',
-                confirmButtonText: 'OK'
-            });
-            return;
-        }
-
-        _card_used = card;
-        $('#formPembahasan')[0].reset();
-
-        let id_materina = card.data('id-materi');
-        let id_materi_customna = $('#id_materi_custom').val();
-
-        $('#materi_id').val(id_materina);
-        $('#pembahasan_id_bab').val(id_babna);
-        $('#pembahasan_id_user').val($('#id_user').val());
-
-        let dataNa = { id_bab: id_babna };
-        if (id_materi_customna) {
-            dataNa.id_materi_custom = id_materi_customna;
-        }
-
-        $.ajax({
-            url: _URL_NEXT_NO_URUT_PEMBAHASAN,
-            method: 'POST',
-            data: dataNa,
-            dataType: 'json',
-            success: function(response) {
-                $('#pembahasan_ordering_index').val(response.data);
-            },
-            error: function() {
-                $('#pembahasan_ordering_index').val('1');
-            }
+    // Safety net: seharusnya tidak terjadi karena link baru muncul setelah save
+    if (!id_babna || id_babna === "") {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Bab belum disimpan',
+            text: 'Simpan bab terlebih dahulu sebelum menambah pembahasan.',
+            confirmButtonText: 'OK'
         });
+        return;
+    }
 
-        $('#modalPembahasan').modal('show');
+    _card_used = card;
+    $('#formPembahasan')[0].reset();
+
+    let id_materina = card.data('id-materi');
+    let id_materi_customna = $('#id_materi_custom').val();
+
+    $('#materi_id').val(id_materina);
+    $('#pembahasan_id_bab').val(id_babna);
+    $('#pembahasan_id_user').val($('#id_user').val());
+
+    let dataNa = { id_bab: id_babna };
+    if (id_materi_customna) {
+        dataNa.id_materi_custom = id_materi_customna;
+    }
+
+    $.ajax({
+        url: _URL_NEXT_NO_URUT_PEMBAHASAN,
+        method: 'POST',
+        data: dataNa,
+        dataType: 'json',
+        success: function(response) {
+            $('#pembahasan_ordering_index').val(response.data);
+        },
+        error: function() {
+            $('#pembahasan_ordering_index').val('1');
+        }
     });
+
+    $('#modalPembahasan').modal('show');
+});
   
     // edit pembahasan
     $(document).on('click', '.edit-pembahasan', function(){ 

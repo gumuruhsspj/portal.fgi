@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+<?php $rand = "?v=" . rand(0, 2000); ?>
 
 <head>
   <meta charset="utf-8">
@@ -286,23 +287,25 @@
   <!-- REQUIRED SCRIPTS -->
 
   <!-- jQuery -->
-  <script src="<?= base_url() ?>assets/js/jquery371.min.js"></script>
-  <script src="<?= base_url() ?>assets/js/jquery-ui.min.js"></script>
+  <script src="<?= base_url() ?>assets/js/jquery371.min.js<?= $rand; ?>"></script>
+  <script src="<?= base_url() ?>assets/js/jquery-ui.min.js<?= $rand; ?>"></script>
   <!-- Bootstrap -->
-  <script src="<?= base_url() ?>assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="<?= base_url() ?>assets/vendor/bootstrap/js/bootstrap.bundle.min.js<?= $rand; ?>"></script>
   <!-- AdminLTE -->
-  <script src="<?= base_url() ?>assets/js/sweetalert2@11.js"></script>
-  <script src="<?= base_url() ?>assets/js/adminlte.js"></script>
+  <script src="<?= base_url() ?>assets/js/sweetalert2@11.js<?= $rand; ?>"></script>
+  <script src="<?= base_url() ?>assets/js/adminlte.js<?= $rand; ?>"></script>
 
   <!-- OPTIONAL SCRIPTS -->
-
-  <script src="<?= base_url() ?>assets/js/cleave.min.js"></script>
-  <script src="<?= base_url() ?>assets/vendor/chart.js/Chart.min.js"></script>
-  <script src="<?= base_url() ?>assets/js/settings.js"></script>
-  <script src="<?= base_url() ?>assets/js/customer-services.js"></script>
-  <script src="<?= base_url() ?>assets/js/timer.js"></script>
-  <script src="<?= base_url() ?>assets/js/pages/dashboard3.js"></script>
-  <script src="<?= base_url() ?>assets/js/saldo.js"></script>
+  <script type="text/javascript">
+    const _URL_MAIN_WEBSITE = "<?= base_url(); ?>";
+  </script>
+  <script src="<?= base_url() ?>assets/js/cleave.min.js<?= $rand; ?>"></script>
+  <script src="<?= base_url() ?>assets/vendor/chart.js/Chart.min.js<?= $rand; ?>"></script>
+  <script src="<?= base_url() ?>assets/js/settings.js<?= $rand; ?>"></script>
+  <script src="<?= base_url() ?>assets/js/customer-services.js<?= $rand; ?>"></script>
+  <script src="<?= base_url() ?>assets/js/timer.js<?= $rand; ?>"></script>
+  <script src="<?= base_url() ?>assets/js/pages/dashboard3.js<?= $rand; ?>"></script>
+  <script src="<?= base_url() ?>assets/js/saldo.js<?= $rand; ?>"></script>
 </body>
 
 </html>

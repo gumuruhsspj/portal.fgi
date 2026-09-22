@@ -208,6 +208,10 @@
         <i class="fas fa-check-circle mr-2"></i> Poster berhasil didownload!
     </div>
 
+    <script type="text/javascript">
+        const _URL_MAIN_WEBSITE = "<?= base_url(); ?>";
+    </script>
+
     <script src="<?= base_url() ?>assets/js/jquery371.min.js<?= $rand; ?>"></script>
     <script src="<?= base_url() ?>assets/vendor/bootstrap/js/bootstrap.bundle.min.js<?= $rand; ?>"></script>
     <script src="<?= base_url() ?>assets/js/adminlte.js<?= $rand; ?>"></script>

@@ -17,7 +17,10 @@ class Works extends BaseController
 
     private $link_logo = 'https://portal.fgroupindonesia.com/assets/img/logo.jpg';
 
-    public function __construct() {}
+    public function __construct()
+    {
+        date_default_timezone_set('Asia/Jakarta');
+    }
 
     // fokus di AI Text Generator
     public function generate_text()
@@ -2637,7 +2640,7 @@ Jangan tambahkan teks di luar format tersebut.";
 
         $this->save_again_session($data);
 
-        header('Location: /homepage');
+        header('Location: ' . base_urL() . 'homepage');
         exit; // Always call exit after header redirection
 
     }

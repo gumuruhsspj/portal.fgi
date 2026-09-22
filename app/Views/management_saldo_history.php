@@ -193,6 +193,10 @@
   <script src="<?= base_url(); ?>assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="<?= base_url(); ?>assets/vendor/datatables/jquery.dataTables.min.js"></script>
 
+  <script type="text/javascript">
+    const _URL_MAIN_WEBSITE = "<?= base_url(); ?>";
+  </script>
+
   <script src="<?= base_url(); ?>assets/js/manage-history-saldo.js"></script>
   <script src="<?= base_url(); ?>assets/js/settings.js"></script>
 

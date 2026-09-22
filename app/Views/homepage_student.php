@@ -591,6 +591,10 @@
   <script src="<?= base_url() ?>assets/js/sweetalert2@11.js<?= $random; ?>"></script>
 
   <!-- OPTIONAL SCRIPTS -->
+  <script type="text/javascript">
+    const _URL_MAIN_WEBSITE = "<?= base_url(); ?>";
+  </script>
+
   <script src="<?= base_url() ?>assets/js/cleave.min.js<?= $random; ?>"></script>
   <script src="<?= base_url() ?>assets/vendor/chart.js/Chart.min.js<?= $random; ?>"></script>
   <script src="<?= base_url() ?>assets/js/settings.js<?= $random; ?>"></script>

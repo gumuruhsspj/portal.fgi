@@ -87,7 +87,7 @@
   * sidebar-mini
 -->
 
-<body class="hold-transition sidebar-mini">
+<body class="hold-transition sidebar-collapse">
   <div class="wrapper">
     <!-- Navbar -->
     <?php include('nav_menu_upper.php'); ?>

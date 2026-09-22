@@ -469,6 +469,9 @@
   <script src="<?= base_url(); ?>assets/js/adminlte.js"></script>
 
   <!-- OPTIONAL SCRIPTS -->
+  <script type="text/javascript">
+    const _URL_MAIN_WEBSITE = "<?= base_url(); ?>";
+  </script>
   <script src="<?= base_url(); ?>assets/vendor/chart.js/Chart.min.js"></script>
   <script src="<?= base_url(); ?>assets/js/settings.js"></script>
   <script src="<?= base_url(); ?>assets/js/customer-services.js"></script>

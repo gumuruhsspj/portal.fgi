@@ -7,6 +7,10 @@ $(document).ready(function() {
     $('.btn-back').hide();
     $('.btn-complete').hide();
 
+ // ✅ TAMBAHKAN INI: tutup semua chapter saat pertama load
+    $('.chapter-body').hide();
+    $('.chapter-icon').removeClass('fa-folder-open').addClass('fa-folder');
+
     download_materi();
     display_materi();
     print_page();

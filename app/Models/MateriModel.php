@@ -959,6 +959,62 @@ class MateriModel extends Model
         }
     }
 
+    public function get_all_paginated($filter = [], $search = '', $sort = 'newest', $limit = 10, $page = 1)
+    {
+        $builder = $this->db->table($this->table);
+        $builder->select('table_materi.id, table_materi.judul, table_materi.kategori, table_materi.icon,
+                      table_materi.deskripsi, table_materi.attachment, table_materi.username,
+                      table_materi.url, table_materi.date_created, table_materi.date_modified,
+                      COUNT(table_comments_rating.id) as total_comments');
+        $builder->join(
+            $this->table_comments_rating_name,
+            'table_comments_rating.id_materi = table_materi.id',
+            'left'
+        );
+        $builder->groupBy('table_materi.id');
+
+        if (!empty($filter['kategori'])) {
+            $builder->where('table_materi.kategori', $filter['kategori']);
+        }
+
+        if ($search !== '') {
+            $builder->groupStart()
+                ->like('table_materi.judul', $search)
+                ->orLike('table_materi.deskripsi', $search)
+                ->groupEnd();
+        }
+
+        if ($sort === 'az') {
+            $builder->orderBy('table_materi.judul', 'ASC');
+        } else {
+            $builder->orderBy('table_materi.date_created', 'DESC');
+        }
+
+        $offset = ($page - 1) * $limit;
+        $builder->limit($limit, $offset);
+
+        $rows = $builder->get()->getResult();
+        return count($rows) > 0 ? $rows : false;
+    }
+
+    public function count_all_paginated($filter = [], $search = '')
+    {
+        $builder = $this->db->table($this->table);
+
+        if (!empty($filter['kategori'])) {
+            $builder->where('kategori', $filter['kategori']);
+        }
+
+        if ($search !== '') {
+            $builder->groupStart()
+                ->like('judul', $search)
+                ->orLike('deskripsi', $search)
+                ->groupEnd();
+        }
+
+        return $builder->countAllResults();
+    }
+
     public function get_all($username = null)
     {
         $builder = $this->db->table($this->table);
