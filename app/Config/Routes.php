@@ -224,6 +224,7 @@ $routes->group('manage/media-promosi', function ($routes) {
     $routes->post('delete', 'Works::media_promosi_delete');
     $routes->get('edit/(:num)', 'Works::media_promosi_edit/$1');
     $routes->get('preview/(:num)', 'Works::media_promosi_preview/$1');
+    $routes->get('download/(:num)', 'Works::media_promosi_download/$1');
 });
 
 // Management Kategori Media Promosi

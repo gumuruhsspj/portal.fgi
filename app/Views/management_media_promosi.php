@@ -175,8 +175,11 @@
                     {
                         data: 'id',
                         render: function(data) {
-                            return `<button class="btn btn-sm btn-warning btn-edit" data-id="${data}"><i class="fas fa-edit"></i></button>
-                        <button class="btn btn-sm btn-danger btn-delete" data-id="${data}"><i class="fas fa-trash"></i></button>`;
+                            return `<div style="white-space:nowrap;">
+            <button class="btn btn-sm btn-warning btn-edit" data-id="${data}"><i class="fas fa-edit"></i></button>
+            <a href="<?= base_url('manage/media-promosi/download/') ?>${data}" class="btn btn-sm btn-success" title="Download"><i class="fas fa-download"></i></a>
+            <button class="btn btn-sm btn-danger btn-delete" data-id="${data}"><i class="fas fa-trash"></i></button>
+        </div>`;
                         }
                     }
                 ]

@@ -732,6 +732,37 @@ Jangan tambahkan teks di luar format tersebut.";
     public function media_promosi_preview($id)
     {
         $this->is_logged_in();
+        $image = $this->_render_media_promosi($id);
+
+        header('Content-Type: image/png');
+        imagepng($image);
+        imagedestroy($image);
+        exit;
+    }
+
+    public function media_promosi_download($id)
+    {
+        $this->is_logged_in();
+        $image = $this->_render_media_promosi($id);
+
+        $media    = $this->model_media_promosi->find($id);
+        $safeName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $media['nama'] ?? 'media_promosi');
+        $filename = 'media_promosi_' . $safeName . '_' . (int) $id . '.png';
+
+        header('Content-Type: image/png');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Cache-Control: no-store');
+        imagepng($image);
+        imagedestroy($image);
+        exit;
+    }
+
+    /**
+     * Render media promosi (overlay WA + QR) -> GD resource.
+     * Dipakai bareng oleh preview (inline) & download (attachment).
+     */
+    private function _render_media_promosi($id)
+    {
         $media = $this->model_media_promosi->getWithCategory($id);
         if (!$media) {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
@@ -775,7 +806,7 @@ Jangan tambahkan teks di luar format tersebut.";
             'wa_x'           => 50,
             'wa_y'           => 50,
             'wa_font_size'   => 24,
-            'wa_color'       => '#000000', // default hitam
+            'wa_color'       => '#000000',
             'qr_x'           => 200,
             'qr_y'           => 200,
             'qr_width'       => 80,
@@ -785,7 +816,6 @@ Jangan tambahkan teks di luar format tersebut.";
 
         $config = array_merge($defaultConfig, $config);
 
-        // Validasi format warna
         if (!preg_match('/^#[0-9a-f]{6}$/i', $config['wa_color'])) {
             $config['wa_color'] = '#000000';
         }
@@ -794,28 +824,24 @@ Jangan tambahkan teks di luar format tersebut.";
         $scaleY = $origH / max(1, $config['display_height']);
 
         // --- Overlay Teks WA ---
-        $wa_text = $config['wa_text'];
-        $wa_x = (int)($config['wa_x'] * $scaleX);
-        $wa_y = (int)($config['wa_y'] * $scaleY);
+        $wa_text      = $config['wa_text'];
+        $wa_x         = (int)($config['wa_x'] * $scaleX);
+        $wa_y         = (int)($config['wa_y'] * $scaleY);
         $wa_font_size = (int)($config['wa_font_size'] * $scaleY);
 
-        // Parse warna secara manual (lebih aman dari sscanf)
         $hex = ltrim($config['wa_color'], '#');
         if (strlen($hex) == 6) {
             $r = hexdec(substr($hex, 0, 2));
             $g = hexdec(substr($hex, 2, 2));
             $b = hexdec(substr($hex, 4, 2));
         } else {
-            $r = $g = $b = 0; // fallback hitam
+            $r = $g = $b = 0;
         }
 
-        // Coba alokasi langsung
         $textColor = imagecolorallocate($image, $r, $g, $b);
         if ($textColor === false || $textColor == -1) {
-            // Jika gagal, cari warna terdekat yang tersedia
             $textColor = imagecolorresolve($image, $r, $g, $b);
         }
-        // Pastikan tidak -1
         if ($textColor < 0) {
             $textColor = imagecolorresolve($image, 0, 0, 0);
         }
@@ -834,9 +860,9 @@ Jangan tambahkan teks di luar format tersebut.";
             $qr_text = 'https://example.com';
         }
 
-        $qr_x = (int)($config['qr_x'] * $scaleX);
-        $qr_y = (int)($config['qr_y'] * $scaleY);
-        $qr_width = (int)($config['qr_width'] * $scaleX);
+        $qr_x      = (int)($config['qr_x'] * $scaleX);
+        $qr_y      = (int)($config['qr_y'] * $scaleY);
+        $qr_width  = (int)($config['qr_width'] * $scaleX);
         $qr_height = (int)($config['qr_height'] * $scaleY);
 
         $tempQrFile = tempnam(sys_get_temp_dir(), 'qr_');
@@ -888,10 +914,7 @@ Jangan tambahkan teks di luar format tersebut.";
             }
         }
 
-        header('Content-Type: image/png');
-        imagepng($image);
-        imagedestroy($image);
-        exit;
+        return $image;
     }
 
 
