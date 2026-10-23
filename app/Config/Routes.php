@@ -35,6 +35,11 @@ $routes->get('/manage/materi/quiz', 'Home::management_quiz_materi');
 
 $routes->post('/manage/pembayaran/update', 'Works::pembayaran_update');
 
+$routes->get('/manage/pemasukan',           'Home::management_pemasukan');
+$routes->post('/manage/pemasukan/cairkan',  'Works::pemasukan_cairkan');
+$routes->post('/manage/pemasukan/approve',  'Works::pemasukan_approve');
+$routes->post('/manage/pemasukan/reject',   'Works::pemasukan_reject');
+
 $routes->get('/manage/quiz-submission', 'Home::management_quiz_submission');
 $routes->get('/manage/quiz-submission/quiz', 'Home::management_quiz_submission_detail');
 $routes->post('/manage/quiz-submission/grade', 'Works::quiz_submission_grade');

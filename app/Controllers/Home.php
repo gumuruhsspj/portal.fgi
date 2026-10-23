@@ -158,6 +158,32 @@ class Home extends BaseController
         return view('management_quiz', $data);
     }
 
+    public function management_pemasukan()
+    {
+        $this->is_logged_in();
+        $data     = $this->get_user_data();
+        $usertype = $data['usertype'];
+        $id_user  = $data['id_user'];
+
+        if ($usertype === 'instruktur') {
+            $data['view_mode']      = 'instruktur';
+            $data['pemasukan_list'] = $this->model_pemasukan->get_all_by_instruktur($id_user);
+            $data['summary']        = $this->model_pemasukan->get_summary($id_user);
+            $data['pencairan_list'] = $this->model_pemasukan->get_pencairan_by_instruktur($id_user);
+        } elseif ($usertype === 'admin') {
+            $data['view_mode']        = 'admin';
+            $data['pending_pencairan'] = $this->model_pemasukan->get_pending_pencairan();
+        } else {
+            return redirect()->to('/homepage')->with('error', 'Akses ditolak.');
+        }
+
+        $data['link_management_open']            = 'menu-open';
+        $data['link_management_pemasukan_active'] = 'active';
+        $data['random']                          = '?v=' . time();
+
+        return view('management_pemasukan', $data);
+    }
+
     public function management_pembayaran()
     {
         $this->is_logged_in();
@@ -546,9 +572,10 @@ class Home extends BaseController
 
         $cat      = $this->request->getGet('kategori');
         $search   = $this->request->getGet('search') ?? '';
-        $sort     = $this->request->getGet('sort')   ?? 'newest'; // newest | az
+        $sort     = $this->request->getGet('sort')   ?? 'newest';
         $page     = (int) ($this->request->getGet('page') ?: 1);
         $perPage  = 10;
+        $id_user  = (int) $data['id_user'];   // ← ambil dari sini, bukan dari model
 
         $filter = [];
         if (!empty($cat)) {
@@ -556,12 +583,13 @@ class Home extends BaseController
             $filter['kategori'] = $cat;
         }
 
-        $data['data_materi']   = $this->model_materi->get_all_paginated($filter, $search, $sort, $perPage, $page);
-        $data['total_materi']  = $this->model_materi->count_all_paginated($filter, $search);
-        $data['per_page']      = $perPage;
-        $data['current_page']  = $page;
-        $data['search']        = $search;
-        $data['sort']          = $sort;
+        $data['data_materi']  = $this->model_materi
+            ->get_all_paginated($filter, $search, $sort, $perPage, $page, $id_user);
+        $data['total_materi'] = $this->model_materi->count_all_paginated($filter, $search);
+        $data['per_page']     = $perPage;
+        $data['current_page'] = $page;
+        $data['search']       = $search;
+        $data['sort']         = $sort;
 
         $data['title']                       = "Seluruh Materi";
         $data['category']                    = $cat;
@@ -731,6 +759,13 @@ class Home extends BaseController
         }
 
         $data['participate'] = $materi_terdaftar != false ? true : false;
+
+        $subs_user = $data_materi != false
+            ? $this->model_materi->get_subscribed_materi($data_materi->id, $data['id_user'])
+            : false;
+
+        $data['user_status'] = $subs_user ? $subs_user->status : null;
+
         $data['data_materi'] = $data_materi;
 
         // ============ LOGIC PAKET DEFAULT ============

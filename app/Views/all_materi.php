@@ -53,6 +53,53 @@
     .materi-card:hover .detail-overlay {
       opacity: 1;
     }
+
+    /* Sticker ribbon di pojok kanan atas */
+    .materi-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .status-ribbon {
+      position: absolute;
+      top: 16px;
+      right: -36px;
+      width: 140px;
+      padding: 6px 0;
+      text-align: center;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      transform: rotate(45deg);
+      z-index: 6;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, .35);
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .status-ribbon.completed {
+      background: #28a745;
+    }
+
+    .status-ribbon.in-progress {
+      background: #ffc107;
+      color: #212529;
+    }
+
+    .status-ribbon.pending {
+      background: #17a2b8;
+    }
+
+    .status-ribbon.error,
+    .status-ribbon.delete-request {
+      background: #dc3545;
+    }
+
+    .btn-materi-akses {
+      color: white !important;
+    }
   </style>
 
 </head>
@@ -161,30 +208,72 @@
                 <div class="row">
                   <?php if ($title == "Seluruh Materi"): ?>
                     <?php if (isset($data_materi)) : ?>
-                      <?php foreach ($data_materi as $dmateri): ?>
-                        <div class="col-md-12 col-lg-6 col-xl-4">
-                          <!-- Tambahkan class "materi-card" di sini -->
-                          <div class="card mb-2 bg-gradient-dark materi-card">
-                            <img class="card-img-top" src="<?= base_url(); ?>assets/img/uploads/materi/<?= $dmateri->icon; ?>" alt="Dist Photo 1">
 
-                            <!-- Overlay Default untuk Tombol "Akses Masuk" -->
+                      <?php foreach ($data_materi as $dmateri): ?>
+                        <?php
+                        // status enrollment user pada materi ini (null = belum terdaftar)
+                        $user_status = $dmateri->user_status ?? null;
+
+                        $ribbon_label = null;
+                        $ribbon_class = null;
+                        $btn_class = 'btn-primary';
+                        $btn_icon = 'fa-sign-in-alt';
+                        $btn_label = 'Akses Masuk';
+                        $btn_url   = base_url('materi?title=' . string_to_url($dmateri->judul));
+
+                        if ($user_status === 'completed') {
+                          $ribbon_label = 'COMPLETED';
+                          $ribbon_class = 'completed';
+                          $btn_class    = 'btn-success';
+                          $btn_icon = 'fa-redo';
+                          $btn_label = 'Simak Lagi';
+                          $btn_url      = base_url('materi/start/?id=' . $dmateri->id);
+                        } elseif ($user_status === 'in progress') {
+                          $ribbon_label = 'IN PROGRESS';
+                          $ribbon_class = 'in-progress';
+                          $btn_class    = 'btn-warning';
+                          $btn_icon = 'fa-play';
+                          $btn_label = 'Lanjutkan';
+                          $btn_url      = base_url('materi/start/?id=' . $dmateri->id);
+                        } elseif ($user_status === 'pending') {
+                          $ribbon_label = 'PENDING';
+                          $ribbon_class = 'pending';
+                          $btn_class    = 'btn-info';
+                          $btn_icon = 'fa-hourglass-half';
+                          $btn_label = 'Menunggu';
+                        } elseif (in_array($user_status, ['error', 'delete request'], true)) {
+                          $ribbon_label = strtoupper($user_status);
+                          $ribbon_class = 'error';
+                          $btn_class    = 'btn-secondary';
+                          $btn_icon = 'fa-exclamation-circle';
+                          $btn_label = 'Bermasalah';
+                        }
+                        ?>
+                        <div class="col-md-12 col-lg-6 col-xl-4">
+                          <div class="card mb-2 bg-gradient-dark materi-card">
+                            <img class="card-img-top" src="<?= base_url(); ?>assets/img/uploads/materi/<?= $dmateri->icon; ?>" alt="Materi">
+
+                            <?php if ($ribbon_label): ?>
+                              <div class="status-ribbon <?= $ribbon_class; ?>"><?= $ribbon_label; ?></div>
+                            <?php endif; ?>
+
                             <div class="card-img-overlay default-overlay d-flex justify-content-end align-items-end">
-                              <a href="<?= base_url(); ?>materi?title=<?= string_to_url($dmateri->judul); ?>" class="btn btn-primary btn-sm shadow m-2">
-                                <i class="fas fa-sign-in-alt"></i> Akses Masuk
+                              <a href="<?= $btn_url; ?>" class="btn btn-materi-akses <?= $btn_class; ?> btn-sm shadow m-2">
+                                <i class="fas <?= $btn_icon; ?>"></i> <?= $btn_label; ?>
                               </a>
                             </div>
 
-                            <!-- Detail Overlay: Ubah div menjadi tag <a> agar seluruh box bisa diklik -->
-                            <a href="<?= base_url(); ?>materi?title=<?= string_to_url($dmateri->judul); ?>" class="card-img-overlay detail-overlay d-flex flex-column justify-content-end">
+                            <a href="<?= base_url(); ?>materi?title=<?= string_to_url($dmateri->judul); ?>"
+                              class="card-img-overlay detail-overlay d-flex flex-column justify-content-end">
                               <h5 class="card-title text-primary text-white"><?= strtoupper($dmateri->judul); ?></h5>
                               <h5 class="card-title text-primary text-white"><?= $dmateri->kategori; ?></h5>
                               <p class="card-text text-white pb-2 pt-1"><?= $dmateri->deskripsi; ?></p>
                               <span class="text-white">Last update <?= calculate_time_elapsed($dmateri->date_modified); ?></span>
                             </a>
-
                           </div>
                         </div>
                       <?php endforeach; ?>
+
                     <?php endif; ?>
 
                   <?php else : ?>
@@ -428,6 +517,7 @@
     document.getElementById('sortSelect')?.addEventListener('change', function() {
       document.getElementById('filterForm').submit();
     });
+
     let tmr;
     document.getElementById('searchInput')?.addEventListener('input', function() {
       clearTimeout(tmr);
@@ -435,11 +525,11 @@
     });
   </script>
   <script src="<?= base_url(); ?>assets/js/cleave.min.js"></script>
-  <script src="<?= base_url(); ?>assets/vendor/chart.js/Chart.min.js"></script>
+
   <script src="<?= base_url(); ?>assets/js/settings.js"></script>
   <script src="<?= base_url(); ?>assets/js/customer-services.js"></script>
   <script src="<?= base_url(); ?>assets/js/timer.js"></script>
-  <script src="<?= base_url(); ?>assets/js/pages/dashboard3.js"></script>
+
   <script src="<?= base_url(); ?>assets/js/saldo.js"></script>
 
 </body>

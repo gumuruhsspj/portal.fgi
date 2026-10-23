@@ -69,6 +69,13 @@
         </li>
 
         <li class="nav-item">
+          <a href="<?= base_url() ?>manage/pemasukan" class="nav-link <?= isset($link_management_pemasukan_active) ? 'active' : ''; ?>">
+            <i class="nav-icon fas fa-money-bill-wave"></i>
+            <p>Pemasukan</p>
+          </a>
+        </li>
+
+        <li class="nav-item">
           <a href="<?= base_url() ?>manage/group" class="nav-link <?= isset($link_management_group_active) ? 'active' : ''; ?>">
             <i class="nav-icon fas fa-comments"></i>
             <p>Group Diskusi</p>

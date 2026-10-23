@@ -28,6 +28,7 @@ use App\Models\MediaCategoryModel;
 use App\Models\MediaPromosiModel;
 use App\Models\ProgramAfiliasiKategoriModel;
 use App\Models\ReferalModel;
+use App\Models\PemasukanModel;
 
 /**
  * Class BaseController
@@ -64,6 +65,7 @@ abstract class BaseController extends Controller
     protected $session;
 
     // private $session;
+    protected $model_pemasukan;
     protected $model_materi;
     protected $model_history_saldo;
     protected $model_user;
@@ -97,6 +99,7 @@ abstract class BaseController extends Controller
         // E.g.: $this->session = \Config\Services::session();
         $this->session = session();
 
+        $this->model_pemasukan = new PemasukanModel();
         $this->model_media_category = new MediaCategoryModel();
         $this->model_media_promosi  = new MediaPromosiModel();
         $this->model_history_saldo = new HistorySaldoModel();
@@ -239,7 +242,6 @@ abstract class BaseController extends Controller
         $tfmale = $data_all_users != false ? sizeof(get_data_as_key_value($data_all_users, 'gender', 'female')) : 0;
 
         $tmateri = $this->model_materi->countAll();
-
 
 
         $tprogress_materi = $data_progress_materi != false ? $score_progress_materi : 0;

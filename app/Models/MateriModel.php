@@ -959,18 +959,38 @@ class MateriModel extends Model
         }
     }
 
-    public function get_all_paginated($filter = [], $search = '', $sort = 'newest', $limit = 10, $page = 1)
+    public function get_all_paginated($filter = [], $search = '', $sort = 'newest', $limit = 10, $page = 1, $id_user = null)
     {
         $builder = $this->db->table($this->table);
-        $builder->select('table_materi.id, table_materi.judul, table_materi.kategori, table_materi.icon,
-                      table_materi.deskripsi, table_materi.attachment, table_materi.username,
-                      table_materi.url, table_materi.date_created, table_materi.date_modified,
-                      COUNT(table_comments_rating.id) as total_comments');
+
+        // Kalau id_user ada → ambil status enrollment-nya, kalau tidak → NULL
+        $userStatusSelect = !empty($id_user)
+            ? 'MAX(sm.status) as user_status'
+            : 'NULL as user_status';
+
+        $builder->select(
+            'table_materi.id, table_materi.judul, table_materi.kategori, table_materi.icon,
+         table_materi.deskripsi, table_materi.attachment, table_materi.username,
+         table_materi.url, table_materi.date_created, table_materi.date_modified,
+         COUNT(DISTINCT table_comments_rating.id) as total_comments,
+         ' . $userStatusSelect
+        );
+
         $builder->join(
             $this->table_comments_rating_name,
             'table_comments_rating.id_materi = table_materi.id',
             'left'
         );
+
+        // JOIN student_materi HANYA untuk user yang login
+        if (!empty($id_user)) {
+            $builder->join(
+                $this->table_student_materi_name . ' sm',
+                'sm.id_materi = table_materi.id AND sm.id_user = ' . (int) $id_user,
+                'left'
+            );
+        }
+
         $builder->groupBy('table_materi.id');
 
         if (!empty($filter['kategori'])) {

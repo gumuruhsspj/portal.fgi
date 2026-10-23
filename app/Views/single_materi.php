@@ -29,6 +29,59 @@
       background-color: green;
       color: white !important;
     }
+
+    .single-materi-img-wrap {
+      position: relative;
+      overflow: hidden;
+      border-radius: 6px;
+    }
+
+    .single-materi-img-wrap .status-ribbon {
+      position: absolute;
+      top: 16px;
+      right: -36px;
+      width: 140px;
+      padding: 6px 0;
+      text-align: center;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      transform: rotate(45deg);
+      z-index: 6;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, .35);
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .single-materi-img-wrap .status-ribbon.completed {
+      background: #28a745;
+    }
+
+    .single-materi-img-wrap .status-ribbon.in-progress {
+      background: #ffc107;
+      color: #212529;
+    }
+
+    .single-materi-img-wrap .status-ribbon.pending {
+      background: #17a2b8;
+    }
+
+    .single-materi-img-wrap .status-ribbon.error,
+    .single-materi-img-wrap .status-ribbon.delete-request {
+      background: #dc3545;
+    }
+
+    @media (min-width: 992px) {
+      .col-12 .product-image {
+        max-width: none !important;
+      }
+    }
+
+    .col-12 .product-image {
+      max-height: none !important;
+    }
   </style>
 </head>
 <!--
@@ -98,9 +151,35 @@
 
                   <div class="col-12 col-sm-6">
                     <h3 class="d-inline-block d-sm-none"><?= ($data_materi != false && isset($data_materi)) ? $data_materi->judul : ""; ?></h3>
+
                     <div class="col-12">
-                      <img src="<?= base_url(); ?>assets/img/uploads/materi/<?= ($data_materi != false && isset($data_materi)) ? $data_materi->icon : ""; ?>"
-                        class="product-image img-fluid img-card-effect" alt="Product Image">
+                      <div class="single-materi-img-wrap">
+                        <img src="<?= base_url(); ?>assets/img/uploads/materi/<?= ($data_materi != false && isset($data_materi)) ? $data_materi->icon : ""; ?>"
+                          class="product-image img-fluid img-card-effect" alt="Product Image">
+
+                        <?php
+                        $user_status  = $user_status ?? null;
+                        $ribbon_label = null;
+                        $ribbon_class = null;
+
+                        if ($user_status === 'completed') {
+                          $ribbon_label = 'COMPLETED';
+                          $ribbon_class = 'completed';
+                        } elseif ($user_status === 'in progress') {
+                          $ribbon_label = 'IN PROGRESS';
+                          $ribbon_class = 'in-progress';
+                        } elseif ($user_status === 'pending') {
+                          $ribbon_label = 'PENDING';
+                          $ribbon_class = 'pending';
+                        } elseif (in_array($user_status, ['error', 'delete request'], true)) {
+                          $ribbon_label = strtoupper($user_status);
+                          $ribbon_class = 'error';
+                        }
+                        ?>
+                        <?php if ($ribbon_label): ?>
+                          <div class="status-ribbon <?= $ribbon_class ?>"><?= $ribbon_label ?></div>
+                        <?php endif; ?>
+                      </div>
                     </div>
 
                   </div>

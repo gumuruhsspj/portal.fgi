@@ -47,6 +47,27 @@
     .top-70 {
       top: 70% !important;
     }
+
+    /* Desktop: center, max ~480px (≈40% di layar 1200px, sisa kosong kiri-kanan) */
+    #loginModal .modal-dialog {
+      width: 100% !important;
+      max-width: 480px;
+      margin: 1.75rem auto;
+      /* <— auto L/R = selalu ke tengah */
+    }
+
+    /* Mobile: full width, biar nggak kejepit */
+    @media (max-width: 575.98px) {
+      #loginModal .modal-dialog {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+      }
+
+      #loginModal .modal-content {
+        border-radius: 0;
+      }
+    }
   </style>
 
 </head>

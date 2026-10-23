@@ -988,6 +988,25 @@ Jangan tambahkan teks di luar format tersebut.";
 
             $this->model_materi->add_student_materi($data_akses);
 
+            // ==== catat pemasukan untuk instruktur ====
+            $owner = $this->model_user->get_by_username($materi['username']);
+            if ($owner && $owner->usertype === 'instruktur') {
+                $komisi          = (float) ($materi['komisi_instruktur_persen'] ?? 70);
+                $nom_instruktur  = (int) round($harga * $komisi / 100);
+                $nom_admin       = $harga - $nom_instruktur;
+
+                $this->model_pemasukan->create_from_purchase([
+                    'id_instruktur'      => $owner->id,
+                    'id_student'         => $id_user,
+                    'id_materi'          => $materi_id,
+                    'nominal_bruto'      => (int) $harga,
+                    'komisi_persen'      => $komisi,
+                    'nominal_instruktur' => $nom_instruktur,
+                    'nominal_admin'      => $nom_admin,
+                    'status'             => 'pending',
+                ]);
+            }
+
             $respond = [
                 'status'  => 'success',
                 'message' => 'Checkout Berhasil! Saldo telah dipotong.'
@@ -1040,6 +1059,73 @@ Jangan tambahkan teks di luar format tersebut.";
         } else {
             return $this->response->setJSON(['status' => 'error', 'message' => 'Gagal bergabung']);
         }
+    }
+
+    public function pemasukan_cairkan()
+    {
+        $this->is_logged_in();
+        if (!$this->request->isAJAX()) return $this->response->setJSON(['status' => 'error']);
+
+        $id_user  = session()->get('id_user');
+        $usertype = session()->get('usertype');
+        if ($usertype !== 'instruktur') {
+            return $this->response->setJSON(['status' => 'error', 'message' => 'Hanya instruktur.']);
+        }
+
+        $total = $this->model_pemasukan->get_total_pending_only($id_user);
+        if ($total <= 0) {
+            return $this->response->setJSON(['status' => 'error', 'message' => 'Tidak ada saldo pending.']);
+        }
+
+        $id_pencairan = $this->model_pemasukan->create_pencairan($id_user);
+        if (!$id_pencairan) {
+            return $this->response->setJSON(['status' => 'error', 'message' => 'Gagal membuat request.']);
+        }
+
+        return $this->response->setJSON([
+            'status'  => 'success',
+            'message' => 'Request pencairan terkirim. Nominal: Rp ' . number_format($total, 0, ',', '.'),
+        ]);
+    }
+
+    public function pemasukan_approve()
+    {
+        $this->is_logged_in();
+        if (!$this->request->isAJAX()) return $this->response->setJSON(['status' => 'error']);
+        if (session()->get('usertype') !== 'admin') {
+            return $this->response->setJSON(['status' => 'error', 'message' => 'Akses ditolak.']);
+        }
+
+        $id_pencairan     = (int) $this->request->getPost('id_pencairan');
+        $nominal_approved = (int) $this->request->getPost('nominal_approved');
+        $admin_id         = session()->get('id_user');
+
+        if (!$id_pencairan || $nominal_approved <= 0) {
+            return $this->response->setJSON(['status' => 'error', 'message' => 'Nominal tidak valid.']);
+        }
+
+        $ok = $this->model_pemasukan->approve_pencairan($id_pencairan, $nominal_approved, $admin_id);
+        return $this->response->setJSON($ok
+            ? ['status' => 'success', 'message' => 'Pencairan approved.']
+            : ['status' => 'error', 'message' => 'Gagal approve.']);
+    }
+
+    public function pemasukan_reject()
+    {
+        $this->is_logged_in();
+        if (!$this->request->isAJAX()) return $this->response->setJSON(['status' => 'error']);
+        if (session()->get('usertype') !== 'admin') {
+            return $this->response->setJSON(['status' => 'error', 'message' => 'Akses ditolak.']);
+        }
+
+        $id_pencairan = (int) $this->request->getPost('id_pencairan');
+        $keterangan   = $this->request->getPost('keterangan') ?? '';
+        $admin_id     = session()->get('id_user');
+
+        $ok = $this->model_pemasukan->reject_pencairan($id_pencairan, $admin_id, $keterangan);
+        return $this->response->setJSON($ok
+            ? ['status' => 'success', 'message' => 'Pencairan ditolak.']
+            : ['status' => 'error', 'message' => 'Gagal reject.']);
     }
 
     public function pembayaran_update()
